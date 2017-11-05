@@ -1,12 +1,19 @@
 {
   "name": "jingo-2",
   "version": "1.0.0",
-  "description": "The jingo wiki engine",
+  "description": "A nodejs based wiki engine",
+  "author": "Claudio Cicali <claudio.cicali@gmail.com>",
+  "keywords": [
+    "wiki",
+    "git",
+    "engine",
+    "cms",
+    "markdown"
+  ],
   "scripts": {
-    "clean": "rm -rf dist/*",
+    "clean": "rm -rf dist/*; ln -s ../src/views dist/",
     "start-dev": "npm run clean; NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -w jingo jingo'"
   },
-  "author": "",
   "license": "MIT",
   "devDependencies": {
     "@types/body-parser": "^1.16.7",
@@ -19,6 +26,7 @@
     "@types/morgan": "^1.7.35",
     "nodemon": "^1.12.1",
     "tsc-watch": "^1.0.8",
+    "tslint": "^5.8.0",
     "typescript": "^2.6.1"
   },
   "dependencies": {
@@ -28,6 +36,7 @@
     "errorhandler": "^1.5.0",
     "express": "^4.16.2",
     "express-flash": "0.0.2",
+    "express-handlebars": "^3.0.0",
     "express-session": "^1.15.6",
     "express-validator": "^4.3.0",
     "method-override": "^2.3.10",
