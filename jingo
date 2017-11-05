@@ -1,0 +1,76 @@
+#!/usr/bin/env node
+
+/*
+ * Jingo, wiki engine
+ * http://github.com/claudioc/jingo
+ *
+ * Copyright 2013-2017 Claudio Cicali <claudio.cicali@gmail.com>
+ * Released under the MIT license
+ */
+
+'use strict'
+
+const DEFAULT_HTTP_PORT = 6767
+
+const server = require('./dist/server')
+const http = require('http')
+
+const httpPort = normalizePort(process.env.PORT || DEFAULT_HTTP_PORT)
+const app = server.Server.bootstrap().app
+app.set('port', httpPort)
+const httpServer = http.createServer(app)
+
+httpServer.listen(httpPort)
+httpServer.on('error', onError)
+httpServer.on('listening', onListening)
+
+function normalizePort (val) {
+  const port = parseInt(val, 10)
+
+  if (isNaN(port)) {
+    return val
+  }
+
+  if (port >= 0) {
+    return port
+  }
+
+  return DEFAULT_HTTP_PORT
+}
+
+/**
+ * Event listener for HTTP server 'error' event.
+ */
+function onError (error) {
+  if (error.syscall !== 'listen') {
+    throw error
+  }
+
+  var bind = typeof httpPort === 'string'
+    ? `Pipe ${httpPort}`
+    : `Port ${httpPort}`
+
+  switch (error.code) {
+    case 'EACCES':
+      console.error(`${bind} requires elevated privileges`)
+      process.exit(1)
+      break
+
+    case 'EADDRINUSE':
+      console.error(`${bind} is already in use`)
+      process.exit(1)
+      break
+
+    default:
+      throw error
+  }
+}
+
+function onListening () {
+  const addr = httpServer.address()
+  const bind = typeof addr === 'string'
+    ? `pipe ${addr}`
+    : `port ${addr.port}`
+
+  console.log(`Listening on ${bind}`)
+}

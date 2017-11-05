@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "strictNullChecks": false,
+    "target": "es6",
+    "outDir": "dist/",
+    "inlineSourceMap": true,
+    "noUnusedParameters": false,
+    "noUnusedLocals": true,
+    "removeComments": true,
+    "allowJs": true,
+    "lib": [
+      "es2016"
+    ]
+  },
+  "include": [
+    "index.ts",
+    "src/**/*.ts"
+  ],
+  "compileOnSave": true,
+  "buildOnSave": false,
+  "atom": {
+    "rewriteTsconfig": false
+  }
+}
+
