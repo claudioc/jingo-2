@@ -11,6 +11,7 @@ import * as logger from 'morgan'
 import * as path from 'path'
 
 import { IndexRoute } from './routes/index'
+import { WikiRoute } from './routes/wiki'
 
 const cookieSession = require('cookie-session')
 
@@ -23,12 +24,6 @@ export class Server {
 
   public app: express.Application
 
-  /**
-   * Constructor.
-   *
-   * @class Server
-   * @constructor
-   */
   constructor () {
     this.app = express()
     this.config()
@@ -36,34 +31,24 @@ export class Server {
     this.api()
   }
 
-  /**
-   * Bootstrap the application.
-   *
-   * @class Server
-   * @method bootstrap
-   * @static
-   * @return {Server} Returns the newly created injector for this app.
-   */
   public static bootstrap (): Server {
     return new Server()
   }
 
-  /**
-   * Create REST API routes
-   *
-   * @class Server
-   * @method api
-   */
+  public routes () {
+    let router: express.Router
+    router = express.Router()
+
+    IndexRoute.create(router)
+    WikiRoute.create(router)
+
+    this.app.use(router)
+  }
+
   public api () {
     // empty
   }
 
-  /**
-   * Configure application
-   *
-   * @class Server
-   * @method config
-   */
   public config () {
 
     const staticOptions = {
@@ -129,19 +114,5 @@ export class Server {
     if (process.env.NODE_ENV === 'development') {
       this.app.use(errorHandler())
     }
-  }
-
-  /**
-   * Create router
-   *
-   * @class Server
-   * @method api
-   */
-  public routes () {
-    let router: express.Router
-    router = express.Router()
-
-    IndexRoute.create(router)
-    this.app.use(router)
   }
 }
