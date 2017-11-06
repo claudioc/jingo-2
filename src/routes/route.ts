@@ -18,7 +18,7 @@ export class BaseRoute {
    * @constructor
    */
   constructor () {
-    this.title = 'Tour of Heros'
+    this.title = 'Jingo'
     this.scripts = []
   }
 

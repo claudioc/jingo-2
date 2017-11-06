@@ -26,7 +26,6 @@ export class IndexRoute extends BaseRoute {
    * @static
    */
   public static create (router: Router) {
-    console.log('[IndexRoute::create] Creating index route.')
     router.get('/', (req: Request, res: Response, next: NextFunction) => {
       new IndexRoute().index(req, res, next)
     })
@@ -48,6 +47,9 @@ export class IndexRoute extends BaseRoute {
       message: 'Welcome to Jingo'
     }
 
+//    const indexPageUrl = this.resolveWikiName(app.locals.config.get('pages').index)
+    // res.redirect(indexPageUrl)
+    // res.redirect(proxyPath + '/wiki/' + app.locals.config.get('pages').index)
     this.render(req, res, 'index', options)
   }
 }

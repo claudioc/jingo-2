@@ -65,7 +65,16 @@ export class Server {
    * @method config
    */
   public config () {
-    this.app.use(express.static(path.join(__dirname, 'public')))
+
+    const staticOptions = {
+      redirect: false
+    }
+
+    // Exclude files from being served from the
+    // static middleware. Note: to use the static middleware
+    // from the wiki pages directly we need to create a
+    // whitelist (not a blacklist)
+    this.app.use([/(.*)\.md/, '/public'], express.static(path.join(__dirname, 'public'), staticOptions))
 
     this.app.engine('.hbs', expressHandlebars({
       defaultLayout: 'main',

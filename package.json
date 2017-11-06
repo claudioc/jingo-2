@@ -11,7 +11,7 @@
     "markdown"
   ],
   "scripts": {
-    "clean": "rm -rf dist/*; ln -s ../src/views dist/",
+    "clean": "rm -rf dist/*; mkdir dist; ln -s ../src/views dist/; ln -s ../src/public dist/",
     "start-dev": "npm run clean; NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -w jingo jingo'"
   },
   "license": "MIT",

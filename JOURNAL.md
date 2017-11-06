@@ -1,0 +1,9 @@
+- Came up with a proper directory layout
+- Decided to go with TypeScript
+- Setup the project lously inspired by []
+- Chose Handlebars as the template engine (this version https://github.com/ericf/express-handlebars)
+- Created editoconfig
+- Came up with a working `start-dev` script involving usage of `tsc-watch` and `nodemon`
+- Used symlink to point the views directory in the /dist directory (at least in development mode)
+- Discovered Tufte CSS
+- Realised that we can use express.static with a blacklist
