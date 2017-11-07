@@ -1,8 +1,10 @@
+type WikiAction = 'history' | 'compare' | 'show'
 
-function convertToWikiPath (docName: string): string {
+function wikiPathFor (docName: string, action: WikiAction = 'show'): string {
   const proxyPath = ''
   const wikied = docName.replace(/\s/g, '_')
-  return `${proxyPath}/wiki/${wikied}`
+  const actionPart = action !== 'show' ? `/${action}` : ''
+  return `${proxyPath}/wiki/${wikied}${actionPart}`
 }
 
 function convertToTitle (docName: string): string {
@@ -11,5 +13,5 @@ function convertToTitle (docName: string): string {
 
 export {
   convertToTitle,
-  convertToWikiPath
+  wikiPathFor
 }

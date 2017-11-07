@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from 'express'
-import { convertToWikiPath } from '../lib/wiki'
+import { wikiPathFor } from '../lib/wiki'
 import { BaseRoute } from './route'
 
 export class IndexRoute extends BaseRoute {
@@ -14,7 +14,7 @@ export class IndexRoute extends BaseRoute {
   }
 
   public index (req: Request, res: Response, next: NextFunction) {
-    const indexPageUrl = convertToWikiPath('Home')
+    const indexPageUrl = wikiPathFor('Home')
     res.redirect(indexPageUrl)
   }
 }
