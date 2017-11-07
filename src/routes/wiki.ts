@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from 'express'
 import * as MarkdownIt from 'markdown-it'
 import { docPathFor, loadDoc } from '../lib/doc'
-import { convertToTitle } from '../lib/wiki'
+import { unwikify } from '../lib/wiki'
 import { BaseRoute } from './route'
 
 export class WikiRoute extends BaseRoute {
@@ -18,24 +18,22 @@ export class WikiRoute extends BaseRoute {
     })
   }
 
-  public renderDoc (req: Request, res: Response, next: NextFunction) {
+  public async renderDoc (req: Request, res: Response, next: NextFunction) {
     const docName = req.params.docName
-    const docTitle = convertToTitle(docName)
+    const docTitle = unwikify(docName)
 
     this.title = `Jingo – ${docTitle}`
 
-    loadDoc(docTitle)
-      .then(doc => {
-        const scope: object = {
-          content: this.parser.render(doc.content),
-          title: docTitle
-        }
-
-        this.render(req, res, 'wiki', scope)
-      })
-      .catch(() => {
-        const createPageUrl = docPathFor(docTitle, 'new')
-        res.redirect(createPageUrl)
-      })
+    try {
+      const doc = await loadDoc(docTitle)
+      const scope: object = {
+        content: this.parser.render(doc.content),
+        title: docTitle
+      }
+      this.render(req, res, 'wiki', scope)
+    } catch (e) {
+      const createPageUrl = docPathFor(docTitle, 'new')
+      res.redirect(createPageUrl)
+    }
   }
 }

@@ -11,6 +11,7 @@
     "markdown"
   ],
   "scripts": {
+    "test": "npx ava dist/**/spec.js",
     "clean": "rm -rf dist/*; mkdir -p dist; ln -s ../src/views dist/; ln -s ../src/public dist/",
     "start-dev": "npm run clean; NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -w jingo jingo'"
   },
@@ -26,8 +27,10 @@
     "@types/markdown-it": "0.0.4",
     "@types/method-override": "0.0.31",
     "@types/morgan": "^1.7.35",
+    "ava": "^0.23.0",
     "editorconfig": "^0.15.0",
     "nodemon": "^1.12.1",
+    "tmp": "0.0.33",
     "tsc-watch": "^1.0.8",
     "tslint": "^5.8.0",
     "typescript": "^2.6.1"

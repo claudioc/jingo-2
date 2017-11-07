@@ -1,4 +1,5 @@
 import * as fs from 'fs-extra'
+import { wikify } from '../wiki'
 
 type DocAction = 'new' | 'edit' | 'revert'
 interface IDoc {
@@ -7,26 +8,20 @@ interface IDoc {
 
 function docPathFor (docName: string, action: DocAction): string {
   const proxyPath = ''
-  const wikied = docName.replace(/\s/g, '_')
+  const wikied = wikify(docName)
   return `${proxyPath}/doc/${wikied}/${action}`
 }
 
-function convertToTitle (docName: string): string {
-  return docName.replace(/_/g, ' ')
-}
-
 async function loadDoc (docName: string): Promise<IDoc> {
-  return fs.readFile(`/tmp/${docName}.md`)
-    .then(content => {
-      return {
-        content: content.toString()
-      } as IDoc
-    })
+  const content = await fs.readFile(`/tmp/${docName}.md`)
+  return {
+    content: content.toString()
+  } as IDoc
 }
 
 export {
-  convertToTitle,
   docPathFor,
   loadDoc,
-  IDoc
+  IDoc,
+  wikify
 }

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from 'express'
-import { convertToTitle } from '../lib/wiki'
+import { unwikify } from '../lib/wiki'
 import { BaseRoute } from './route'
 
 export class DocRoute extends BaseRoute {
@@ -15,7 +15,7 @@ export class DocRoute extends BaseRoute {
 
   public newDoc (req: Request, res: Response, next: NextFunction) {
     const docName = req.params.docName
-    const docTitle = convertToTitle(docName)
+    const docTitle = unwikify(docName)
 
     this.title = `Jingo – Creating ${docTitle}`
 
