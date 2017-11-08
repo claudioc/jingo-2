@@ -8,7 +8,7 @@ export class DocRoute extends BaseRoute {
   }
 
   public static create (router: Router) {
-    router.get('/doc/:docName/new', (req: Request, res: Response, next: NextFunction) => {
+    router.get('/doc/new/:docName', (req: Request, res: Response, next: NextFunction) => {
       new DocRoute().newDoc(req, res, next)
     })
   }
@@ -20,6 +20,7 @@ export class DocRoute extends BaseRoute {
     this.title = `Jingo – Creating ${docTitle}`
 
     const scope: object = {
+      docName,
       title: docTitle
     }
 

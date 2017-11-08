@@ -11,9 +11,9 @@
     "markdown"
   ],
   "scripts": {
-    "test": "npx ava dist/**/spec.js",
+    "test": "npx tsc; npx ava dist/**/spec.js",
     "clean": "rm -rf dist/*; mkdir -p dist; ln -s ../src/views dist/; ln -s ../src/public dist/",
-    "start-dev": "npm run clean; NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -w jingo jingo'"
+    "start-dev": "npm run clean; npm test; NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -w jingo jingo'"
   },
   "license": "MIT",
   "devDependencies": {

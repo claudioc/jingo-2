@@ -8,8 +8,13 @@ interface IDoc {
 
 function docPathFor (docName: string, action: DocAction): string {
   const proxyPath = ''
-  const wikied = wikify(docName)
-  return `${proxyPath}/doc/${wikied}/${action}`
+
+  let path = `${proxyPath}/doc/${action}`
+  if (docName) {
+    path += `/${wikify(docName)}`
+  }
+
+  return path
 }
 
 async function loadDoc (docName: string): Promise<IDoc> {

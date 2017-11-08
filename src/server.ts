@@ -10,6 +10,7 @@ import * as methodOverride from 'method-override'
 import * as logger from 'morgan'
 import * as path from 'path'
 
+import * as helpers from './lib/view-helpers'
 import { DocRoute } from './routes/doc'
 import { IndexRoute } from './routes/index'
 import { WikiRoute } from './routes/wiki'
@@ -66,8 +67,10 @@ export class Server {
     this.app.engine('.hbs', expressHandlebars({
       defaultLayout: 'main',
       extname: '.hbs',
+      helpers,
       layoutsDir: path.join(__dirname, '../src/views/layouts')
     }))
+
     this.app.set('views', path.join(__dirname, '../src/views'))
     this.app.set('view engine', '.hbs')
     this.app.enable('trust proxy')

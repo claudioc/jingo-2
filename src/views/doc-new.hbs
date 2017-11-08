@@ -1,1 +1,7 @@
 <h1>Creating {{title}}</h1>
+<form method="post" action="{{urlFor resource="doc"}}">
+  <input name="docName" type="hidden" value="{{docName}}">
+  <input name="docName">
+  <textarea name="content"></textarea>
+  <input type="submit" value="Save">
+</form>
