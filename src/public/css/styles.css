@@ -1,0 +1,19 @@
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+form {
+  max-width: 60%;
+}
+
+form > div {
+  margin-bottom: 1rem;
+}
+
+form input[type=text] {
+  width: 100%;
+}
