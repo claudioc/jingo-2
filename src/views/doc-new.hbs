@@ -1,32 +1,16 @@
 <link rel="stylesheet" href="/public/vendor/codemirror/lib/codemirror.css">
-<link rel="stylesheet" href="/public/css/styles.css">
 <link rel="stylesheet" href="/public/css/codemirror-ext.css">
 <h1>Creating {{title}}</h1>
-<form method="post" action="{{urlFor resource="doc"}}">
-  <input name="docName" type="hidden" value="{{docName}}">
+<form id="editor-form" method="post" action="{{urlFor resource="doc"}}">
   <div>
-    <input autofocus type="text" name="docName">
+    <input autofocus type="text" value="{{docName}}" name="docName" required>
   </div>
   <div>
-    <textarea id="editor" name="content"></textarea>
+    <textarea id="editor-content" name="content"></textarea>
   </div>
   <div>
     <input type="submit" value="Save">
   </div>
 </form>
 <script src="/public/vendor/codemirror/lib/codemirror.min.js"></script>
-<script>
-CodeMirror.fromTextArea(document.getElementById("editor"), {
-  lineNumbers: true,
-  matchBrackets: true,
-  lineWrapping: true,
-  extraKeys: {
-    "Ctrl-Enter": function(cm) {
-      //Jingo.toggleFullscreen();
-    },
-    "Ctrl-S": function(cm) {
-      //Jingo.save();
-    }
-  }
-})
-</script>
+<script src="/public/js/editor.js"></script>

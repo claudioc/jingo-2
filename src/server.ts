@@ -5,7 +5,6 @@ import * as express from 'express'
 import * as expressFlash from 'express-flash'
 import * as expressHandlebars from 'express-handlebars'
 import * as session from 'express-session'
-import * as expressValidator from 'express-validator'
 import * as methodOverride from 'method-override'
 import * as logger from 'morgan'
 import * as path from 'path'
@@ -108,7 +107,6 @@ export class Server {
       secret: 'SECRET_GOES_HERE'
     }))
     this.app.use(expressFlash())
-    this.app.use(expressValidator())
 
     // catch 404 and forward to error handler
     this.app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
