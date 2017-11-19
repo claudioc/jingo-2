@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="/public/vendor/codemirror/lib/codemirror.css">
 <link rel="stylesheet" href="/public/css/codemirror-ext.css">
-<h1>Creating {{title}}</h1>
+{{>errors}}
+<h1>Creating {{docTitle}}</h1>
 <form id="editor-form" method="post" action="{{urlFor resource="doc"}}">
   <div>
     <input autofocus type="text" value="{{docName}}" name="docName" required>

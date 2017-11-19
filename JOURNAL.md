@@ -13,3 +13,5 @@
 - Jingo will have _support_ for Git, but will also work without fetching pages directly from filesystem
 7/11/17
 - Installed AVA for tests https://github.com/avajs/ava
+19/11/17
+- Installed sinon and starting testing routes using spies
