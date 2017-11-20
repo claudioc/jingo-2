@@ -5,7 +5,7 @@ import Route from '.'
 
 test('newDoc route receiving a name in the url', t => {
   const route = new Route()
-  route.render = sinon.spy()
+  const render = sinon.stub(route, 'render')
 
   const request = {
     params: {
@@ -13,7 +13,6 @@ test('newDoc route receiving a name in the url', t => {
     }
   }
   route.newDoc(request as any, null, _nop)
-  const subject = route.render as any
 
   t.is(route.title, 'Jingo – Creating a document')
 
@@ -22,19 +21,18 @@ test('newDoc route receiving a name in the url', t => {
     docTitle: 'hello world'
   }
 
-  t.is(subject.calledWith(request, null, 'doc-new', expectedScope), true)
+  t.is(render.calledWith(request, null, 'doc-new', expectedScope), true)
 })
 
 test('newDoc route not receiving a name in the url', t => {
   const route = new Route()
-  route.render = sinon.spy()
+  const render = sinon.stub(route, 'render')
 
   const request = {
     params: {
     }
   }
   route.newDoc(request as any, null, _nop)
-  const subject = route.render as any
 
   t.is(route.title, 'Jingo – Creating a document')
 
@@ -43,25 +41,65 @@ test('newDoc route not receiving a name in the url', t => {
     docTitle: 'new document'
   }
 
-  t.is(subject.calledWith(request, null, 'doc-new', expectedScope), true)
+  t.is(render.calledWith(request, null, 'doc-new', expectedScope), true)
 })
 
-// test('createDoc success redirect to the wiki page', t => {
-//   const route = new Route()
-//   route.render = sinon.spy()
+test('createDoc success redirect to the wiki page', t => {
+  const route = new Route()
+  sinon.stub(route, 'inspectRequest').callsFake(req => {
+    return {
+      data: {
+        content: 'Winter in Berlin',
+        docName: 'hello world'
+      },
+      errors: null
+    }
+  })
 
-//   const request = {
-//     query: {
-//       docName: 'hello world'
-//     }
-//   }
+  const request = {
+    query: {
+      docName: 'hello world'
+    }
+  }
 
-//   const response = {
-//     redirect: sinon.spy()
-//   }
+  const redirect = sinon.spy()
+  const response = {
+    redirect
+  }
 
-//   route.createDoc(request as any, response as any, _nop)
-//   const subject = response.redirect
+  route.createDoc(request as any, response as any, _nop)
 
-//   t.is(subject.calledWith('/wiki/hello_world'), true)
-// })
+  t.is(redirect.calledWith('/wiki/hello_world'), true)
+})
+
+test('createDoc renders again with a validation error', t => {
+  const route = new Route()
+  const render = sinon.stub(route, 'render')
+
+  sinon.stub(route, 'inspectRequest').callsFake(req => {
+    return {
+      data: {
+        content: 'blah',
+        docName: 'My Name'
+      },
+      errors: 123
+    }
+  })
+
+  const request = {
+    query: {
+      docName: 'hello world'
+    }
+  }
+
+  route.createDoc(request as any, null, _nop)
+
+  const expectedScope = {
+    content: 'blah',
+    docName: 'My Name',
+    docTitle: 'My Name',
+    errors: 123
+  }
+
+  t.is(render.calledWith(request, null, 'doc-new', expectedScope), true)
+})

@@ -37,7 +37,7 @@ export default class DocRoute extends BaseRoute {
     })
   }
 
-  public newDoc (req: Request, res: Response, next: NextFunction) {
+  public newDoc (req: Request, res: Response, next: NextFunction): void {
     this.title = 'Jingo – Creating a document'
 
     // The document name can be part of the URL or not
@@ -52,25 +52,30 @@ export default class DocRoute extends BaseRoute {
     this.render(req, res, 'doc-new', scope)
   }
 
-  public createDoc (req: Request, res: Response, next: NextFunction) {
-    const errors = validationResult(req)
-    const hasErrors = !errors.isEmpty()
+  public createDoc (req: Request, res: Response, next: NextFunction): void {
+    const { errors, data } = this.inspectRequest(req)
 
-    const data = matchedData(req)
-
-    if (hasErrors) {
+    if (errors) {
       const scope: object = {
         content: data.content,
         docName: data.docName,
         docTitle: data.docName,
-        errors: errors.mapped()
+        errors
       }
 
-      console.log(errors.mapped())
       this.render(req, res, 'doc-new', scope)
       return
     }
 
     res.redirect(wikiPathFor(data.docName))
+  }
+
+  public inspectRequest (req: Request) {
+    const validationErrors = validationResult(req)
+
+    return {
+      data: matchedData(req),
+      errors: validationErrors.isEmpty() ? null : validationErrors.mapped()
+    }
   }
 }
