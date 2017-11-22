@@ -1,16 +1,16 @@
 import { NextFunction, Request, Response, Router } from 'express'
 import { check, validationResult } from 'express-validator/check'
 import { matchedData, sanitize } from 'express-validator/filter'
-import { wikiPathFor } from '../../lib/wiki'
-import { unwikify } from '../../lib/wiki'
+import { api } from '../../api'
+import { unwikify, wikiPathFor } from '../../lib/wiki'
 import { BaseRoute } from '../route'
 
 // Returns a validator chains for the new document
 function validatesNew () {
   return [
-    check('docName')
+    check('docTitle')
       .isLength({ min: 1 })
-      .withMessage('The document name cannot be empty')
+      .withMessage('The document title cannot be empty')
       .trim(),
 
     check('content')
@@ -18,7 +18,7 @@ function validatesNew () {
       .withMessage('The document content cannot be empty')
       .trim(),
 
-    sanitize(['docName', 'content'])
+    sanitize(['docTitle', 'content'])
   ]
 }
 
@@ -41,25 +41,22 @@ export default class DocRoute extends BaseRoute {
     this.title = 'Jingo – Creating a document'
 
     // The document name can be part of the URL or not
-    const docName = req.params.docName || ''
-    const docTitle = unwikify(docName)
+    const docTitle = unwikify(req.params.docName || '')
 
     const scope: object = {
-      docName,
-      docTitle: docTitle !== '' ? docTitle : 'new document'
+      docTitle: docTitle !== '' ? docTitle : 'Unnamed document'
     }
 
     this.render(req, res, 'doc-new', scope)
   }
 
-  public createDoc (req: Request, res: Response, next: NextFunction): void {
+  public async createDoc (req: Request, res: Response, next: NextFunction): Promise<void> {
     const { errors, data } = this.inspectRequest(req)
 
     if (errors) {
       const scope: object = {
         content: data.content,
-        docName: data.docName,
-        docTitle: data.docName,
+        docTitle: data.docTitle,
         errors
       }
 
@@ -67,7 +64,10 @@ export default class DocRoute extends BaseRoute {
       return
     }
 
-    res.redirect(wikiPathFor(data.docName))
+    await api.createDoc(data.docTitle, data.content)
+
+    // All done, go to the just saved page
+    res.redirect(wikiPathFor(data.docTitle))
   }
 
   public inspectRequest (req: Request) {

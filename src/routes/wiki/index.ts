@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response, Router } from 'express'
 import * as MarkdownIt from 'markdown-it'
-import { docPathFor, loadDoc } from '../lib/doc'
-import { unwikify } from '../lib/wiki'
-import { BaseRoute } from './route'
+import { api } from '../../api'
+import { docPathFor } from '../../lib/doc'
+import { unwikify } from '../../lib/wiki'
+import { BaseRoute } from '../route'
 
 export class WikiRoute extends BaseRoute {
   parser: MarkdownIt.MarkdownIt
@@ -25,7 +26,7 @@ export class WikiRoute extends BaseRoute {
     this.title = `Jingo – ${docTitle}`
 
     try {
-      const doc = await loadDoc(docTitle)
+      const doc = await api.loadDoc(docName)
       const scope: object = {
         content: this.parser.render(doc.content),
         title: docTitle
