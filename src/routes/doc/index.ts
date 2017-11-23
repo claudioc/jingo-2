@@ -2,11 +2,13 @@ import { NextFunction, Request, Response, Router } from 'express'
 import { check, validationResult } from 'express-validator/check'
 import { matchedData, sanitize } from 'express-validator/filter'
 import { api } from '../../api'
+import config from '../../lib/config'
 import { unwikify, wikiPathFor } from '../../lib/wiki'
 import { BaseRoute } from '../route'
 
 // Returns a validator chains for the new document
 function validatesNew () {
+  console.log(config.get('topa'))
   return [
     check('docTitle')
       .isLength({ min: 1 })

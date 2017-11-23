@@ -11,12 +11,27 @@
 'use strict'
 
 const DEFAULT_HTTP_PORT = 6767
-
-const server = require('./dist/server')
+const program = require('commander')
+const pkg = require('./package')
+const fs = require('fs')
+const config = require('./dist/lib/config').default
+const Server = require('./dist/server').default
 const http = require('http')
 
+program.version(pkg.version)
+  .option('-c, --config <path>', 'Specify the config file')
+  .parse(process.argv)
+
+if (!program.config || !fs.existsSync(program.config)) {
+  program.help()
+}
+
+console.log(config)
+config.load()
+
 const httpPort = normalizePort(process.env.PORT || DEFAULT_HTTP_PORT)
-const app = server.Server.bootstrap().app
+
+const app = Server.bootstrap().app
 app.set('port', httpPort)
 const httpServer = http.createServer(app)
 

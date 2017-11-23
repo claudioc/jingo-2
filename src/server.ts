@@ -21,7 +21,7 @@ const cookieSession = require('cookie-session')
  *
  * @class Server
  */
-export class Server {
+export default class Server {
 
   public app: express.Application
 
