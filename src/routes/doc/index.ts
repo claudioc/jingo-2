@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from 'express'
 import { check, validationResult } from 'express-validator/check'
 import { matchedData, sanitize } from 'express-validator/filter'
-import { api } from '../../api'
+import api from '../../api'
 import config from '../../lib/config'
 import { unwikify, wikiPathFor } from '../../lib/wiki'
 import { BaseRoute } from '../route'

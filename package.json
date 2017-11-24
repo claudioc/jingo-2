@@ -11,9 +11,16 @@
     "markdown"
   ],
   "scripts": {
+    "build": "echo TBD",
+    "prepublish": "npm run build",
     "test": "npx tsc; npx ava dist/**/spec.js",
     "clean": "rm -rf dist/*; mkdir -p dist; ln -s ../src/views dist/; ln -s ../src/public dist/",
     "start-dev": "npm run clean; npm test; NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -w jingo jingo'"
+  },
+  "_moduleAliases": {
+    "@api" : "dist/api/index",
+    "@lib" : "dist/lib",
+    "@routes" : "dist/routes"
   },
   "license": "MIT",
   "devDependencies": {
@@ -50,6 +57,7 @@
     "fs-extra": "^4.0.2",
     "markdown-it": "^8.4.0",
     "method-override": "^2.3.10",
+    "module-alias": "^2.0.3",
     "morgan": "^1.9.0"
   }
 }

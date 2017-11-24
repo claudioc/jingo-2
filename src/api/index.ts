@@ -15,7 +15,7 @@ async function loadDoc (docName: string): Promise<IDoc> {
   } as IDoc
 }
 
-export const api = {
+export default {
   createDoc,
   loadDoc
 }

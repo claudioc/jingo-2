@@ -1,7 +1,5 @@
 import test from 'ava'
-import {
-  api
-} from '.'
+import api from '.'
 
 test('loadDoc failure', async t => {
   try {

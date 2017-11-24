@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "moduleResolution": "node",
     "strictNullChecks": false,
     "target": "es6",
     "outDir": "dist/",
@@ -11,7 +12,13 @@
     "allowJs": true,
     "lib": [
       "es2016"
-    ]
+    ],
+    "baseUrl": "src",
+    "paths": {
+      "@api": ["api/index"],
+      "@lib/*": ["lib/*"],
+      "@routes/*": ["routes/*"]
+    }
   },
   "include": [
     "index.ts",
