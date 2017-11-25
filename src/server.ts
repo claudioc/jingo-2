@@ -9,10 +9,10 @@ import * as methodOverride from 'method-override'
 import * as logger from 'morgan'
 import * as path from 'path'
 
-import * as helpers from './lib/view-helpers'
-import DocRoute from './routes/doc'
-import { IndexRoute } from './routes/index'
-import { WikiRoute } from './routes/wiki'
+import * as helpers from '@lib/view-helpers'
+import DocRoute from '@routes/doc'
+import IndexRoute from '@routes/index'
+import WikiRoute from '@routes/wiki'
 
 const cookieSession = require('cookie-session')
 

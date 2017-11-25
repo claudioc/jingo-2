@@ -1,4 +1,4 @@
-import { wikify } from '../wiki'
+import { wikify } from '@lib/wiki'
 
 type DocAction = 'new' | 'edit' | 'revert'
 

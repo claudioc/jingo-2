@@ -1,5 +1,5 @@
-import { docPathFor } from '../doc'
-import { wikiPathFor } from '../wiki'
+import { docPathFor } from '@lib/doc'
+import { wikiPathFor } from '@lib/wiki'
 
 function urlFor (params) {
   const { resource, id } = params.hash

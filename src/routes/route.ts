@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 
-export class BaseRoute {
+export default class BaseRoute {
 
   public title: string
 

@@ -1,11 +1,11 @@
 import api from '@api'
 import { docPathFor } from '@lib/doc'
 import { unwikify } from '@lib/wiki'
-import { BaseRoute } from '@routes/route'
+import BaseRoute from '@routes/route'
 import { NextFunction, Request, Response, Router } from 'express'
 import * as MarkdownIt from 'markdown-it'
 
-export class WikiRoute extends BaseRoute {
+export default class WikiRoute extends BaseRoute {
   parser: MarkdownIt.MarkdownIt
 
   constructor () {
