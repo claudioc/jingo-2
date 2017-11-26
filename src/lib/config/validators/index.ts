@@ -15,6 +15,8 @@ function checkDocumentRoot (documentRoot: string) {
   if (!stat.isDirectory()) {
     throw new Error(`EACCES The document root must be a directory (${documentRoot})`)
   }
+
+  // @TODO it must be an absolute path (`path.isAbsolute`)
 }
 
 export default {

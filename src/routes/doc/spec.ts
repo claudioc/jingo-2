@@ -3,7 +3,7 @@ import { nop as _nop } from 'lodash'
 import * as sinon from 'sinon'
 import Route from '.'
 
-test('newDoc route receiving a name in the url', t => {
+test('newDoc route receiving a name in the url', async t => {
   const route = new Route()
   const render = sinon.stub(route, 'render')
 
@@ -12,7 +12,7 @@ test('newDoc route receiving a name in the url', t => {
       docName: 'hello_world'
     }
   }
-  route.newDoc(request as any, null, _nop)
+  await route.newDoc(request as any, null, _nop)
 
   t.is(route.title, 'Jingo – Creating a document')
 

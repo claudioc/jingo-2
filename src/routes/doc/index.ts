@@ -1,5 +1,5 @@
 import api from '@api'
-//import config from '@lib/config'
+import config from '@lib/config'
 import { NextFunction, Request, Response, Router } from 'express'
 import { check, validationResult } from 'express-validator/check'
 import { matchedData, sanitize } from 'express-validator/filter'
@@ -38,14 +38,24 @@ export default class DocRoute extends BaseRoute {
     })
   }
 
-  public newDoc (req: Request, res: Response, next: NextFunction): void {
+  public async newDoc (req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Creating a document'
 
     // The document name can be part of the URL or not
     const docTitle = unwikify(req.params.docName || '')
+    const hasDocTitle = docTitle !== ''
+
+    // If a document with this name already exists, bring the user there
+    if (hasDocTitle) {
+      const itExists = await api(config).docExists(docTitle)
+      if (itExists) {
+        res.redirect(wikiPathFor(docTitle))
+        return
+      }
+    }
 
     const scope: object = {
-      docTitle: docTitle !== '' ? docTitle : 'Unnamed document'
+      docTitle: hasDocTitle ? docTitle : 'Unnamed document'
     }
 
     this.render(req, res, 'doc-new', scope)
@@ -65,7 +75,7 @@ export default class DocRoute extends BaseRoute {
       return
     }
 
-    await api.createDoc(data.docTitle, data.content)
+    await api(config).createDoc(data.docTitle, data.content)
 
     // All done, go to the just saved page
     res.redirect(wikiPathFor(data.docTitle))
@@ -76,7 +86,12 @@ export default class DocRoute extends BaseRoute {
 
     return {
       data: matchedData(req),
-      errors: validationErrors.isEmpty() ? null : validationErrors.mapped()
+      errors: validationErrors.isEmpty() ? null : validationErrorsToArray()
+    }
+
+    function validationErrorsToArray () {
+      const map = validationErrors.mapped()
+      return Object.keys(map).map(key => map[key].msg)
     }
   }
 }

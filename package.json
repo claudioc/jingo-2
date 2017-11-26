@@ -11,10 +11,10 @@
     "markdown"
   ],
   "scripts": {
-    "build": "echo TBD",
+    "build": "npm run clear; echo TBD",
     "prepublish": "npm run build",
     "test": "npx tsc; npx ava -v",
-    "clean": "rm -rf dist/*; mkdir -p dist; ln -s ../src/views dist/; ln -s ../src/public dist/",
+    "clean": "rm -rf dist/*; mkdir -p dist; ln -s ../src/views dist/; ln -s ../src/public dist/; ln -s ../src/lib/config/defaults.json dist/config-defaults.json",
     "start-dev": "npm run clean; npm test; NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -w jingo -w config.json jingo -c config.json'"
   },
   "_moduleAliases": {

@@ -1,4 +1,5 @@
 import api from '@api'
+import config from '@lib/config'
 import { docPathFor } from '@lib/doc'
 import { unwikify } from '@lib/wiki'
 import BaseRoute from '@routes/route'
@@ -26,7 +27,7 @@ export default class WikiRoute extends BaseRoute {
     this.title = `Jingo – ${docTitle}`
 
     try {
-      const doc = await api.loadDoc(docName)
+      const doc = await api(config).loadDoc(docName)
       const scope: object = {
         content: this.parser.render(doc.content),
         title: docTitle

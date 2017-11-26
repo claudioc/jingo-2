@@ -18,3 +18,6 @@
 25/11/17
 - Added the module-alias and fixed ava to use it via package.json
 - Added the comment-json module to read the config file
+26/11/17
+- Added the config-defaults file, symlinked in /dist for discovery by JS
+- Changed the API to be configurable

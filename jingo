@@ -24,7 +24,7 @@ let httpPort
 main()
 
 async function main () {
-  parseCommandLine()
+  await parseCommandLine()
   await loadConfig()
   setupServer()
 }
@@ -90,15 +90,24 @@ function onListening () {
   console.log(`Listening on ${bind}`)
 }
 
-function parseCommandLine () {
+async function parseCommandLine () {
   program.version(pkg.version)
   .option('-c, --config <path>', 'Specify the config file')
   .option('-s, --sample-config', 'Dumps a config file template and exits')
   .parse(process.argv)
 
   if (program.sampleConfig) {
-    console.log(config.sample())
+    console.log(await config.sample())
     process.exit(0)
+  }
+
+  if (!program.config) {
+    program.help()
+  }
+
+  if (!fs.existsSync(program.config)) {
+    console.error('The specified config file doesn\'t exists')
+    process.exit(-1)
   }
 
   if (!program.config || !fs.existsSync(program.config)) {

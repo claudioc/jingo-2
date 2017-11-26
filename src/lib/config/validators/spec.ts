@@ -27,3 +27,5 @@ test('checkDocumentRoot', t => {
     validators.checkDocumentRoot(value)
   })
 })
+
+test.todo('Check if the document root is an absolute path')
