@@ -1,5 +1,5 @@
 import api from '@api'
-import config from '@lib/config'
+//import config from '@lib/config'
 import { NextFunction, Request, Response, Router } from 'express'
 import { check, validationResult } from 'express-validator/check'
 import { matchedData, sanitize } from 'express-validator/filter'
@@ -8,7 +8,6 @@ import BaseRoute from '../route'
 
 // Returns a validator chains for the new document
 function validatesNew () {
-  console.log(config.get('topa'))
   return [
     check('docTitle')
       .isLength({ min: 1 })

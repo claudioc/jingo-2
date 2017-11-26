@@ -93,14 +93,24 @@ function onListening () {
 function parseCommandLine () {
   program.version(pkg.version)
   .option('-c, --config <path>', 'Specify the config file')
+  .option('-s, --sample-config', 'Dumps a config file template and exits')
   .parse(process.argv)
+
+  if (program.sampleConfig) {
+    console.log(config.sample())
+    process.exit(0)
+  }
 
   if (!program.config || !fs.existsSync(program.config)) {
     program.help()
   }
 }
 
-async function loadConfig (configFileName) {
-  console.log(config)
-  config.load(program.config)
+async function loadConfig () {
+  try {
+    await config.load(program.config)
+  } catch (err) {
+    console.error(`There was an error reading your config file and Jingo cannot continue:\n${program.config}: ${err}`)
+    process.exit(-1)
+  }
 }

@@ -18,7 +18,5 @@
 
   form.addEventListener('submit', (evt) => {
     cm.save()
-
-   // console.log(console.log(content.))
   }, false)
 })()

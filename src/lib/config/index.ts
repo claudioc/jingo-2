@@ -1,26 +1,44 @@
+import fixers from '@lib/config/fixers'
+import validators from '@lib/config/validators'
+import * as cjson from 'comment-json'
+import * as fs from 'fs-extra'
 import { get as _get } from 'lodash'
 
 type TConfigValue = boolean | string | number
 type TConfig = {
-  topa: number
+  documentRoot: string
 }
 
 class Config {
-  config: TConfig
+  config: TConfig | null
 
   constructor () {
-    this.config = {
-      topa: 0
-    }
-    console.log('Config loaded')
+    this.config = null
   }
 
-  public load () {
-    this.config.topa = 12
+  // Load the configuration from a config file
+  public async load (filename: string) {
+    const fileContent = await fs.readFile(filename)
+    this.config = cjson.parse(fileContent, null, true)
+    this.fixConfig()
+    this.checkConfig()
+    console.log(this.config)
+  }
+
+  public sample () {
+    //
   }
 
   public get (path: string): TConfigValue {
     return _get(this.config, path)
+  }
+
+  protected fixConfig () {
+    this.config.documentRoot = fixers.fixDocumentRoot(this.config.documentRoot)
+  }
+
+  protected checkConfig () {
+    validators.checkDocumentRoot(this.config.documentRoot)
   }
 }
 
