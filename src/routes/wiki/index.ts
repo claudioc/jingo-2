@@ -9,14 +9,14 @@ import * as MarkdownIt from 'markdown-it'
 export default class WikiRoute extends BaseRoute {
   parser: MarkdownIt.MarkdownIt
 
-  constructor () {
-    super()
+  constructor (cfg) {
+    super(cfg)
     this.parser = new MarkdownIt()
   }
 
   public static create (router: Router) {
     router.get('/wiki/:docName', (req: Request, res: Response, next: NextFunction) => {
-      new WikiRoute().renderDoc(req, res, next)
+      new WikiRoute(config).renderDoc(req, res, next)
     })
   }
 
@@ -27,7 +27,7 @@ export default class WikiRoute extends BaseRoute {
     this.title = `Jingo – ${docTitle}`
 
     try {
-      const doc = await api(config).loadDoc(docName)
+      const doc = await api(this.config).loadDoc(docName)
       const scope: object = {
         content: this.parser.render(doc.content),
         title: docTitle

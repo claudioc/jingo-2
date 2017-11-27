@@ -1,15 +1,12 @@
+import config from '@lib/config'
 import { wikiPathFor } from '@lib/wiki'
 import BaseRoute from '@routes/route'
 import { NextFunction, Request, Response, Router } from 'express'
 
 export default class IndexRoute extends BaseRoute {
-  constructor () {
-    super()
-  }
-
   public static create (router: Router) {
     router.get('/', (req: Request, res: Response, next: NextFunction) => {
-      new IndexRoute().index(req, res, next)
+      new IndexRoute(config).index(req, res, next)
     })
   }
 

@@ -1,10 +1,10 @@
 import api from '@api'
 import config from '@lib/config'
+import { unwikify, wikiPathFor } from '@lib/wiki'
+import BaseRoute from '@routes/route'
 import { NextFunction, Request, Response, Router } from 'express'
 import { check, validationResult } from 'express-validator/check'
 import { matchedData, sanitize } from 'express-validator/filter'
-import { unwikify, wikiPathFor } from '../../lib/wiki'
-import BaseRoute from '../route'
 
 // Returns a validator chains for the new document
 function validatesNew () {
@@ -24,17 +24,13 @@ function validatesNew () {
 }
 
 export default class DocRoute extends BaseRoute {
-  constructor () {
-    super()
-  }
-
   public static create (router: Router) {
     router.get('/doc/new/:docName?', (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute().newDoc(req, res, next)
+      new DocRoute(config).newDoc(req, res, next)
     })
 
     router.post('/doc/new', validatesNew(), (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute().createDoc(req, res, next)
+      new DocRoute(config).createDoc(req, res, next)
     })
   }
 
@@ -47,7 +43,7 @@ export default class DocRoute extends BaseRoute {
 
     // If a document with this name already exists, bring the user there
     if (hasDocTitle) {
-      const itExists = await api(config).docExists(docTitle)
+      const itExists = await api(this.config).docExists(docTitle)
       if (itExists) {
         res.redirect(wikiPathFor(docTitle))
         return
@@ -75,7 +71,7 @@ export default class DocRoute extends BaseRoute {
       return
     }
 
-    await api(config).createDoc(data.docTitle, data.content)
+    await api(this.config).createDoc(data.docTitle, data.content)
 
     // All done, go to the just saved page
     res.redirect(wikiPathFor(data.docTitle))

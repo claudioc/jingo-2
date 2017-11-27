@@ -1,10 +1,11 @@
+import { configWithDefaults } from '@lib/config'
 import test from 'ava'
 import { nop as _nop } from 'lodash'
 import * as sinon from 'sinon'
 import Route from '.'
 
 test('newDoc route receiving a name in the url', async t => {
-  const route = new Route()
+  const route = new Route(await configWithDefaults())
   const render = sinon.stub(route, 'render')
 
   const request = {
@@ -23,8 +24,8 @@ test('newDoc route receiving a name in the url', async t => {
   t.is(render.calledWith(request, null, 'doc-new', expectedScope), true)
 })
 
-test('newDoc route not receiving a name in the url', t => {
-  const route = new Route()
+test('newDoc route not receiving a name in the url', async t => {
+  const route = new Route(await configWithDefaults())
   const render = sinon.stub(route, 'render')
 
   const request = {
@@ -43,7 +44,7 @@ test('newDoc route not receiving a name in the url', t => {
 })
 
 test('createDoc success redirect to the wiki page', async t => {
-  const route = new Route()
+  const route = new Route(await configWithDefaults())
   sinon.stub(route, 'inspectRequest').callsFake(req => {
     return {
       data: {
@@ -67,8 +68,8 @@ test('createDoc success redirect to the wiki page', async t => {
   t.is(redirect.calledWith('/wiki/hello_world'), true)
 })
 
-test('createDoc renders again with a validation error', t => {
-  const route = new Route()
+test('createDoc renders again with a validation error', async t => {
+  const route = new Route(await configWithDefaults())
   const render = sinon.stub(route, 'render')
 
   sinon.stub(route, 'inspectRequest').callsFake(req => {
