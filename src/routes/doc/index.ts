@@ -1,5 +1,5 @@
 import api from '@api'
-import config from '@lib/config'
+import { Config } from '@lib/config'
 import { unwikify, wikiPathFor } from '@lib/wiki'
 import BaseRoute from '@routes/route'
 import { NextFunction, Request, Response, Router } from 'express'
@@ -24,7 +24,7 @@ function validatesNew () {
 }
 
 export default class DocRoute extends BaseRoute {
-  public static create (router: Router) {
+  public static create (router: Router, config: Config) {
     router.get('/doc/new/:docName?', (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).newDoc(req, res, next)
     })

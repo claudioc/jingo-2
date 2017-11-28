@@ -1,3 +1,4 @@
+import * as helpers from '@lib/view-helpers'
 import * as bodyParser from 'body-parser'
 import * as cookieParser from 'cookie-parser'
 import * as errorHandler from 'errorhandler'
@@ -9,7 +10,7 @@ import * as methodOverride from 'method-override'
 import * as logger from 'morgan'
 import * as path from 'path'
 
-import * as helpers from '@lib/view-helpers'
+import config from '@lib/config'
 import DocRoute from '@routes/doc'
 import IndexRoute from '@routes/index'
 import WikiRoute from '@routes/wiki'
@@ -27,7 +28,7 @@ export default class Server {
 
   constructor () {
     this.app = express()
-    this.config()
+    this.setup()
     this.routes()
     this.api()
   }
@@ -40,9 +41,9 @@ export default class Server {
     let router: express.Router
     router = express.Router()
 
-    IndexRoute.create(router)
-    WikiRoute.create(router)
-    DocRoute.create(router)
+    IndexRoute.create(router, config)
+    WikiRoute.create(router, config)
+    DocRoute.create(router, config)
 
     this.app.use(router)
   }
@@ -51,7 +52,7 @@ export default class Server {
     // empty
   }
 
-  public config () {
+  public setup () {
 
     const staticOptions = {
       redirect: false

@@ -1,5 +1,5 @@
 import api from '@api'
-import config from '@lib/config'
+import { Config } from '@lib/config'
 import { docPathFor } from '@lib/doc'
 import { unwikify } from '@lib/wiki'
 import BaseRoute from '@routes/route'
@@ -14,7 +14,7 @@ export default class WikiRoute extends BaseRoute {
     this.parser = new MarkdownIt()
   }
 
-  public static create (router: Router) {
+  public static create (router: Router, config: Config) {
     router.get('/wiki/:docName', (req: Request, res: Response, next: NextFunction) => {
       new WikiRoute(config).renderDoc(req, res, next)
     })
