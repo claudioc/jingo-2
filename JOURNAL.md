@@ -21,3 +21,6 @@
 26/11/17
 - Added the config-defaults file, symlinked in /dist for discovery by JS
 - Changed the API to be configurable
+29/11/17
+- Trying mocking fs with mock-fs but it doesn't work with Ava. The solution is too aggressive
+- Trying using memfs + mountfs but it doesn't work with the promised version of fs-extra

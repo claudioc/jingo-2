@@ -1,4 +1,5 @@
 import test from 'ava'
+import * as path from 'path'
 import { Config, configWithDefaults } from '.'
 
 test('reset', async t => {
@@ -34,6 +35,15 @@ test('configWithDefaults', async t => {
   t.not(config.values, null)
 })
 
+test('configWithDefaults with defaults filename', async t => {
+  try {
+    await configWithDefaults('pippo')
+    t.fail()
+  } catch (err) {
+    t.regex(err.message, /ENOENT/)
+  }
+})
+
 test('get', async t => {
   const config = await configWithDefaults()
 
@@ -48,6 +58,21 @@ test('get throws when no config', t => {
   })
 
   t.regex(error.message, /Cannot get an empty config/)
+})
+
+test('getDefaultsFilename', t => {
+  const config = new Config()
+  const expected = path.join(process.cwd(), 'dist/config-defaults.json')
+  const actual = config.getDefaultsFilename()
+  t.is(actual, expected)
+})
+
+test('setDefaultsFilename', t => {
+  const config = new Config()
+  const expected = 'antani'
+  config.setDefaultsFilename(expected)
+  const actual = config.getDefaultsFilename()
+  t.is(actual, expected)
 })
 
 test('sample', async t => {

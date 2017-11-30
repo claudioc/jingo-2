@@ -11,8 +11,8 @@
     "markdown"
   ],
   "scripts": {
-    "build": "npm run clear; echo TBD",
-    "prepublish": "npm run build",
+    "build": "npm run clean; echo TBD",
+    "prepublish": "echo TBD",
     "test": "npx tsc; npx ava -v",
     "clean": "rm -rf dist/*; mkdir -p dist; ln -s ../src/views dist/; ln -s ../src/public dist/; ln -s ../src/lib/config/defaults.json dist/config-defaults.json",
     "start-dev": "npm run clean; npm test; NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -w jingo -w config.json jingo -c config.json'"
@@ -47,6 +47,7 @@
     "@types/morgan": "^1.7.35",
     "ava": "^0.23.0",
     "editorconfig": "^0.15.0",
+    "mock-fs": "^4.4.2",
     "nodemon": "^1.12.1",
     "sinon": "^4.1.2",
     "tmp": "0.0.33",

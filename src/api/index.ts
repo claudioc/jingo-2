@@ -23,6 +23,7 @@ class Api {
       await fs.access(this.absDocPath(docName), fs.constants.F_OK)
       return true
     } catch (err) {
+      console.log(err)
       return false
     }
   }
