@@ -1,81 +1,71 @@
-// import test from 'ava'
-// test.todo('Zot!')
 import { configWithDefaults } from '@lib/config'
 import test from 'ava'
-import * as fs from 'fs-extra'
+import * as path from 'path'
+import api from '.'
+
+/*
+ * @FIXME When a test fails, we get a crash which not understandable
+*/
+
+import * as fs from 'fs'
 const memfs = require('memfs')
 import * as MountFs from 'mountfs'
-import * as sinon from 'sinon'
 
-MountFs.patchInPlace( fs )
+const mockBasePath = '/home/jingo'
 
-;(fs as any).mount('/home/jingo', memfs)
+const myFs = new MountFs(fs)
+myFs.mount(mockBasePath, memfs)
 
-// import api from '.'
-
-test.afterEach(() => {
-  ;(fs as any).unmount('/home/jingo')
+test.after(() => {
+  myFs.unmount(mockBasePath)
 })
 
-test('loadDoc failure', async t => {
-  // Other options: custom require() or use sinon to mock the single call?
-
-  const readFile = sinon.stub(fs, 'readFile').callsFake(filename => {
-    return new Promise((resolve, reject) => {
-      resolve('ANTANI')
-    })
-  })
-
-  const configFilename = '/home/jingo/config.json'
-  await fs.writeFile(configFilename, 'antani')
-  console.log(await fs.readFile(configFilename).toString())
-  const config = await configWithDefaults(configFilename)
-  config.set('documentRoot', '/home/jingo')
-  console.log(config)
-  readFile.restore()
-  t.pass()
+test.serial('docExists with a non-existant file', async t => {
+  const config = await configWithDefaults()
+  config.setFs(myFs)
+  const expected = false
+  const actual = await api(config).docExists('pappero')
+  t.is(actual, expected)
 })
 
-// test('docExists with a non-existant file', async t => {
-//   const config = await configWithDefaults()
-//   const expected = false
-//   const actual = await api(config).docExists('pappero')
-//   t.is(actual, expected)
-// })
+test.serial('docExists with a existant file', async t => {
+  const config = await configWithDefaults()
+  config.setFs(myFs)
+  config.set('documentRoot', mockBasePath)
+  myFs.writeFileSync(path.join(mockBasePath, 'pappero'), 'Hi')
+  const expected = true
+  const actual = await api(config).docExists('pappero')
+  t.is(actual, expected)
+})
 
-// const fs = require('mock-fs')
+test.serial('loadDoc failure', async t => {
+  const config = await configWithDefaults()
+  config.setFs(myFs)
 
-// test.afterEach(() => {
-//   fs.restore()
-// })
+  try {
+    await api(config).loadDoc('pappero')
+    t.fail()
+  } catch (e) {
+    t.pass()
+  }
+})
 
-// test('loadDoc failure', async t => {
-//   const config = await configWithDefaults()
+test.serial('loadDoc success', async t => {
+  const config = await configWithDefaults()
+  config.setFs(myFs)
+  config.set('documentRoot', mockBasePath)
+  myFs.writeFileSync(path.join(mockBasePath, 'pappero'), 'Hi!')
+  const actual = await api(config).loadDoc('pappero')
+  const expected = 'Hi!'
+  t.is(actual.content, expected)
+})
 
-//   fs()
-//   try {
-//     await api(config).loadDoc('pappero')
-//     t.fail()
-//   } catch (e) {
-//     t.pass()
-//   }
-// })
-
-// test('docExists with a non-existant file', async t => {
-//   const config = await configWithDefaults()
-//   fs()
-//   const expected = false
-//   const actual = await api(config).docExists('pappero')
-//   t.is(actual, expected)
-// })
-
-// test('docExists with a existant file', async t => {
-//   const config = await configWithDefaults()
-//   config.set('documentRoot', '/tmp')
-//   fs({
-//     '/tmp/bazinga': 'some content'
-//   })
-//   const expected = true
-//   const actual = await api(config).docExists('bazinga')
-//   t.is(actual, expected)
-// })
+test.serial('saveDoc success', async t => {
+  const config = await configWithDefaults()
+  config.setFs(myFs)
+  config.set('documentRoot', mockBasePath)
+  await api(config).saveDoc('pappero', 'Today is nöt yestarday')
+  const actual = myFs.readFileSync(path.join(mockBasePath, 'pappero')).toString()
+  const expected = 'Today is nöt yestarday'
+  t.is(actual, expected)
+})

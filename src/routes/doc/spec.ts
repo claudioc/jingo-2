@@ -4,7 +4,20 @@ import { nop as _nop } from 'lodash'
 import * as sinon from 'sinon'
 import Route from '.'
 
-test('newDoc route receiving a name in the url', async t => {
+import * as fs from 'fs'
+const memfs = require('memfs')
+import * as MountFs from 'mountfs'
+
+const mockBasePath = '/home/jingo'
+
+const myFs = new MountFs(fs)
+myFs.mount(mockBasePath, memfs)
+
+test.after(() => {
+  myFs.unmount(mockBasePath)
+})
+
+test.serial('newDoc route receiving a name in the url', async t => {
   const route = new Route(await configWithDefaults())
   const render = sinon.stub(route, 'render')
 
@@ -24,7 +37,7 @@ test('newDoc route receiving a name in the url', async t => {
   t.is(render.calledWith(request, null, 'doc-new', expectedScope), true)
 })
 
-test('newDoc route not receiving a name in the url', async t => {
+test.serial('newDoc route not receiving a name in the url', async t => {
   const route = new Route(await configWithDefaults())
   const render = sinon.stub(route, 'render')
 
@@ -43,8 +56,11 @@ test('newDoc route not receiving a name in the url', async t => {
   t.is(render.calledWith(request, null, 'doc-new', expectedScope), true)
 })
 
-test('createDoc success redirect to the wiki page', async t => {
-  const route = new Route(await configWithDefaults())
+test.serial('createDoc success redirect to the wiki page', async t => {
+  const config = await configWithDefaults()
+  config.setFs(myFs)
+  config.set('documentRoot', mockBasePath)
+  const route = new Route(config)
   sinon.stub(route, 'inspectRequest').callsFake(req => {
     return {
       data: {
@@ -68,8 +84,11 @@ test('createDoc success redirect to the wiki page', async t => {
   t.is(redirect.calledWith('/wiki/hello_world'), true)
 })
 
-test('createDoc renders again with a validation error', async t => {
-  const route = new Route(await configWithDefaults())
+test.serial('createDoc renders again with a validation error', async t => {
+  const config = await configWithDefaults()
+  config.setFs(myFs)
+  config.set('documentRoot', mockBasePath)
+  const route = new Route(config)
   const render = sinon.stub(route, 'render')
 
   sinon.stub(route, 'inspectRequest').callsFake(req => {

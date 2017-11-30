@@ -60,6 +60,39 @@ test('get throws when no config', t => {
   t.regex(error.message, /Cannot get an empty config/)
 })
 
+test('has with existing key', async t => {
+  const config = await configWithDefaults()
+
+  const actual = config.has('documentRoot')
+  const expected = true
+  t.is(actual, expected)
+})
+
+test('has with a non-existing key', async t => {
+  const config = await configWithDefaults()
+
+  const actual = config.has('pappero')
+  const expected = false
+  t.is(actual, expected)
+})
+
+test('set with a valid key', async t => {
+  const config = await configWithDefaults()
+
+  const actual = config.set('documentRoot', 43)
+  const expected = true
+  t.is(config.get('documentRoot'), 43)
+  t.is(actual, expected)
+})
+
+test('set with an invalid key', async t => {
+  const config = await configWithDefaults()
+
+  const actual = config.set('pappero', 43)
+  const expected = false
+  t.is(actual, expected)
+})
+
 test('getDefaultsFilename', t => {
   const config = new Config()
   const expected = path.join(process.cwd(), 'dist/config-defaults.json')

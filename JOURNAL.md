@@ -24,3 +24,8 @@
 29/11/17
 - Trying mocking fs with mock-fs but it doesn't work with Ava. The solution is too aggressive
 - Trying using memfs + mountfs but it doesn't work with the promised version of fs-extra
+30/11/17
+- To be able to test the fs, now we use mountfs + memfs + our own fs functions wrapper
+- Removed fs-extra, but patching the native is still a no-go (problems with source-map loader)
+- Finally ended up not patching the native `fs` module, but using mountfs and memfs to create
+  an new fs and passing it down to our fs module

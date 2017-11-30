@@ -27,7 +27,8 @@
       "module-alias/register"
     ],
     "files": [
-      "dist/**/**/spec.js"
+      "dist/**/**/spec.js",
+      "dist/api/**/spec.js"
     ],
     "source": [
       "dist/**/**/spec.js"
@@ -47,7 +48,9 @@
     "@types/morgan": "^1.7.35",
     "ava": "^0.23.0",
     "editorconfig": "^0.15.0",
+    "memfs": "^2.6.0",
     "mock-fs": "^4.4.2",
+    "mountfs": "^0.5.0",
     "nodemon": "^1.12.1",
     "sinon": "^4.1.2",
     "tmp": "0.0.33",
@@ -67,7 +70,6 @@
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.6",
     "express-validator": "^4.3.0",
-    "fs-extra": "^4.0.2",
     "markdown-it": "^8.4.0",
     "method-override": "^2.3.10",
     "module-alias": "^2.0.3",

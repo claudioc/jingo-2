@@ -71,7 +71,7 @@ export default class DocRoute extends BaseRoute {
       return
     }
 
-    await api(this.config).createDoc(data.docTitle, data.content)
+    await api(this.config).saveDoc(data.docTitle, data.content)
 
     // All done, go to the just saved page
     res.redirect(wikiPathFor(data.docTitle))

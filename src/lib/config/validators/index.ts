@@ -1,17 +1,16 @@
-import * as fs from 'fs-extra'
+import { Config } from '@lib/config'
+import fs from '@lib/fs'
 
-function checkDocumentRoot (documentRoot: string) {
+const checkDocumentRoot = async (config: Config, documentRoot: string): Promise<void> => {
   if (!documentRoot) {
     throw new Error('The document root is empty')
   }
 
-  try {
-    fs.accessSync(documentRoot, fs.constants.R_OK | fs.constants.W_OK)
-  } catch (err) {
+  if (!await fs.access(config.fs, documentRoot, fs.constants.R_OK | fs.constants.W_OK)) {
     throw new Error(`EACCES The document root is not accessible by Jingo (${documentRoot})`)
   }
 
-  const stat = fs.statSync(documentRoot)
+  const stat = await fs.stat(config.fs, documentRoot)
   if (!stat.isDirectory()) {
     throw new Error(`EACCES The document root must be a directory (${documentRoot})`)
   }

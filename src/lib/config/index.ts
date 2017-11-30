@@ -1,9 +1,10 @@
 import fixers from '@lib/config/fixers'
 import validators from '@lib/config/validators'
+import fs from '@lib/fs'
 import * as cjson from 'comment-json'
-import * as fs from 'fs-extra'
 import {
   get as _get,
+  has as _has,
   set as _set } from 'lodash'
 import * as path from 'path'
 
@@ -26,6 +27,7 @@ export class Config implements IConfig {
   values: TConfig
   defaults: TConfig
   defaultsFilename: string
+  fs = null
 
   constructor () {
     this.values = null
@@ -38,10 +40,10 @@ export class Config implements IConfig {
   // Load both the defaults and the configuration from a config file
   public async load (filename: string): Promise<void> {
     await this.loadDefaults()
-    const fileContent = await fs.readFile(filename)
+    const fileContent = await fs.readFile(this.fs, filename)
     this.values = cjson.parse(fileContent, null, true)
     this.fixConfig()
-    this.checkConfig()
+    await this.checkConfig()
   }
 
   public async sample (): Promise<string> {
@@ -64,12 +66,20 @@ export class Config implements IConfig {
     return _get(this.values, configPath)
   }
 
-  public set (configPath: string, value: any): void {
-    _set(configPath, value)
+  public set (configPath: string, value: any): boolean {
+    if (!this.has(configPath)) {
+      return false
+    }
+    _set(this.values, configPath, value)
+    return true
+  }
+
+  public has (configPath: string): boolean {
+    return _has(this.values, configPath)
   }
 
   public async loadDefaults (): Promise<void> {
-    const defaultContents = (await fs.readFile(this.getDefaultsFilename())).toString()
+    const defaultContents = await fs.readFile(this.fs, this.getDefaultsFilename())
     // Keeps comments in the defaults (so we can dump them to the console)
     this.defaults = cjson.parse(defaultContents)
     // Strip comments for the default values
@@ -84,12 +94,16 @@ export class Config implements IConfig {
     this.defaultsFilename = filename
   }
 
+  public setFs (useFs) {
+    this.fs = useFs
+  }
+
   protected fixConfig () {
     this.values.documentRoot = fixers.fixDocumentRoot(this.values.documentRoot)
   }
 
-  protected checkConfig () {
-    validators.checkDocumentRoot(this.values.documentRoot)
+  protected async checkConfig () {
+    await validators.checkDocumentRoot(this, this.values.documentRoot)
   }
 }
 

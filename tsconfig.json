@@ -25,9 +25,6 @@
     "src/**/*.ts"
   ],
   "compileOnSave": true,
-  "buildOnSave": false,
-  "atom": {
-    "rewriteTsconfig": false
-  }
+  "buildOnSave": false
 }
 

@@ -1,5 +1,5 @@
 import { Config } from '@lib/config'
-import * as fs from 'fs-extra'
+import fs from '@lib/fs'
 import * as path from 'path'
 
 interface IDoc {
@@ -14,24 +14,18 @@ class Api {
   constructor (public config: Config) {
   }
 
-  public async createDoc (docName: string, docContent: string) {
-    //
+  public async saveDoc (docName: string, docContent: string): Promise<void> {
+    await fs.writeFile(this.config.fs, this.absDocPath(docName), docContent)
   }
 
   public async docExists (docName: string): Promise<boolean> {
-    try {
-      await fs.access(this.absDocPath(docName), fs.constants.F_OK)
-      return true
-    } catch (err) {
-      console.log(err)
-      return false
-    }
+    return await fs.access(this.config.fs, this.absDocPath(docName), fs.constants.F_OK)
   }
 
   public async loadDoc (docName: string): Promise<IDoc> {
-    const content = await fs.readFile(`/tmp/${docName}.md`)
+    const content = await fs.readFile(this.config.fs, this.absDocPath(docName))
     return {
-      content: content.toString()
+      content
     } as IDoc
   }
 
