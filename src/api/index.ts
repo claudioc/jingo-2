@@ -1,4 +1,5 @@
 import { Config } from '@lib/config'
+import { docFilenameFor } from '@lib/doc'
 import fs from '@lib/fs'
 import * as path from 'path'
 
@@ -30,7 +31,7 @@ class Api {
   }
 
   protected absDocPath (docName: string): string {
-    return path.resolve(this.config.get('documentRoot'), docName)
+    return path.resolve(this.config.get('documentRoot'), docFilenameFor(docName))
   }
 }
 

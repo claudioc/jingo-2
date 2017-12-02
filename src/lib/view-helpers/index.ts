@@ -2,12 +2,12 @@ import { docPathFor } from '@lib/doc'
 import { wikiPathFor } from '@lib/wiki'
 
 function urlFor (params) {
-  const { resource, id } = params.hash
+  const { resource, id, action } = params.hash
 
   let path
   switch (resource) {
     case 'doc':
-      path = docPathFor(undefined, 'new')
+      path = docPathFor(id, action || 'new')
       break
 
     case 'wiki':

@@ -3,9 +3,7 @@ import { wikify } from '@lib/wiki'
 type DocAction = 'new' | 'edit' | 'revert'
 
 function docPathFor (docName: string, action: DocAction): string {
-  const proxyPath = ''
-
-  let path = `${proxyPath}/doc/${action}`
+  let path = `/doc/${action}`
   if (docName) {
     path += `/${wikify(docName)}`
   }
@@ -13,6 +11,11 @@ function docPathFor (docName: string, action: DocAction): string {
   return path
 }
 
+function docFilenameFor (docName: string) {
+  return `${wikify(docName)}.md`
+}
+
 export {
+  docFilenameFor,
   docPathFor
 }

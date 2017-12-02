@@ -30,7 +30,8 @@ export default class WikiRoute extends BaseRoute {
       const doc = await api(this.config).loadDoc(docName)
       const scope: object = {
         content: this.parser.render(doc.content),
-        title: docTitle
+        docName,
+        docTitle
       }
       this.render(req, res, 'wiki', scope)
     } catch (e) {
