@@ -3,6 +3,18 @@ import * as fs_ from 'fs'
 // About returning promises inside an async ts method
 // https://github.com/Microsoft/TypeScript/issues/5254
 
+const rename = (useFs, oldPath: fs_.PathLike, newPath: fs_.PathLike): Promise<void> => {
+  const fs = useFs || fs_
+  return new Promise<void>((resolve, reject) => {
+    fs.rename(oldPath, newPath, (err) => {
+      if (err) {
+        return reject(err)
+      }
+      resolve()
+    })
+  })
+}
+
 const stat = async (useFs, filename: fs_.PathLike): Promise<fs_.Stats> => {
   const fs = useFs || fs_
   return new Promise<fs_.Stats>((resolve, reject) => {
@@ -52,6 +64,7 @@ export default {
   access,
   constants: fs_.constants,
   readFile,
+  rename,
   stat,
   writeFile
 }

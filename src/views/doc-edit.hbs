@@ -3,6 +3,7 @@
 {{>errors}}
 <h1>Editing {{docTitle}}</h1>
 <form id="editor-form" method="post" action="{{urlFor resource="doc" action="update"}}">
+  <input type="hidden" value="{{docName}}" name="docName">
   <div>
     <input autofocus type="text" value="{{docTitle}}" name="docTitle" required>
   </div>

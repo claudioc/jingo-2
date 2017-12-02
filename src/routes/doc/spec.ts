@@ -155,6 +155,7 @@ test.serial('editDoc route with an existing file', async t => {
 
   const expectedScope = {
     content: 'Hello 41!',
+    docName: 'pappero_PI',
     docTitle: 'pappero PI'
   }
   t.is(render.calledWith(request, null, 'doc-edit', expectedScope), true)

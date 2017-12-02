@@ -31,6 +31,20 @@ class Api {
     return await fs.access(this.config.fs, this.docFullpathFor(docName), fs.constants.F_OK)
   }
 
+  public async renameDoc (oldDocName: string, newDocName: string): Promise<boolean> {
+    if (oldDocName === newDocName) {
+      return true
+    }
+
+    if (await this.docExists(newDocName)) {
+      return false
+    }
+
+    await fs.rename(this.config.fs, this.docFullpathFor(oldDocName), this.docFullpathFor(newDocName))
+
+    return true
+  }
+
   /**
    * Loads a document from the file system and returns an IDoc
    * @param docName Id of the document to load

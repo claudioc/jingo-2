@@ -1,11 +1,12 @@
 import api from '@api'
 import { Config } from '@lib/config'
 import { docPathFor } from '@lib/doc'
-import { unwikify, wikiPathFor } from '@lib/wiki'
+import { unwikify, wikify, wikiPathFor } from '@lib/wiki'
 import BaseRoute from '@routes/route'
 import { NextFunction, Request, Response, Router } from 'express'
 import { check, validationResult } from 'express-validator/check'
 import { matchedData, sanitize } from 'express-validator/filter'
+import { assign as _assign } from 'lodash'
 
 // Returns a validator chains for the new document
 function validatesCreate () {
@@ -30,12 +31,16 @@ export default class DocRoute extends BaseRoute {
       new DocRoute(config).newDoc(req, res, next)
     })
 
+    router.post('/doc/create', validatesCreate(), (req: Request, res: Response, next: NextFunction) => {
+      new DocRoute(config).createDoc(req, res, next)
+    })
+
     router.get('/doc/edit/:docName', (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).editDoc(req, res, next)
     })
 
-    router.post('/doc/create', validatesCreate(), (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute(config).createDoc(req, res, next)
+    router.post('/doc/update', validatesCreate(), (req: Request, res: Response, next: NextFunction) => {
+      new DocRoute(config).updateDoc(req, res, next)
     })
   }
 
@@ -63,6 +68,27 @@ export default class DocRoute extends BaseRoute {
     this.render(req, res, 'doc-new', scope)
   }
 
+  public async createDoc (req: Request, res: Response, next: NextFunction): Promise<void> {
+    const { errors, data } = this.inspectRequest(req)
+
+    if (errors) {
+      const scope: object = {
+        content: data.content,
+        docTitle: data.docTitle,
+        errors
+      }
+
+      this.render(req, res, 'doc-new', scope)
+      return
+    }
+
+    // @FIXME check if the file already exists (and fail)
+    await api(this.config).saveDoc(wikify(data.docTitle), data.content)
+
+    // All done, go to the just saved page
+    res.redirect(wikiPathFor(data.docTitle))
+  }
+
   public async editDoc (req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Editing a document'
     const docName = req.params.docName
@@ -79,27 +105,38 @@ export default class DocRoute extends BaseRoute {
 
     const scope: object = {
       content: doc.content,
+      docName,
       docTitle
     }
 
     this.render(req, res, 'doc-edit', scope)
   }
 
-  public async createDoc (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async updateDoc (req: Request, res: Response, next: NextFunction): Promise<void> {
     const { errors, data } = this.inspectRequest(req)
 
-    if (errors) {
-      const scope: object = {
-        content: data.content,
-        docTitle: data.docTitle,
-        errors
-      }
+    const oldDocName = req.body.docName
 
-      this.render(req, res, 'doc-new', scope)
+    const scope: object = {
+      content: data.content,
+      docName: oldDocName,
+      docTitle: data.docTitle
+    }
+
+    if (errors) {
+      this.render(req, res, 'doc-edit', _assign(scope, { errors }))
       return
     }
 
-    await api(this.config).saveDoc(data.docTitle, data.content)
+    const newDocName = wikify(data.docTitle)
+
+    // Rename the file (if needed and if possible)
+    if (!(await api(this.config).renameDoc(oldDocName, newDocName))) {
+      this.render(req, res, 'doc-edit', _assign(scope, { errors: ['Cannot rename a document to an already existant one'] }))
+      return
+    }
+
+    await api(this.config).saveDoc(newDocName, data.content)
 
     // All done, go to the just saved page
     res.redirect(wikiPathFor(data.docTitle))
