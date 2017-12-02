@@ -1,7 +1,7 @@
 1/11/17
 - Came up with a proper directory layout
 - Decided to go with TypeScript
-- Setup the project lously inspired by []
+- Setup the project
 - Chose Handlebars as the template engine (this version https://github.com/ericf/express-handlebars)
 - Created editorconfig
 4/11/17
@@ -29,3 +29,6 @@
 - Removed fs-extra, but patching the native is still a no-go (problems with source-map loader)
 - Finally ended up not patching the native `fs` module, but using mountfs and memfs to create
   an new fs and passing it down to our fs module
+03/12/17
+- Finished the fist version of document updating
+- 3137 sloc
