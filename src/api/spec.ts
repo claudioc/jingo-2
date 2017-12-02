@@ -21,17 +21,16 @@ test.serial('docExists with a non-existant file', async t => {
   const config = await configWithDefaults()
   config.setFs(myFs)
   const expected = false
-  const actual = await api(config).docExists('pappero')
+  const actual = await api(config).docExists('pappero_PI')
   t.is(actual, expected)
 })
 
 test.serial('docExists with a existant file', async t => {
   const config = await configWithDefaults()
-  config.setFs(myFs)
-  config.set('documentRoot', mockBasePath)
-  myFs.writeFileSync(path.join(mockBasePath, docFilenameFor('pappero')), 'Hi')
+  config.setFs(myFs).set('documentRoot', mockBasePath)
+  myFs.writeFileSync(path.join(mockBasePath, docFilenameFor('pappero_PI')), 'Hi')
   const expected = true
-  const actual = await api(config).docExists('pappero')
+  const actual = await api(config).docExists('pappero_PI')
   t.is(actual, expected)
 })
 

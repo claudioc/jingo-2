@@ -80,7 +80,7 @@ test('set with a valid key', async t => {
   const config = await configWithDefaults()
 
   const actual = config.set('documentRoot', 43)
-  const expected = true
+  const expected = config
   t.is(config.get('documentRoot'), 43)
   t.is(actual, expected)
 })
@@ -89,7 +89,7 @@ test('set with an invalid key', async t => {
   const config = await configWithDefaults()
 
   const actual = config.set('pappero', 43)
-  const expected = false
+  const expected = null
   t.is(actual, expected)
 })
 

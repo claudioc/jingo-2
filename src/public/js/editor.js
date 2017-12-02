@@ -8,6 +8,7 @@
     lineWrapping: true,
     extraKeys: {
       'Ctrl-Enter': (cm) => {
+        // form.submit()
         // Jingo.toggleFullscreen();
       },
       'Ctrl-S': (cm) => {

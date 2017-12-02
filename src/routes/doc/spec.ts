@@ -1,4 +1,5 @@
 import { configWithDefaults } from '@lib/config'
+import { docFullpathFor, docPathFor } from '@lib/doc'
 import test from 'ava'
 import { nop as _nop } from 'lodash'
 import * as sinon from 'sinon'
@@ -58,8 +59,7 @@ test.serial('newDoc route not receiving a name in the url', async t => {
 
 test.serial('createDoc success redirect to the wiki page', async t => {
   const config = await configWithDefaults()
-  config.setFs(myFs)
-  config.set('documentRoot', mockBasePath)
+  config.setFs(myFs).set('documentRoot', mockBasePath)
   const route = new Route(config)
   sinon.stub(route, 'inspectRequest').callsFake(req => {
     return {
@@ -86,8 +86,7 @@ test.serial('createDoc success redirect to the wiki page', async t => {
 
 test.serial('createDoc renders again with a validation error', async t => {
   const config = await configWithDefaults()
-  config.setFs(myFs)
-  config.set('documentRoot', mockBasePath)
+  config.setFs(myFs).set('documentRoot', mockBasePath)
   const route = new Route(config)
   const render = sinon.stub(route, 'render')
 
@@ -116,4 +115,47 @@ test.serial('createDoc renders again with a validation error', async t => {
   }
 
   t.is(render.calledWith(request, null, 'doc-new', expectedScope), true)
+})
+
+test.serial('editDoc route with a non-existing file', async t => {
+  const route = new Route(await configWithDefaults())
+
+  const request = {
+    params: {
+      docName: 'lovely_sugar'
+    }
+  }
+
+  const redirect = sinon.spy()
+  const response = {
+    redirect
+  }
+
+  await route.editDoc(request as any, response as any, _nop)
+
+  t.is(redirect.calledWith(docPathFor('lovely_sugar', 'new')), true)
+})
+
+test.serial('editDoc route with an existing file', async t => {
+  const config = await configWithDefaults()
+  config.setFs(myFs).set('documentRoot', mockBasePath)
+  myFs.writeFileSync(docFullpathFor(mockBasePath, 'pappero_PI'), 'Hello 41!')
+  const route = new Route(config)
+  const render = sinon.stub(route, 'render')
+
+  const request = {
+    params: {
+      docName: 'pappero_PI'
+    }
+  }
+
+  await route.editDoc(request as any, null, _nop)
+
+  t.is(route.title, 'Jingo – Editing a document')
+
+  const expectedScope = {
+    content: 'Hello 41!',
+    docTitle: 'pappero PI'
+  }
+  t.is(render.calledWith(request, null, 'doc-edit', expectedScope), true)
 })

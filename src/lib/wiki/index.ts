@@ -31,10 +31,9 @@ function unwikify (name: string): string {
 }
 
 function wikiPathFor (docName: string, action: WikiAction = 'show'): string {
-  const proxyPath = ''
-  const wikied = docName.replace(/\s/g, '_')
+  const wikied = wikify(docName)
   const actionPart = action !== 'show' ? `/${action}` : ''
-  return `${proxyPath}/wiki/${wikied}${actionPart}`
+  return `/wiki/${wikied}${actionPart}`
 }
 
 export {

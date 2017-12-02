@@ -1,21 +1,42 @@
 import { wikify } from '@lib/wiki'
+import * as fs_ from 'fs'
+import * as path from 'path'
 
-type DocAction = 'new' | 'edit' | 'revert'
+type DocAction = 'new' | 'edit' | 'revert' | 'create'
 
-function docPathFor (docName: string, action: DocAction): string {
-  let path = `/doc/${action}`
+/**
+ * Returns the URL path for a document action
+ * @param docName Id of the document
+ * @param action DocAction
+ */
+const docPathFor = (docName: string, action: DocAction): string => {
+  let docPath = `/doc/${action}`
   if (docName) {
-    path += `/${wikify(docName)}`
+    docPath += `/${wikify(docName)}`
   }
 
-  return path
+  return docPath
 }
 
-function docFilenameFor (docName: string) {
-  return `${wikify(docName)}.md`
+/**
+ * Returns the formatted Md filename of a document
+ * @param docName Id of the document
+ */
+const docFilenameFor = (docName: string): string => {
+  return `${docName}.md`
+}
+
+/**
+ * Returns the full file system path of a document
+ * @param documentRoot The document root (usually defined in the config)
+ * @param docName The id of the document
+ */
+const docFullpathFor = (documentRoot: string, docName: string): fs_.PathLike => {
+  return path.resolve(documentRoot, docFilenameFor(docName))
 }
 
 export {
   docFilenameFor,
+  docFullpathFor,
   docPathFor
 }

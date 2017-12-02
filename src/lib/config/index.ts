@@ -13,17 +13,7 @@ export type TConfig = {
   documentRoot: string
 }
 
-interface IConfig {
-  values: TConfig | null
-  defaults: TConfig | null
-  load: (filename: string) => Promise<void>
-  sample: () => Promise<string>
-  reset: () => void
-  get: (configPath: string) => TConfigValue
-  loadDefaults: () => void
-}
-
-export class Config implements IConfig {
+export class Config {
   values: TConfig
   defaults: TConfig
   defaultsFilename: string
@@ -38,12 +28,13 @@ export class Config implements IConfig {
   }
 
   // Load both the defaults and the configuration from a config file
-  public async load (filename: string): Promise<void> {
+  public async load (filename: string): Promise<Config> {
     await this.loadDefaults()
     const fileContent = await fs.readFile(this.fs, filename)
     this.values = cjson.parse(fileContent, null, true)
     this.fixConfig()
     await this.checkConfig()
+    return this
   }
 
   public async sample (): Promise<string> {
@@ -51,9 +42,10 @@ export class Config implements IConfig {
     return cjson.stringify(this.defaults, null, 2)
   }
 
-  public reset (): void {
+  public reset (): Config {
     this.defaults = null
     this.values = null
+    return this
   }
 
   public get (configPath: string): TConfigValue {
@@ -66,44 +58,49 @@ export class Config implements IConfig {
     return _get(this.values, configPath)
   }
 
-  public set (configPath: string, value: any): boolean {
+  public set (configPath: string, value: any): Config | null {
     if (!this.has(configPath)) {
-      return false
+      return null
     }
     _set(this.values, configPath, value)
-    return true
+    return this
   }
 
   public has (configPath: string): boolean {
     return _has(this.values, configPath)
   }
 
-  public async loadDefaults (): Promise<void> {
+  public async loadDefaults (): Promise<Config> {
     const defaultContents = await fs.readFile(this.fs, this.getDefaultsFilename())
     // Keeps comments in the defaults (so we can dump them to the console)
     this.defaults = cjson.parse(defaultContents)
     // Strip comments for the default values
     this.values = cjson.parse(defaultContents, null, true)
+    return this
   }
 
-  public getDefaultsFilename () {
+  public getDefaultsFilename (): string {
     return this.defaultsFilename
   }
 
-  public setDefaultsFilename (filename) {
+  public setDefaultsFilename (filename): Config {
     this.defaultsFilename = filename
+    return this
   }
 
-  public setFs (useFs) {
+  public setFs (useFs): Config {
     this.fs = useFs
+    return this
   }
 
-  protected fixConfig () {
+  protected fixConfig (): Config {
     this.values.documentRoot = fixers.fixDocumentRoot(this.values.documentRoot)
+    return this
   }
 
-  protected async checkConfig () {
+  protected async checkConfig (): Promise<Config> {
     await validators.checkDocumentRoot(this, this.values.documentRoot)
+    return this
   }
 }
 
@@ -115,4 +112,5 @@ export async function configWithDefaults (defaultsFilename?: string): Promise<Co
   await config.loadDefaults()
   return config
 }
+
 export default new Config()

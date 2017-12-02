@@ -1,5 +1,6 @@
 import api from '@api'
 import { Config } from '@lib/config'
+import { docPathFor } from '@lib/doc'
 import { unwikify, wikiPathFor } from '@lib/wiki'
 import BaseRoute from '@routes/route'
 import { NextFunction, Request, Response, Router } from 'express'
@@ -7,7 +8,7 @@ import { check, validationResult } from 'express-validator/check'
 import { matchedData, sanitize } from 'express-validator/filter'
 
 // Returns a validator chains for the new document
-function validatesNew () {
+function validatesCreate () {
   return [
     check('docTitle')
       .isLength({ min: 1 })
@@ -29,7 +30,11 @@ export default class DocRoute extends BaseRoute {
       new DocRoute(config).newDoc(req, res, next)
     })
 
-    router.post('/doc/new', validatesNew(), (req: Request, res: Response, next: NextFunction) => {
+    router.get('/doc/edit/:docName', (req: Request, res: Response, next: NextFunction) => {
+      new DocRoute(config).editDoc(req, res, next)
+    })
+
+    router.post('/doc/create', validatesCreate(), (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).createDoc(req, res, next)
     })
   }
@@ -38,23 +43,46 @@ export default class DocRoute extends BaseRoute {
     this.title = 'Jingo – Creating a document'
 
     // The document name can be part of the URL or not
-    const docTitle = unwikify(req.params.docName || '')
-    const hasDocTitle = docTitle !== ''
+    const docName = req.params.docName || ''
 
     // If a document with this name already exists, bring the user there
-    if (hasDocTitle) {
-      const itExists = await api(this.config).docExists(docTitle)
+    if (docName) {
+      const itExists = await api(this.config).docExists(docName)
       if (itExists) {
-        res.redirect(wikiPathFor(docTitle))
+        res.redirect(wikiPathFor(docName))
         return
       }
     }
 
+    const docTitle = unwikify(docName) || 'Unnamed document'
+
     const scope: object = {
-      docTitle: hasDocTitle ? docTitle : 'Unnamed document'
+      docTitle
     }
 
     this.render(req, res, 'doc-new', scope)
+  }
+
+  public async editDoc (req: Request, res: Response, next: NextFunction): Promise<void> {
+    this.title = 'Jingo – Editing a document'
+    const docName = req.params.docName
+
+    const itExists = await api(this.config).docExists(docName)
+    if (!itExists) {
+      res.redirect(docPathFor(docName, 'new'))
+      return
+    }
+
+    const doc = await api(this.config).loadDoc(docName)
+
+    const docTitle = unwikify(docName)
+
+    const scope: object = {
+      content: doc.content,
+      docTitle
+    }
+
+    this.render(req, res, 'doc-edit', scope)
   }
 
   public async createDoc (req: Request, res: Response, next: NextFunction): Promise<void> {
