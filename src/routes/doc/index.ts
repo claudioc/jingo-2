@@ -79,19 +79,25 @@ export default class DocRoute extends BaseRoute {
   public async didCreate (req: Request, res: Response, next: NextFunction): Promise<void> {
     const { errors, data } = this.inspectRequest(req)
 
-    if (errors) {
-      const scope: object = {
-        content: data.content,
-        docTitle: data.docTitle,
-        errors
-      }
+    const scope: object = {
+      content: data.content,
+      docTitle: data.docTitle
+    }
 
-      this.render(req, res, 'doc-new', scope)
+    if (errors) {
+      this.render(req, res, 'doc-new', _assign(scope, { errors }))
+      return
+    }
+
+    const docName = wikify(data.docTitle)
+    const itExists = await api(this.config).docExists(docName)
+    if (itExists) {
+      this.render(req, res, 'doc-new', _assign(scope, { errors: ['A document with this title already exists'] }))
       return
     }
 
     // @FIXME check if the file already exists (and fail)
-    await api(this.config).saveDoc(wikify(data.docTitle), data.content)
+    await api(this.config).saveDoc(docName, data.content)
 
     // All done, go to the just saved page
     res.redirect(wikiPathFor(data.docTitle))
@@ -122,7 +128,6 @@ export default class DocRoute extends BaseRoute {
 
   public async didUpdate (req: Request, res: Response, next: NextFunction): Promise<void> {
     const { errors, data } = this.inspectRequest(req)
-
     const oldDocName = req.body.docName
 
     const scope: object = {
@@ -137,7 +142,6 @@ export default class DocRoute extends BaseRoute {
     }
 
     const newDocName = wikify(data.docTitle)
-
     // Rename the file (if needed and if possible)
     if (!(await api(this.config).renameDoc(oldDocName, newDocName))) {
       this.render(req, res, 'doc-edit', _assign(scope, { errors: ['Cannot rename a document to an already existant one'] }))
