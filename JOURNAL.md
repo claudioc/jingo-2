@@ -32,3 +32,7 @@
 03/12/17
 - Finished the fist version of document updating
 - 3137 sloc
+04/12/17
+- Renamed the routes actions with `didVerb`
+- Created lib/fake-fs
+- Using random names for file names in the tests to avoid conflicts

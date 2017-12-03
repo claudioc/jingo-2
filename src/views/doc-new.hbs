@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="/public/css/codemirror-ext.css">
 {{>errors}}
 <h1>Creating {{docTitle}}</h1>
-<form id="editor-form" method="post" action="{{urlFor resource="doc" action="create"}}">
+<form id="editor-form" method="post" action="{{urlFor resource="doc" action="didCreate"}}">
   <div>
     <input autofocus type="text" value="{{docTitle}}" name="docTitle" required>
   </div>

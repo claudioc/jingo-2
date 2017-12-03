@@ -29,6 +29,12 @@ test('docFilenameFor', t => {
   t.is(actual, expected)
 })
 
+test('docFilenameFor with the extension already', t => {
+  const actual = docFilenameFor('My_Test.md')
+  const expected = 'My_Test.md'
+  t.is(actual, expected)
+})
+
 test('docFullpathFor', t => {
   const actual = docFullpathFor('/hello/world', 'My_Test')
   const expected = '/hello/world/My_Test.md'

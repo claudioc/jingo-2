@@ -3,24 +3,24 @@ import {
   urlFor
 } from '.'
 
-test('urlFor doc new', t => {
+test('urlFor doc create', t => {
   const params = {
     hash: {
       resource: 'doc'
     }
   }
-  t.is(urlFor(params), '/doc/new')
+  t.is(urlFor(params), '/doc/create')
 })
 
-test('urlFor doc edit', t => {
+test('urlFor doc update', t => {
   const params = {
     hash: {
-      action: 'edit',
+      action: 'update',
       id: 'pan european',
       resource: 'doc'
     }
   }
-  t.is(urlFor(params), '/doc/edit/pan_european')
+  t.is(urlFor(params), '/doc/update/pan_european')
 })
 
 test('urlFor wiki', t => {

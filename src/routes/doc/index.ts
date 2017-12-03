@@ -27,24 +27,32 @@ function validatesCreate () {
 
 export default class DocRoute extends BaseRoute {
   public static create (router: Router, config: Config) {
-    router.get('/doc/new/:docName?', (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute(config).newDoc(req, res, next)
+    router.get('/doc/create/:docName?', (req: Request, res: Response, next: NextFunction) => {
+      new DocRoute(config).create(req, res, next)
     })
 
     router.post('/doc/create', validatesCreate(), (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute(config).createDoc(req, res, next)
+      new DocRoute(config).didCreate(req, res, next)
     })
 
-    router.get('/doc/edit/:docName', (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute(config).editDoc(req, res, next)
+    router.get('/doc/update/:docName', (req: Request, res: Response, next: NextFunction) => {
+      new DocRoute(config).update(req, res, next)
     })
 
     router.post('/doc/update', validatesCreate(), (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute(config).updateDoc(req, res, next)
+      new DocRoute(config).didUpdate(req, res, next)
     })
+
+    // router.get('/doc/delete', (req: Request, res: Response, next: NextFunction) => {
+    //   new DocRoute(config).delete(req, res, next)
+    // })
+
+    // router.post('/doc/delete', (req: Request, res: Response, next: NextFunction) => {
+    //   new DocRoute(config).didDelete(req, res, next)
+    // })
   }
 
-  public async newDoc (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async create (req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Creating a document'
 
     // The document name can be part of the URL or not
@@ -68,7 +76,7 @@ export default class DocRoute extends BaseRoute {
     this.render(req, res, 'doc-new', scope)
   }
 
-  public async createDoc (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async didCreate (req: Request, res: Response, next: NextFunction): Promise<void> {
     const { errors, data } = this.inspectRequest(req)
 
     if (errors) {
@@ -89,7 +97,7 @@ export default class DocRoute extends BaseRoute {
     res.redirect(wikiPathFor(data.docTitle))
   }
 
-  public async editDoc (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async update (req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Editing a document'
     const docName = req.params.docName
 
@@ -112,7 +120,7 @@ export default class DocRoute extends BaseRoute {
     this.render(req, res, 'doc-edit', scope)
   }
 
-  public async updateDoc (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async didUpdate (req: Request, res: Response, next: NextFunction): Promise<void> {
     const { errors, data } = this.inspectRequest(req)
 
     const oldDocName = req.body.docName

@@ -7,7 +7,7 @@ function urlFor (params) {
   let path
   switch (resource) {
     case 'doc':
-      path = docPathFor(id, action || 'new')
+      path = docPathFor(id, action || 'create')
       break
 
     case 'wiki':

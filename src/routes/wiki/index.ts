@@ -16,11 +16,11 @@ export default class WikiRoute extends BaseRoute {
 
   public static create (router: Router, config: Config) {
     router.get('/wiki/:docName', (req: Request, res: Response, next: NextFunction) => {
-      new WikiRoute(config).renderDoc(req, res, next)
+      new WikiRoute(config).read(req, res, next)
     })
   }
 
-  public async renderDoc (req: Request, res: Response, next: NextFunction) {
+  public async read (req: Request, res: Response, next: NextFunction) {
     const docName = req.params.docName
     const docTitle = unwikify(docName)
 

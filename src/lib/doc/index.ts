@@ -23,7 +23,7 @@ const docPathFor = (docName: string, action: DocAction): string => {
  * @param docName Id of the document
  */
 const docFilenameFor = (docName: string): string => {
-  return `${docName}.md`
+  return docName.endsWith('.md') ? docName : `${docName}.md`
 }
 
 /**

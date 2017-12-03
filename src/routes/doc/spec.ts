@@ -1,24 +1,24 @@
 import { configWithDefaults } from '@lib/config'
-import { docFullpathFor, docPathFor } from '@lib/doc'
+import { Config } from '@lib/config'
+import { docFilenameFor, docPathFor } from '@lib/doc'
+import FakeFs from '@lib/fake-fs'
+import { unwikify } from '@lib/wiki'
 import test from 'ava'
 import { nop as _nop } from 'lodash'
 import * as sinon from 'sinon'
 import Route from '.'
 
-import * as fs from 'fs'
-const memfs = require('memfs')
-import * as MountFs from 'mountfs'
+const fakeFs = new FakeFs('/home/jingo')
 
-const mockBasePath = '/home/jingo'
-
-const myFs = new MountFs(fs)
-myFs.mount(mockBasePath, memfs)
+const useFakeFs = (config: Config) => {
+  config.setFs(fakeFs.theFs).set('documentRoot', fakeFs.mountPoint)
+}
 
 test.after(() => {
-  myFs.unmount(mockBasePath)
+  fakeFs.unmount()
 })
 
-test.serial('newDoc route receiving a name in the url', async t => {
+test('get create route receiving a name in the url', async t => {
   const route = new Route(await configWithDefaults())
   const render = sinon.stub(route, 'render')
 
@@ -27,7 +27,7 @@ test.serial('newDoc route receiving a name in the url', async t => {
       docName: 'hello_world'
     }
   }
-  await route.newDoc(request as any, null, _nop)
+  await route.create(request as any, null, _nop)
 
   t.is(route.title, 'Jingo – Creating a document')
 
@@ -38,7 +38,7 @@ test.serial('newDoc route receiving a name in the url', async t => {
   t.is(render.calledWith(request, null, 'doc-new', expectedScope), true)
 })
 
-test.serial('newDoc route not receiving a name in the url', async t => {
+test('get create route not receiving a name in the url', async t => {
   const route = new Route(await configWithDefaults())
   const render = sinon.stub(route, 'render')
 
@@ -46,7 +46,7 @@ test.serial('newDoc route not receiving a name in the url', async t => {
     params: {
     }
   }
-  route.newDoc(request as any, null, _nop)
+  route.create(request as any, null, _nop)
 
   t.is(route.title, 'Jingo – Creating a document')
 
@@ -57,9 +57,9 @@ test.serial('newDoc route not receiving a name in the url', async t => {
   t.is(render.calledWith(request, null, 'doc-new', expectedScope), true)
 })
 
-test.serial('createDoc success redirect to the wiki page', async t => {
+test('post create success redirect to the wiki page', async t => {
   const config = await configWithDefaults()
-  config.setFs(myFs).set('documentRoot', mockBasePath)
+  useFakeFs(config)
   const route = new Route(config)
   sinon.stub(route, 'inspectRequest').callsFake(req => {
     return {
@@ -79,14 +79,14 @@ test.serial('createDoc success redirect to the wiki page', async t => {
     redirect
   }
 
-  await route.createDoc(request as any, response as any, _nop)
+  await route.didCreate(request as any, response as any, _nop)
 
   t.is(redirect.calledWith('/wiki/hello_world'), true)
 })
 
-test.serial('createDoc renders again with a validation error', async t => {
+test('post create renders again with a validation error', async t => {
   const config = await configWithDefaults()
-  config.setFs(myFs).set('documentRoot', mockBasePath)
+  useFakeFs(config)
   const route = new Route(config)
   const render = sinon.stub(route, 'render')
 
@@ -106,7 +106,7 @@ test.serial('createDoc renders again with a validation error', async t => {
     }
   }
 
-  route.createDoc(request as any, null, _nop)
+  route.didCreate(request as any, null, _nop)
 
   const expectedScope = {
     content: 'blah',
@@ -117,7 +117,7 @@ test.serial('createDoc renders again with a validation error', async t => {
   t.is(render.calledWith(request, null, 'doc-new', expectedScope), true)
 })
 
-test.serial('editDoc route with a non-existing file', async t => {
+test('get update route with a non-existing file', async t => {
   const route = new Route(await configWithDefaults())
 
   const request = {
@@ -131,32 +131,33 @@ test.serial('editDoc route with a non-existing file', async t => {
     redirect
   }
 
-  await route.editDoc(request as any, response as any, _nop)
+  await route.update(request as any, response as any, _nop)
 
   t.is(redirect.calledWith(docPathFor('lovely_sugar', 'new')), true)
 })
 
-test.serial('editDoc route with an existing file', async t => {
+test('get update route with an existing file', async t => {
   const config = await configWithDefaults()
-  config.setFs(myFs).set('documentRoot', mockBasePath)
-  myFs.writeFileSync(docFullpathFor(mockBasePath, 'pappero_PI'), 'Hello 41!')
+  useFakeFs(config)
+  const docName = fakeFs.rndName()
+  fakeFs.writeFile(docFilenameFor(docName), 'Hello 41!')
   const route = new Route(config)
   const render = sinon.stub(route, 'render')
 
   const request = {
     params: {
-      docName: 'pappero_PI'
+      docName
     }
   }
 
-  await route.editDoc(request as any, null, _nop)
+  await route.update(request as any, null, _nop)
 
   t.is(route.title, 'Jingo – Editing a document')
 
   const expectedScope = {
     content: 'Hello 41!',
-    docName: 'pappero_PI',
-    docTitle: 'pappero PI'
+    docName,
+    docTitle: unwikify(docName)
   }
   t.is(render.calledWith(request, null, 'doc-edit', expectedScope), true)
 })
