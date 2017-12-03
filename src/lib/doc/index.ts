@@ -2,7 +2,7 @@ import { wikify } from '@lib/wiki'
 import * as fs_ from 'fs'
 import * as path from 'path'
 
-type DocAction = 'new' | 'edit' | 'revert' | 'create'
+type DocAction = 'delete' | 'update' | 'create'
 
 /**
  * Returns the URL path for a document action

@@ -35,7 +35,7 @@ export default class WikiRoute extends BaseRoute {
       }
       this.render(req, res, 'wiki', scope)
     } catch (e) {
-      const createPageUrl = docPathFor(docTitle, 'new')
+      const createPageUrl = docPathFor(docTitle, 'create')
       res.redirect(createPageUrl)
     }
   }

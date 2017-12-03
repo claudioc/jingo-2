@@ -73,7 +73,7 @@ export default class DocRoute extends BaseRoute {
       docTitle
     }
 
-    this.render(req, res, 'doc-new', scope)
+    this.render(req, res, 'doc-create', scope)
   }
 
   public async didCreate (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -85,18 +85,17 @@ export default class DocRoute extends BaseRoute {
     }
 
     if (errors) {
-      this.render(req, res, 'doc-new', _assign(scope, { errors }))
+      this.render(req, res, 'doc-create', _assign(scope, { errors }))
       return
     }
 
     const docName = wikify(data.docTitle)
     const itExists = await api(this.config).docExists(docName)
     if (itExists) {
-      this.render(req, res, 'doc-new', _assign(scope, { errors: ['A document with this title already exists'] }))
+      this.render(req, res, 'doc-create', _assign(scope, { errors: ['A document with this title already exists'] }))
       return
     }
 
-    // @FIXME check if the file already exists (and fail)
     await api(this.config).saveDoc(docName, data.content)
 
     // All done, go to the just saved page
@@ -109,7 +108,7 @@ export default class DocRoute extends BaseRoute {
 
     const itExists = await api(this.config).docExists(docName)
     if (!itExists) {
-      res.redirect(docPathFor(docName, 'new'))
+      res.redirect(docPathFor(docName, 'create'))
       return
     }
 
@@ -123,7 +122,7 @@ export default class DocRoute extends BaseRoute {
       docTitle
     }
 
-    this.render(req, res, 'doc-edit', scope)
+    this.render(req, res, 'doc-update', scope)
   }
 
   public async didUpdate (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -137,14 +136,14 @@ export default class DocRoute extends BaseRoute {
     }
 
     if (errors) {
-      this.render(req, res, 'doc-edit', _assign(scope, { errors }))
+      this.render(req, res, 'doc-update', _assign(scope, { errors }))
       return
     }
 
     const newDocName = wikify(data.docTitle)
     // Rename the file (if needed and if possible)
     if (!(await api(this.config).renameDoc(oldDocName, newDocName))) {
-      this.render(req, res, 'doc-edit', _assign(scope, { errors: ['Cannot rename a document to an already existant one'] }))
+      this.render(req, res, 'doc-update', _assign(scope, { errors: ['Cannot rename a document to an already existant one'] }))
       return
     }
 

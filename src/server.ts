@@ -8,6 +8,7 @@ import * as expressHandlebars from 'express-handlebars'
 import * as session from 'express-session'
 import * as methodOverride from 'method-override'
 import * as logger from 'morgan'
+import * as ipc from 'node-ipc'
 import * as path from 'path'
 
 import config from '@lib/config'
@@ -31,6 +32,7 @@ export default class Server {
     this.setup()
     this.routes()
     this.api()
+    this.ipc()
   }
 
   public static bootstrap (): Server {
@@ -50,6 +52,39 @@ export default class Server {
 
   public api () {
     // empty
+  }
+
+  /**
+   * Setup the IPC server
+   */
+  public ipc () {
+    ipc.config.id = 'jingo'
+    ipc.config.retry = 1000
+    ipc.config.silent = true
+    ipc.config.encoding = 'utf8'
+
+    ipc.connectTo('myIpcServer', handleConnected)
+
+    function handleConnected () {
+      ipc.of.myIpcServer.on('connect', () => {
+        ipc.log('IPC: Connected to my-ipc-server', ipc.config.delay)
+        ipc.of.myIpcServer.emit('app.message', {
+          id: ipc.config.id,
+          message : 'Hello'
+        })
+      })
+
+      ipc.of.myIpcServer.on('disconnect', () => {
+        ipc.log('IPC: Disconnected from my-ipc-server')
+      })
+    }
+
+    // ipc.of.world.on(
+    //     'app.message',
+    //     function(data){
+    //         ipc.log('got a message from world : ', data);
+    //     }
+    // );
   }
 
   public setup () {

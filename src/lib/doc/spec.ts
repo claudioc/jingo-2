@@ -6,14 +6,14 @@ import {
 } from '.'
 
 test('docPathFor new, with name', t => {
-  const actual = docPathFor('my test', 'new')
-  const expected = '/doc/new/my_test'
+  const actual = docPathFor('my test', 'create')
+  const expected = '/doc/create/my_test'
   t.is(actual, expected)
 })
 
 test('docPathFor new, without name', t => {
-  const actual = docPathFor(undefined, 'new')
-  const expected = '/doc/new'
+  const actual = docPathFor(undefined, 'create')
+  const expected = '/doc/create'
   t.is(actual, expected)
 })
 

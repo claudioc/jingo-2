@@ -35,7 +35,7 @@ test('get create route receiving a name in the url', async t => {
     docTitle: 'hello world'
   }
 
-  t.is(render.calledWith(request, null, 'doc-new', expectedScope), true)
+  t.is(render.calledWith(request, null, 'doc-create', expectedScope), true)
 })
 
 test('get create route not receiving a name in the url', async t => {
@@ -54,7 +54,7 @@ test('get create route not receiving a name in the url', async t => {
     docTitle: 'Unnamed document'
   }
 
-  t.is(render.calledWith(request, null, 'doc-new', expectedScope), true)
+  t.is(render.calledWith(request, null, 'doc-create', expectedScope), true)
 })
 
 test('post create fail if document already exists', async t => {
@@ -85,7 +85,7 @@ test('post create fail if document already exists', async t => {
     errors: ['A document with this title already exists']
   }
 
-  t.is(render.calledWith(request, null, 'doc-new', expectedScope), true)
+  t.is(render.calledWith(request, null, 'doc-create', expectedScope), true)
 })
 
 test('post create success redirect to the wiki page', async t => {
@@ -145,7 +145,7 @@ test('post create renders again with a validation error', async t => {
     errors: 123
   }
 
-  t.is(render.calledWith(request, null, 'doc-new', expectedScope), true)
+  t.is(render.calledWith(request, null, 'doc-create', expectedScope), true)
 })
 
 test('get update route with a non-existing file', async t => {
@@ -164,7 +164,7 @@ test('get update route with a non-existing file', async t => {
 
   await route.update(request as any, response as any, _nop)
 
-  t.is(redirect.calledWith(docPathFor('lovely_sugar', 'new')), true)
+  t.is(redirect.calledWith(docPathFor('lovely_sugar', 'create')), true)
 })
 
 test('get update route with an existing file', async t => {
@@ -190,7 +190,7 @@ test('get update route with an existing file', async t => {
     docName,
     docTitle: unwikify(docName)
   }
-  t.is(render.calledWith(request, null, 'doc-edit', expectedScope), true)
+  t.is(render.calledWith(request, null, 'doc-update', expectedScope), true)
 })
 
 test('post update route is a failure if the file already exists (rename fails)', async t => {
@@ -228,7 +228,7 @@ test('post update route is a failure if the file already exists (rename fails)',
     errors: ['Cannot rename a document to an already existant one']
   }
 
-  t.is(render.calledWith(request, null, 'doc-edit', expectedScope), true)
+  t.is(render.calledWith(request, null, 'doc-update', expectedScope), true)
 })
 
 test('post update route is a success (renaming)', async t => {

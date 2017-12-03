@@ -74,6 +74,7 @@
     "markdown-it": "^8.4.0",
     "method-override": "^2.3.10",
     "module-alias": "^2.0.3",
-    "morgan": "^1.9.0"
+    "morgan": "^1.9.0",
+    "node-ipc": "^9.1.1"
   }
 }
