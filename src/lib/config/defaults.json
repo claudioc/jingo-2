@@ -1,4 +1,8 @@
 {
   // The directory from which Jingo will start reading and writing documents
-  "documentRoot": ""
+  "documentRoot": "",
+  "ipc": {
+    "enabled": false,
+    "server": ""
+  }
 }

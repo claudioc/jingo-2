@@ -9,8 +9,15 @@ import {
 import * as path from 'path'
 
 type TConfigValue = boolean | string | number
+
+export type TIpcSettings = {
+  enabled?: boolean
+  server?: string
+}
+
 export type TConfig = {
   documentRoot: string
+  ipc?: TIpcSettings
 }
 
 export class Config {
@@ -95,11 +102,13 @@ export class Config {
 
   protected fixConfig (): Config {
     this.values.documentRoot = fixers.fixDocumentRoot(this.values.documentRoot)
+    this.values.ipc = fixers.fixIpc(this.values.ipc)
     return this
   }
 
   protected async checkConfig (): Promise<Config> {
     await validators.checkDocumentRoot(this, this.values.documentRoot)
+    validators.checkIpc(this.values.ipc)
     return this
   }
 }

@@ -38,3 +38,4 @@
 - Using random names for file names in the tests to avoid conflicts
 - Adding the IPC server part to notify "clients" when something happens
 - Emoji, because why not?
+- 3314 sloc

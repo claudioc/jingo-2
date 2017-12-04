@@ -58,37 +58,33 @@ export default class Server {
    * Setup the IPC server
    */
   public ipc () {
+    if (config.get('ipc.enabled')) {
+      return
+    }
+
     ipc.config.id = 'jingo'
     ipc.config.retry = 1000
     ipc.config.silent = true
     ipc.config.encoding = 'utf8'
 
-    ipc.connectTo('myIpcServer', handleConnected)
+    ipc.connectTo('zeitgeist', handleConnected)
 
     function handleConnected () {
-      ipc.of.myIpcServer.on('connect', () => {
-        ipc.log('IPC: Connected to my-ipc-server', ipc.config.delay)
-        ipc.of.myIpcServer.emit('app.message', {
+      ipc.of.zeitgeist.on('connect', () => {
+        console.log('Connected to the ipc server')
+        ipc.of.zeitgeist.emit('app.message', {
           id: ipc.config.id,
           message : 'Hello'
         })
       })
 
-      ipc.of.myIpcServer.on('disconnect', () => {
-        ipc.log('IPC: Disconnected from my-ipc-server')
+      ipc.of.zeitgeist.on('disconnect', () => {
+        console.log('Disconnected from the ipc server')
       })
     }
-
-    // ipc.of.world.on(
-    //     'app.message',
-    //     function(data){
-    //         ipc.log('got a message from world : ', data);
-    //     }
-    // );
   }
 
   public setup () {
-
     const staticOptions = {
       redirect: false
     }

@@ -1,4 +1,4 @@
-import { Config } from '@lib/config'
+import { Config, TIpcSettings } from '@lib/config'
 import fs from '@lib/fs'
 
 const checkDocumentRoot = async (config: Config, documentRoot: string): Promise<void> => {
@@ -18,6 +18,11 @@ const checkDocumentRoot = async (config: Config, documentRoot: string): Promise<
   // @TODO it must be an absolute path (`path.isAbsolute`)
 }
 
+const checkIpc = (ipcSettings: TIpcSettings): void => {
+  throw new Error('The IPC configuration is incorrect')
+}
+
 export default {
-  checkDocumentRoot
+  checkDocumentRoot,
+  checkIpc
 }
