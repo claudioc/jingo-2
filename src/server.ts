@@ -8,13 +8,14 @@ import * as expressHandlebars from 'express-handlebars'
 import * as session from 'express-session'
 import * as methodOverride from 'method-override'
 import * as logger from 'morgan'
-import * as ipc from 'node-ipc'
 import * as path from 'path'
 
 import config from '@lib/config'
 import DocRoute from '@routes/doc'
 import IndexRoute from '@routes/index'
 import WikiRoute from '@routes/wiki'
+
+import ipc from '@lib/ipc'
 
 const cookieSession = require('cookie-session')
 
@@ -58,30 +59,7 @@ export default class Server {
    * Setup the IPC server
    */
   public ipc () {
-    if (config.get('ipc.enabled')) {
-      return
-    }
-
-    ipc.config.id = 'jingo'
-    ipc.config.retry = 1000
-    ipc.config.silent = true
-    ipc.config.encoding = 'utf8'
-
-    ipc.connectTo('zeitgeist', handleConnected)
-
-    function handleConnected () {
-      ipc.of.zeitgeist.on('connect', () => {
-        console.log('Connected to the ipc server')
-        ipc.of.zeitgeist.emit('app.message', {
-          id: ipc.config.id,
-          message : 'Hello'
-        })
-      })
-
-      ipc.of.zeitgeist.on('disconnect', () => {
-        console.log('Disconnected from the ipc server')
-      })
-    }
+    ipc(config).connect()
   }
 
   public setup () {

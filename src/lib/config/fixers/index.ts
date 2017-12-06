@@ -1,4 +1,3 @@
-
 import { TIpcSettings } from '@lib/config'
 import {
   clone as _clone,

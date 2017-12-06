@@ -1,0 +1,8 @@
+<h1>Deleting "{{docTitle}}"</h1>
+<form method="post" action="{{urlFor resource="doc" action="delete"}}">
+  <input type="hidden" value="{{docName}}" name="docName">
+  <p>Are you sure? This operation cannot be undone!</p>
+  <div>
+    <input type="submit" value="Yes, delete"> or <a href="{{urlFor resource="wiki" id=docName}}">Cancel</a>
+  </div>
+</form>

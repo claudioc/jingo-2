@@ -304,3 +304,93 @@ test('post update route is a success (not renaming)', async t => {
   t.is(content, 'blah')
   t.is(redirect.calledWith(wikiPathFor(docName2)), true)
 })
+
+test('get delete route for a non-existing doc', async t => {
+  const route = new Route(await configWithDefaults())
+
+  const request = {
+    params: {
+      docName: 'hello_world'
+    }
+  }
+
+  const redirect = sinon.spy()
+  const response = {
+    redirect
+  }
+
+  await route.delete(request as any, response as any, _nop)
+
+  t.is(route.title, 'Jingo – Deleting a document')
+
+  t.is(redirect.calledWith('/?e=1'), true)
+})
+
+test('get delete route for a existing doc', async t => {
+  const config = await configWithDefaults()
+  useFakeFs(config)
+  const route = new Route(config)
+  const docName = fakeFs.rndName()
+  fakeFs.writeFile(docFilenameFor(docName), 'Hello 41!')
+  const render = sinon.stub(route, 'render')
+
+  const request = {
+    params: {
+      docName
+    }
+  }
+
+  await route.delete(request as any, null, _nop)
+
+  t.is(route.title, 'Jingo – Deleting a document')
+
+  const expectedScope = {
+    docName,
+    docTitle: unwikify(docName)
+  }
+
+  t.is(render.calledWith(request, null, 'doc-delete', expectedScope), true)
+})
+
+test('post delete route for a non-existing doc', async t => {
+  const route = new Route(await configWithDefaults())
+
+  const request = {
+    body: {
+      docName: fakeFs.rndName()
+    }
+  }
+
+  const redirect = sinon.spy()
+  const response = {
+    redirect
+  }
+
+  await route.didDelete(request as any, response as any, _nop)
+
+  t.is(redirect.calledWith('/?e=1'), true)
+})
+
+test('post delete route for a existing doc', async t => {
+  const config = await configWithDefaults()
+  useFakeFs(config)
+  const route = new Route(config)
+  const docName = fakeFs.rndName()
+  fakeFs.writeFile(docFilenameFor(docName), 'Hello 41!')
+
+  const request = {
+    body: {
+      docName
+    }
+  }
+
+  const redirect = sinon.spy()
+  const response = {
+    redirect
+  }
+
+  await route.didDelete(request as any, response as any, _nop)
+  t.is(fakeFs.readFile(docFilenameFor(docName)), null)
+
+  t.is(redirect.calledWith('/?e=0'), true)
+})

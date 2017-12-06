@@ -39,3 +39,8 @@
 - Adding the IPC server part to notify "clients" when something happens
 - Emoji, because why not?
 - 3314 sloc
+06/12/17
+- Added the document deletion feature
+- Added the ipc module
+- Added the ipc message for CRUD operation on docs
+- 3522 sloc

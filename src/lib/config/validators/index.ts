@@ -19,7 +19,7 @@ const checkDocumentRoot = async (config: Config, documentRoot: string): Promise<
 }
 
 const checkIpc = (ipcSettings: TIpcSettings): void => {
-  throw new Error('The IPC configuration is incorrect')
+  // NOP
 }
 
 export default {

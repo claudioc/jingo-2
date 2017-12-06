@@ -1,6 +1,7 @@
 import api from '@api'
 import { Config } from '@lib/config'
 import { docPathFor } from '@lib/doc'
+import ipc from '@lib/ipc'
 import { unwikify, wikify, wikiPathFor } from '@lib/wiki'
 import BaseRoute from '@routes/route'
 import { NextFunction, Request, Response, Router } from 'express'
@@ -43,13 +44,13 @@ export default class DocRoute extends BaseRoute {
       new DocRoute(config).didUpdate(req, res, next)
     })
 
-    // router.get('/doc/delete', (req: Request, res: Response, next: NextFunction) => {
-    //   new DocRoute(config).delete(req, res, next)
-    // })
+    router.get('/doc/delete/:docName', (req: Request, res: Response, next: NextFunction) => {
+      new DocRoute(config).delete(req, res, next)
+    })
 
-    // router.post('/doc/delete', (req: Request, res: Response, next: NextFunction) => {
-    //   new DocRoute(config).didDelete(req, res, next)
-    // })
+    router.post('/doc/delete', (req: Request, res: Response, next: NextFunction) => {
+      new DocRoute(config).didDelete(req, res, next)
+    })
   }
 
   public async create (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -100,6 +101,8 @@ export default class DocRoute extends BaseRoute {
 
     // All done, go to the just saved page
     res.redirect(wikiPathFor(data.docTitle))
+
+    ipc(this.config).send('CREATE', docName)
   }
 
   public async update (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -151,6 +154,44 @@ export default class DocRoute extends BaseRoute {
 
     // All done, go to the just saved page
     res.redirect(wikiPathFor(data.docTitle))
+
+    ipc(this.config).send('UPDATE', oldDocName)
+  }
+
+  public async delete (req: Request, res: Response, next: NextFunction): Promise<void> {
+    this.title = 'Jingo – Deleting a document'
+    const docName = req.params.docName
+
+    const itExists = await api(this.config).docExists(docName)
+    if (!itExists) {
+      res.redirect('/?e=1')
+      return
+    }
+
+    const docTitle = unwikify(docName)
+
+    const scope: object = {
+      docName,
+      docTitle
+    }
+
+    this.render(req, res, 'doc-delete', scope)
+  }
+
+  public async didDelete (req: Request, res: Response, next: NextFunction): Promise<void> {
+    const docName = req.body.docName
+
+    const itExists = await api(this.config).docExists(docName)
+    if (!itExists) {
+      res.redirect('/?e=1')
+      return
+    }
+
+    await api(this.config).deleteDoc(docName)
+
+    res.redirect('/?e=0')
+
+    ipc(this.config).send('DELETE', docName)
   }
 
   public inspectRequest (req: Request) {

@@ -15,12 +15,20 @@ class Api {
   }
 
   /**
-   * Save a document to the file system
+   * Saves a document to the file system
    * @param docName Id of the document to save
    * @param docContent Content of the document
    */
   public async saveDoc (docName: string, docContent: string): Promise<void> {
     await fs.writeFile(this.config.fs, this.docFullpathFor(docName), docContent)
+  }
+
+  /**
+   * Deletes a document from the file system
+   * @param docName Id of the document to delete
+   */
+  public async deleteDoc (docName: string): Promise<void> {
+    await fs.unlink(this.config.fs, this.docFullpathFor(docName))
   }
 
   /**
