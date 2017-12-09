@@ -1,7 +1,6 @@
 import api from '@api'
 import { Config } from '@lib/config'
 import { docPathFor } from '@lib/doc'
-import ipc from '@lib/ipc'
 import { unwikify, wikify, wikiPathFor } from '@lib/wiki'
 import BaseRoute from '@routes/route'
 import { NextFunction, Request, Response, Router } from 'express'
@@ -97,12 +96,10 @@ export default class DocRoute extends BaseRoute {
       return
     }
 
-    await api(this.config).saveDoc(docName, data.content)
+    await api(this.config).createDoc(docName, data.content)
 
     // All done, go to the just saved page
     res.redirect(wikiPathFor(data.docTitle))
-
-    ipc(this.config).send('CREATE', docName)
   }
 
   public async update (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -144,18 +141,16 @@ export default class DocRoute extends BaseRoute {
     }
 
     const newDocName = wikify(data.docTitle)
-    // Rename the file (if needed and if possible)
-    if (!(await api(this.config).renameDoc(oldDocName, newDocName))) {
-      this.render(req, res, 'doc-update', _assign(scope, { errors: ['Cannot rename a document to an already existant one'] }))
+
+    try {
+      await api(this.config).updateDoc(newDocName, oldDocName, data.content)
+    } catch (err) {
+      this.render(req, res, 'doc-update', _assign(scope, { errors: [err.message] }))
       return
     }
 
-    await api(this.config).saveDoc(newDocName, data.content)
-
     // All done, go to the just saved page
     res.redirect(wikiPathFor(data.docTitle))
-
-    ipc(this.config).send('UPDATE', oldDocName)
   }
 
   public async delete (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -190,8 +185,6 @@ export default class DocRoute extends BaseRoute {
     await api(this.config).deleteDoc(docName)
 
     res.redirect('/?e=0')
-
-    ipc(this.config).send('DELETE', docName)
   }
 
   public inspectRequest (req: Request) {

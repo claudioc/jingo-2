@@ -56,14 +56,40 @@ test('loadDoc success', async t => {
   t.is(actual.content, expected)
 })
 
-test('saveDoc success', async t => {
+test('createDoc success', async t => {
   const config = await configWithDefaults()
   useFakeFs(config)
   const docName = fakeFs.rndName()
-  await api(config).saveDoc(docName, 'Today is nöt yestarday')
+  await api(config).createDoc(docName, 'Today is nöt yestarday')
   const actual = fakeFs.readFile(docFilenameFor(docName))
   const expected = 'Today is nöt yestarday'
   t.is(actual, expected)
+})
+
+test('updateDoc success', async t => {
+  const config = await configWithDefaults()
+  useFakeFs(config)
+  const docName = fakeFs.rndName()
+  const docFilename = docFilenameFor(docName)
+  fakeFs.writeFile(docFilename, 'Hello')
+  await api(config).updateDoc(docName, docName, 'Today is nöt yestarday')
+  const actual = fakeFs.readFile(docFilename)
+  const expected = 'Today is nöt yestarday'
+  t.is(actual, expected)
+})
+
+test('updateDoc failure', async t => {
+  const config = await configWithDefaults()
+  useFakeFs(config)
+  const docName1 = fakeFs.rndName()
+  const docName2 = fakeFs.rndName()
+  const docFilename1 = docFilenameFor(docName1)
+  const docFilename2 = docFilenameFor(docName2)
+  fakeFs.writeFile(docFilename1, 'Hello')
+  fakeFs.writeFile(docFilename2, 'Hello')
+  // This must fail because docName2 already exists
+  const error = await t.throws(api(config).updateDoc(docName1, docName2, 'Today is nöt yestarday'))
+  t.regex(error.message, /Cannot rename/)
 })
 
 test('renameDoc with the same name', async t => {

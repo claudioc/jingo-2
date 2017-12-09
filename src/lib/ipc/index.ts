@@ -1,11 +1,29 @@
 import { Config } from '@lib/config'
 import * as ipc_ from 'node-ipc'
 
-function ipc (config: Config): Ipc {
+type IIpcOp = 'CREATE' | 'UPDATE' | 'DELETE'
+
+interface IIpc {
+  connect (): void
+  send (op: IIpcOp, subject): void
+}
+
+// We use a dummy object to return in case IPC is not active
+// instead of instantiating the full blown IPC class
+const nop: IIpc = {
+  connect: () => 0,
+  send: (op, subject) => 0
+}
+
+function ipc (config: Config): Ipc | IIpc {
+  if (!config.get('ipc.enabled')) {
+    return nop
+  }
+
   return new Ipc(config)
 }
 
-class Ipc {
+class Ipc implements IIpc {
   private server
   private enabled
 
@@ -38,8 +56,7 @@ class Ipc {
     }
   }
 
-  // @TODO make the `op` a type
-  send (op, subject) {
+  send (op: IIpcOp, subject) {
     if (!this.enabled) {
       return
     }

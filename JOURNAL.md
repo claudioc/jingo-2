@@ -44,3 +44,6 @@
 - Added the ipc module
 - Added the ipc message for CRUD operation on docs
 - 3522 sloc
+09/12/17
+- Made the IPC module return an empty object if ipc is not enabled
+- Moved the IPC calls to the api module
