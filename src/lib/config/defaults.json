@@ -4,5 +4,8 @@
   "ipc": {
     "enabled": false,
     "server": ""
+  },
+  "wiki": {
+    "index": "Home"
   }
 }

@@ -1,4 +1,3 @@
-import * as helpers from '@lib/view-helpers'
 import * as bodyParser from 'body-parser'
 import * as cookieParser from 'cookie-parser'
 import * as errorHandler from 'errorhandler'
@@ -11,6 +10,7 @@ import * as logger from 'morgan'
 import * as path from 'path'
 
 import config from '@lib/config'
+import viewHelpers from '@lib/view-helpers'
 import DocRoute from '@routes/doc'
 import IndexRoute from '@routes/index'
 import WikiRoute from '@routes/wiki'
@@ -76,7 +76,7 @@ export default class Server {
     this.app.engine('.hbs', expressHandlebars({
       defaultLayout: 'main',
       extname: '.hbs',
-      helpers,
+      helpers: viewHelpers(config),
       layoutsDir: path.join(__dirname, '../src/views/layouts'),
       partialsDir: [
         path.join(__dirname, '../src/views/partials')

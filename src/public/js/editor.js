@@ -7,8 +7,8 @@
     matchBrackets: true,
     lineWrapping: true,
     extraKeys: {
-      'Ctrl-Enter': (cm) => {
-        // form.submit()
+      'Cmd-Enter': (cm) => {
+        form.submit()
         // Jingo.toggleFullscreen();
       },
       'Ctrl-S': (cm) => {

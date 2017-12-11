@@ -5,19 +5,25 @@ import * as cjson from 'comment-json'
 import {
   get as _get,
   has as _has,
+  merge as _merge,
   set as _set } from 'lodash'
 import * as path from 'path'
 
-type TConfigValue = boolean | string | number
+type TConfigValue = any
 
 export type TIpcSettings = {
   enabled?: boolean
   server?: string
 }
 
+export type TWikiSettings = {
+  index: string
+}
+
 export type TConfig = {
   documentRoot: string
   ipc?: TIpcSettings
+  wiki?: TWikiSettings
 }
 
 export class Config {
@@ -38,7 +44,7 @@ export class Config {
   public async load (filename: string): Promise<Config> {
     await this.loadDefaults()
     const fileContent = await fs.readFile(this.fs, filename)
-    this.values = cjson.parse(fileContent, null, true)
+    _merge(this.values, cjson.parse(fileContent, null, true))
     this.fixConfig()
     await this.checkConfig()
     return this
@@ -55,6 +61,7 @@ export class Config {
     return this
   }
 
+  // @TODO check if we should throw in case the value is undefined (the fixers should avoid that)
   public get (configPath: string): TConfigValue {
     // @TODO Check if we can safely load the defaults here
     // If we load the defaults here, the method becomes async, which is less
@@ -63,6 +70,10 @@ export class Config {
       throw new Error('Cannot get an empty config')
     }
     return _get(this.values, configPath)
+  }
+
+  public getDefault (configPath: string): TConfigValue {
+    return _get(this.defaults, configPath)
   }
 
   public set (configPath: string, value: any): Config | null {
@@ -103,6 +114,7 @@ export class Config {
   protected fixConfig (): Config {
     this.values.documentRoot = fixers.fixDocumentRoot(this.values.documentRoot)
     this.values.ipc = fixers.fixIpc(this.values.ipc)
+    this.values.wiki = fixers.fixWiki(this.values.wiki, this.getDefault('wiki.index'))
     return this
   }
 

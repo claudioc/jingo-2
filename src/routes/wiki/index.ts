@@ -15,6 +15,10 @@ export default class WikiRoute extends BaseRoute {
   }
 
   public static create (router: Router, config: Config) {
+    router.get('/wiki', (req: Request, res: Response, next: NextFunction) => {
+      new WikiRoute(config).list(req, res, next)
+    })
+
     router.get('/wiki/:docName', (req: Request, res: Response, next: NextFunction) => {
       new WikiRoute(config).read(req, res, next)
     })
@@ -33,10 +37,17 @@ export default class WikiRoute extends BaseRoute {
         docName,
         docTitle
       }
-      this.render(req, res, 'wiki', scope)
+      this.render(req, res, 'wiki-read', scope)
     } catch (e) {
       const createPageUrl = docPathFor(docTitle, 'create')
       res.redirect(createPageUrl)
     }
+  }
+
+  public async list (req: Request, res: Response, next: NextFunction) {
+    this.title = `Jingo – List of documents`
+
+    const scope = {}
+    this.render(req, res, 'wiki-list', scope)
   }
 }

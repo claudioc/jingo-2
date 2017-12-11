@@ -1,10 +1,12 @@
 import test from 'ava'
 import {
   unwikify,
-  wikify
+  wikify,
+  wikiPathFor
 } from '.'
 
 test('wikify', t => {
+  t.is(wikify(undefined), '')
   t.is(wikify('34'),'34')
   t.is(wikify(''),'')
   t.is(wikify('    '),'')
@@ -24,4 +26,11 @@ test('wikify', t => {
 test('unwikify', t => {
   t.is(unwikify('E_anche_questa_è_fatta'), 'E anche questa è fatta')
   t.is(unwikify('E+anche+questa_è_fatta'), 'E/anche/questa è fatta')
+})
+
+test('wikiPathFor', t => {
+  t.is(wikiPathFor(undefined), '/wiki')
+  t.is(wikiPathFor(undefined, 'show'), '/wiki')
+  t.is(wikiPathFor('petto', 'show'), '/wiki/petto')
+  t.is(wikiPathFor('Petto'), '/wiki/Petto')
 })

@@ -1,6 +1,17 @@
+import FakeFs from '@lib/fake-fs'
 import test from 'ava'
 import * as path from 'path'
 import { Config, configWithDefaults } from '.'
+
+const fakeFs = new FakeFs('/home/jingo')
+
+const useFakeFs = (config: Config) => {
+  config.setFs(fakeFs.theFs).set('documentRoot', fakeFs.mountPoint)
+}
+
+test.after(() => {
+  fakeFs.unmount()
+})
 
 test('reset', async t => {
   const config = new Config()
@@ -27,6 +38,20 @@ test('loadDefaults', async t => {
 
   comments = Object.keys(config.values).filter(k => k.startsWith('//'))
   t.true(comments.length === 0)
+})
+
+test('load will merge values with the defaults', async t => {
+  const config = new Config()
+  useFakeFs(config)
+  // We do not specify the wiki index in our config, so that it should
+  // come up from the default configuration file
+  fakeFs.writeFile('config.json', JSON.stringify({
+    documentRoot: '/home/jingo',
+    wiki: {
+    }
+  }))
+  await config.load('/home/jingo/config.json')
+  t.is(config.get('wiki.index'), config.getDefault('wiki.index'))
 })
 
 test('configWithDefaults', async t => {

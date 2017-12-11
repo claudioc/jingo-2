@@ -24,11 +24,11 @@ test('fixDocumentRoot', t => {
 })
 
 test('fixIpc enabled', t => {
-  let expected = { enabled: false }
+  let expected = { enabled: false, server: '' }
   let actual = fixers.fixIpc(undefined)
   t.deepEqual(actual, expected)
 
-  expected = { enabled: false }
+  expected = { enabled: false, server: '' }
   actual = fixers.fixIpc(null)
   t.deepEqual(actual, expected)
 
@@ -46,7 +46,19 @@ test('fixIpc enabled', t => {
 })
 
 test('fixIpc server', t => {
-  let expected = { enabled: false, server: '' }
-  let actual = fixers.fixIpc({ enabled: false })
+  const expected = { enabled: false, server: '' }
+  const actual = fixers.fixIpc({ enabled: false })
+  t.deepEqual(actual, expected)
+})
+
+test('fixWiki unset', t => {
+  const expected = { index: 'Home' }
+  const actual = fixers.fixWiki(undefined, 'Home')
+  t.deepEqual(actual, expected)
+})
+
+test('fixWiki index unset', t => {
+  const expected = { index: 'Home' }
+  const actual = fixers.fixWiki({} as any, 'Home')
   t.deepEqual(actual, expected)
 })

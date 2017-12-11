@@ -1,4 +1,4 @@
-type WikiAction = 'history' | 'compare' | 'show'
+type WikiAction = 'show'
 
 const WS_REPLACEMENT = '_'
 
@@ -33,7 +33,8 @@ function unwikify (name: string): string {
 function wikiPathFor (docName: string, action: WikiAction = 'show'): string {
   const wikied = wikify(docName)
   const actionPart = action !== 'show' ? `/${action}` : ''
-  return `/wiki/${wikied}${actionPart}`
+  // Remove leading space
+  return `/wiki/${wikied}${actionPart}`.replace(/\/$/, '')
 }
 
 export {
