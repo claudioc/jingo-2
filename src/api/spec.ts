@@ -86,7 +86,7 @@ test('updateDoc failure', async t => {
   const docFilename1 = docFilenameFor(docName1)
   const docFilename2 = docFilenameFor(docName2)
   fakeFs.writeFile(docFilename1, 'Hello')
-  fakeFs.writeFile(docFilename2, 'Hello')
+    .writeFile(docFilename2, 'Hello')
   // This must fail because docName2 already exists
   const error = await t.throws(api(config).updateDoc(docName1, docName2, 'Today is nöt yestarday'))
   t.regex(error.message, /Cannot rename/)
@@ -125,8 +125,21 @@ test('renameDoc with a different name and new file already exists', async t => {
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
   fakeFs.writeFile(docFilenameFor(docName1), 'zot')
-  fakeFs.writeFile(docFilenameFor(docName2), 'zot')
+    .writeFile(docFilenameFor(docName2), 'zot')
   const actual: any = await api(config).renameDoc(docName1, docName2)
   const expected: any = false
   t.is(actual, expected)
+})
+
+test('listDocs in a subdir', async t => {
+  const config = await configWithDefaults()
+  useFakeFs(config)
+  const docName1 = fakeFs.rndName()
+  const docName2 = fakeFs.rndName()
+  fakeFs.mkdir('mmh')
+    .writeFile('mmh/' + docFilenameFor(docName1), 'zot')
+    .writeFile('mmh/' + docFilenameFor(docName2), 'zot')
+  const actual: any = await api(config).listDocs('mmh')
+  const expected: any = [docName2, docName1].sort()
+  t.deepEqual(actual, expected)
 })

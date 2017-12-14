@@ -47,7 +47,11 @@ export default class WikiRoute extends BaseRoute {
   public async list (req: Request, res: Response, next: NextFunction) {
     this.title = `Jingo – List of documents`
 
-    const scope = {}
+    const list = await api(this.config).listDocs()
+
+    const scope = {
+      list
+    }
     this.render(req, res, 'wiki-list', scope)
   }
 }

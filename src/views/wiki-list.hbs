@@ -1,0 +1,8 @@
+<h1>List of documents</h1>
+<ul>
+{{#each list}}
+  <li><a href="{{urlFor resource="wiki" id=this}}">{{this}}</a></li>
+{{else}}
+The document repository is empty
+{{/each}}
+</ul>

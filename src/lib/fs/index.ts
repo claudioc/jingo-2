@@ -63,6 +63,18 @@ const readFile = async (useFs, filename: fs_.PathLike): Promise<string> => {
   })
 }
 
+const readdir = async (useFs, root: fs_.PathLike): Promise<string[]> => {
+  const fs = useFs || fs_
+  return new Promise<string[]>((resolve, reject) => {
+    fs.readdir(root, (err, files) => {
+      if (err) {
+        return reject(err)
+      }
+      resolve(files)
+    })
+  })
+}
+
 const access = async (useFs, filename: fs_.PathLike, mode: number): Promise<boolean> => {
   const fs = useFs || fs_
   return new Promise<boolean>((resolve, reject) => {
@@ -76,6 +88,7 @@ export default {
   access,
   constants: fs_.constants,
   readFile,
+  readdir,
   rename,
   stat,
   unlink,

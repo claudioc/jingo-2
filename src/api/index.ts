@@ -2,9 +2,16 @@ import { Config } from '@lib/config'
 import { docFullpathFor } from '@lib/doc'
 import fs from '@lib/fs'
 import ipc from '@lib/ipc'
+import * as path from 'path'
 
 interface IDoc {
   content: string
+}
+
+interface IDocItem {
+  docName: string
+  docTitle: string
+  updatedAt: string
 }
 
 function api (config: Config): Api {
@@ -13,6 +20,17 @@ function api (config: Config): Api {
 
 class Api {
   constructor (public config: Config) {
+  }
+
+  /**
+   * Returns the list of documents in the repository
+   * @param subdir A sub directory below the root
+   */
+  public async listDocs (subdir: string = ''): Promise<IDocItem[] | any> {
+    const docRoot = this.config.get('documentRoot')
+    let files = await fs.readdir(this.config.fs, path.join(docRoot, subdir))
+    files = files.filter(file => /\.md$/.test(file.toLowerCase())).map(file => file.slice(0, -3))
+    return files.sort()
   }
 
   /**

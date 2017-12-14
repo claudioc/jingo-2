@@ -14,10 +14,17 @@ export default class FakeFs {
 
   unmount () {
     this.theFs.unmount(this.mountPoint)
+    return this
   }
 
   writeFile (pathName, content) {
     this.theFs.writeFileSync(path.join(this.mountPoint, pathName), content)
+    return this
+  }
+
+  mkdir (dir) {
+    this.theFs.mkdirSync(path.join(this.mountPoint, dir))
+    return this
   }
 
   readFile (pathName) {
