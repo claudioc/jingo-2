@@ -2,7 +2,7 @@ type WikiAction = 'show'
 
 const WS_REPLACEMENT = '_'
 
-function wikify (name: string): string {
+const wikify = (name: string): string => {
   let ret = name
 
   if (typeof ret !== 'string' || ret.trim() === '') {
@@ -17,7 +17,7 @@ function wikify (name: string): string {
   return ret
 }
 
-function unwikify (name: string): string {
+const unwikify = (name: string): string => {
   let ret = name
 
   if (typeof ret !== 'string' || ret.trim() === '') {
@@ -30,7 +30,7 @@ function unwikify (name: string): string {
   return ret
 }
 
-function wikiPathFor (docName: string, action: WikiAction = 'show'): string {
+const wikiPathFor = (docName: string, action: WikiAction = 'show'): string => {
   const wikied = wikify(docName)
   const actionPart = action !== 'show' ? `/${action}` : ''
   // Remove leading space

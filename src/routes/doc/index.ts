@@ -9,7 +9,7 @@ import { matchedData, sanitize } from 'express-validator/filter'
 import { assign as _assign } from 'lodash'
 
 // Returns a validator chains for the new document
-function validatesCreate () {
+const validatesCreate = () => {
   return [
     check('docTitle')
       .isLength({ min: 1 })

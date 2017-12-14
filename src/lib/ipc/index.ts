@@ -15,7 +15,7 @@ const nop: IIpc = {
   send: (op, subject) => 0
 }
 
-function ipc (config: Config): Ipc | IIpc {
+const ipc = (config: Config): Ipc | IIpc => {
   if (!config.get('ipc.enabled')) {
     return nop
   }
@@ -32,7 +32,7 @@ class Ipc implements IIpc {
     this.enabled = this.config.get('ipc.enabled')
   }
 
-  connect () {
+  public connect () {
     if (!this.enabled) {
       return
     }
@@ -56,7 +56,7 @@ class Ipc implements IIpc {
     }
   }
 
-  send (op: IIpcOp, subject) {
+  public send (op: IIpcOp, subject) {
     if (!this.enabled) {
       return
     }
