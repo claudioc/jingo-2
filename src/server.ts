@@ -86,6 +86,7 @@ export default class Server {
     this.app.set('views', path.join(__dirname, '../src/views'))
     this.app.set('view engine', '.hbs')
     this.app.enable('trust proxy')
+    this.app.enable('strict routing')
 
     // 'combined' or 'dev'
     this.app.use(logger('combined' as any))

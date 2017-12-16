@@ -7,24 +7,40 @@ import * as MarkdownIt from 'markdown-it'
 export default class WikiRoute extends BaseRoute {
   parser: MarkdownIt.MarkdownIt
 
-  constructor (cfg) {
-    super(cfg)
+  constructor (config) {
+    super(config)
     this.parser = new MarkdownIt()
   }
 
   public static create (router: Router, config: Config) {
     const basePath = config.get('wiki.basePath')
-    router.get(`/${basePath}`, (req: Request, res: Response, next: NextFunction) => {
-      new WikiRoute(config).list(req, res, next)
-    })
 
-    router.get(`/${basePath}/:docName`, (req: Request, res: Response, next: NextFunction) => {
-      new WikiRoute(config).read(req, res, next)
+    /**
+     * The catch-all route for all the route request:
+     * - /wiki/docname: will render `docname`
+     * - /wiki/dir/: will render the list in `dir`
+     * - /wiki/dir/docname: will render docname in `dir`
+     */
+    router.get(`/${basePath}*`, (req: Request, res: Response, next: NextFunction) => {
+      const path = req.params[0]
+      delete req.params[0]
+
+      if (path.length === 0) {
+        res.redirect(`/${basePath}/`)
+        return
+      }
+
+      req.params.path = path
+      if (path.endsWith('/')) {
+        new WikiRoute(config).list(req, res, next)
+      } else {
+        new WikiRoute(config).read(req, res, next)
+      }
     })
   }
 
   public async read (req: Request, res: Response, next: NextFunction) {
-    const docName = req.params.docName
+    const { docName } = this.docHelpers.parsePath(req.params.path)
     const docTitle = this.wikiHelpers.unwikify(docName)
 
     this.title = `Jingo – ${docTitle}`
@@ -45,7 +61,6 @@ export default class WikiRoute extends BaseRoute {
 
   public async list (req: Request, res: Response, next: NextFunction) {
     this.title = `Jingo – List of documents`
-
     const list = await api(this.config).listDocs()
 
     const scope = {

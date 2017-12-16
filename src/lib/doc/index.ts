@@ -4,6 +4,10 @@ import * as fs_ from 'fs'
 import * as path from 'path'
 
 type DocAction = 'delete' | 'update' | 'create'
+type PathParts = {
+  dirName: string
+  docName: string
+}
 
 function doc (config: Config): Doc {
   return new Doc(config)
@@ -45,6 +49,14 @@ export class Doc {
    */
   public docFullpathFor (documentRoot: string, docName: string): fs_.PathLike {
     return path.resolve(documentRoot, this.docFilenameFor(docName))
+  }
+
+  public parsePath (unparsed: string): PathParts {
+    const { dir, name } = path.parse(unparsed)
+    return {
+      dirName: dir || '/',
+      docName: name
+    }
   }
 }
 
