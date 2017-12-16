@@ -71,8 +71,6 @@ test('configWithDefaults with defaults filename', async t => {
 
 test('get', async t => {
   const config = await configWithDefaults()
-
-  t.is(config.get('not.exists'), undefined)
   t.is(config.get('documentRoot'), '')
 })
 
@@ -83,6 +81,15 @@ test('get throws when no config', t => {
   })
 
   t.regex(error.message, /Cannot get an empty config/)
+})
+
+test('get throws when unknown key', async t => {
+  const config = await configWithDefaults()
+  const error = t.throws(() => {
+    config.get('i.am.an.alien')
+  })
+
+  t.regex(error.message, /Cannot get an unknown config key/)
 })
 
 test('has with existing key', async t => {

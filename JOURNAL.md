@@ -47,3 +47,7 @@
 09/12/17
 - Made the IPC module return an empty object if ipc is not enabled
 - Moved the IPC calls to the api module
+16/12/17
+- Added the basePath configuration
+- Move the doc and wiki helpers to use dependency injection
+- 3812 sloc

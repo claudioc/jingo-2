@@ -1,7 +1,5 @@
 import api from '@api'
 import { Config } from '@lib/config'
-import { docPathFor } from '@lib/doc'
-import { unwikify, wikify, wikiPathFor } from '@lib/wiki'
 import BaseRoute from '@routes/route'
 import { NextFunction, Request, Response, Router } from 'express'
 import { check, validationResult } from 'express-validator/check'
@@ -62,12 +60,12 @@ export default class DocRoute extends BaseRoute {
     if (docName) {
       const itExists = await api(this.config).docExists(docName)
       if (itExists) {
-        res.redirect(wikiPathFor(docName))
+        res.redirect(this.wikiHelpers.wikiPathFor(docName))
         return
       }
     }
 
-    const docTitle = unwikify(docName) || 'Unnamed document'
+    const docTitle = this.wikiHelpers.unwikify(docName) || 'Unnamed document'
 
     const scope: object = {
       docTitle
@@ -89,7 +87,7 @@ export default class DocRoute extends BaseRoute {
       return
     }
 
-    const docName = wikify(data.docTitle)
+    const docName = this.wikiHelpers.wikify(data.docTitle)
     const itExists = await api(this.config).docExists(docName)
     if (itExists) {
       this.render(req, res, 'doc-create', _assign(scope, { errors: ['A document with this title already exists'] }))
@@ -99,7 +97,7 @@ export default class DocRoute extends BaseRoute {
     await api(this.config).createDoc(docName, data.content)
 
     // All done, go to the just saved page
-    res.redirect(wikiPathFor(data.docTitle))
+    res.redirect(this.wikiHelpers.wikiPathFor(data.docTitle))
   }
 
   public async update (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -108,13 +106,13 @@ export default class DocRoute extends BaseRoute {
 
     const itExists = await api(this.config).docExists(docName)
     if (!itExists) {
-      res.redirect(docPathFor(docName, 'create'))
+      res.redirect(this.docHelpers.docPathFor(docName, 'create'))
       return
     }
 
     const doc = await api(this.config).loadDoc(docName)
 
-    const docTitle = unwikify(docName)
+    const docTitle = this.wikiHelpers.unwikify(docName)
 
     const scope: object = {
       content: doc.content,
@@ -140,7 +138,7 @@ export default class DocRoute extends BaseRoute {
       return
     }
 
-    const newDocName = wikify(data.docTitle)
+    const newDocName = this.wikiHelpers.wikify(data.docTitle)
 
     try {
       await api(this.config).updateDoc(newDocName, oldDocName, data.content)
@@ -150,7 +148,7 @@ export default class DocRoute extends BaseRoute {
     }
 
     // All done, go to the just saved page
-    res.redirect(wikiPathFor(data.docTitle))
+    res.redirect(this.wikiHelpers.wikiPathFor(data.docTitle))
   }
 
   public async delete (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -163,7 +161,7 @@ export default class DocRoute extends BaseRoute {
       return
     }
 
-    const docTitle = unwikify(docName)
+    const docTitle = this.wikiHelpers.unwikify(docName)
 
     const scope: object = {
       docName,

@@ -33,9 +33,19 @@ const fixIpc = (ipcSettings: TIpcSettings): TIpcSettings => {
   return settings
 }
 
-const fixWiki = (wikiSettings: TWikiSettings, defaultIndex) => {
+const fixWiki = (wikiSettings: TWikiSettings, defaults) => {
   const settings = _clone(_isObject(wikiSettings) ? wikiSettings : {})
-  settings.index = _isUndefined(settings.index) ? defaultIndex : _toString(settings.index).trim()
+
+  // Fix the index
+  settings.index = _isUndefined(settings.index) ? defaults.index : _toString(settings.index).trim()
+
+  // Fix the basePath
+  settings.basePath = _isUndefined(settings.basePath) ? defaults.basePath : _toString(settings.basePath).trim()
+  settings.basePath = settings.basePath.replace(/^\/+|\/+$/g, '').trim()
+  if (settings.basePath === '') {
+    settings.basePath = defaults.basePath
+  }
+
   return settings
 }
 

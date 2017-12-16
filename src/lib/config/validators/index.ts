@@ -1,4 +1,8 @@
-import { Config, TIpcSettings } from '@lib/config'
+import {
+  Config,
+  TIpcSettings,
+  TWikiSettings
+} from '@lib/config'
 import fs from '@lib/fs'
 
 const checkDocumentRoot = async (config: Config, documentRoot: string): Promise<void> => {
@@ -22,7 +26,12 @@ const checkIpc = (ipcSettings: TIpcSettings): void => {
   // NOP
 }
 
+const checkWiki = (wikiSettings: TWikiSettings): void => {
+  // NOP
+}
+
 export default {
   checkDocumentRoot,
-  checkIpc
+  checkIpc,
+  checkWiki
 }

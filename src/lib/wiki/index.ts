@@ -1,44 +1,51 @@
+import { Config } from '@lib/config'
 type WikiAction = 'show'
 
 const WS_REPLACEMENT = '_'
 
-const wikify = (name: string): string => {
-  let ret = name
+function wiki (config: Config): Wiki {
+  return new Wiki(config)
+}
 
-  if (typeof ret !== 'string' || ret.trim() === '') {
-    return ''
+export class Wiki {
+  constructor (public config: Config) {
   }
 
-  ret = ret.replace(/[<>]/g, '')
-  ret = ret.replace(/\//g, '+')
-  ret = ret.trim()
-  ret = ret.replace(/\s/g, WS_REPLACEMENT)
+  public wikify (name: string): string {
+    let ret = name
 
-  return ret
-}
+    if (typeof ret !== 'string' || ret.trim() === '') {
+      return ''
+    }
 
-const unwikify = (name: string): string => {
-  let ret = name
+    ret = ret.replace(/[<>]/g, '')
+    ret = ret.replace(/\//g, '+')
+    ret = ret.trim()
+    ret = ret.replace(/\s/g, WS_REPLACEMENT)
 
-  if (typeof ret !== 'string' || ret.trim() === '') {
-    return ''
+    return ret
   }
 
-  ret = ret.replace(new RegExp(WS_REPLACEMENT, 'g'), ' ')
-  ret = ret.replace(/\+/g, '/')
+  public unwikify (name: string): string {
+    let ret = name
 
-  return ret
+    if (typeof ret !== 'string' || ret.trim() === '') {
+      return ''
+    }
+
+    ret = ret.replace(new RegExp(WS_REPLACEMENT, 'g'), ' ')
+    ret = ret.replace(/\+/g, '/')
+
+    return ret
+  }
+
+  public wikiPathFor (docName: string, action: WikiAction = 'show'): string {
+    const wikied = this.wikify(docName)
+    const actionPart = action !== 'show' ? `/${action}` : ''
+    const basePath = this.config.get('wiki.basePath')
+    // Remove leading space
+    return `/${basePath}/${wikied}${actionPart}`.replace(/\/$/, '')
+  }
 }
 
-const wikiPathFor = (docName: string, action: WikiAction = 'show'): string => {
-  const wikied = wikify(docName)
-  const actionPart = action !== 'show' ? `/${action}` : ''
-  // Remove leading space
-  return `/wiki/${wikied}${actionPart}`.replace(/\/$/, '')
-}
-
-export {
-  wikiPathFor,
-  wikify,
-  unwikify
-}
+export default wiki

@@ -1,11 +1,15 @@
 {
   // The directory from which Jingo will start reading and writing documents
   "documentRoot": "",
+  // Configuration for the IPC support
   "ipc": {
     "enabled": false,
     "server": ""
   },
+  // Configuration of the wiki itself
   "wiki": {
-    "index": "Home"
+    "index": "Home",
+    // Specify a base path common to all the pages (defaults to /wiki)
+    "basePath": "wiki"
   }
 }

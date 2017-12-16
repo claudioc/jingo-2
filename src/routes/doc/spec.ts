@@ -1,8 +1,6 @@
 import { configWithDefaults } from '@lib/config'
 import { Config } from '@lib/config'
-import { docFilenameFor, docPathFor } from '@lib/doc'
 import FakeFs from '@lib/fake-fs'
-import { unwikify, wikiPathFor } from '@lib/wiki'
 import test from 'ava'
 import { nop as _nop } from 'lodash'
 import * as sinon from 'sinon'
@@ -63,13 +61,13 @@ test('post create fail if document already exists', async t => {
   const route = new Route(config)
   const docName = fakeFs.rndName()
   const render = sinon.stub(route, 'render')
-  fakeFs.writeFile(docFilenameFor(docName), 'Hello 41!')
+  fakeFs.writeFile(route.docHelpers.docFilenameFor(docName), 'Hello 41!')
 
   sinon.stub(route, 'inspectRequest').callsFake(req => {
     return {
       data: {
         content: 'Winter in Berlin',
-        docTitle: unwikify(docName)
+        docTitle: route.wikiHelpers.unwikify(docName)
       },
       errors: null
     }
@@ -81,7 +79,7 @@ test('post create fail if document already exists', async t => {
   await route.didCreate(request as any, null, _nop)
   const expectedScope = {
     content: 'Winter in Berlin',
-    docTitle: unwikify(docName),
+    docTitle: route.wikiHelpers.unwikify(docName),
     errors: ['A document with this title already exists']
   }
 
@@ -164,15 +162,15 @@ test('get update route with a non-existing file', async t => {
 
   await route.update(request as any, response as any, _nop)
 
-  t.is(redirect.calledWith(docPathFor('lovely_sugar', 'create')), true)
+  t.is(redirect.calledWith(route.docHelpers.docPathFor('lovely_sugar', 'create')), true)
 })
 
 test('get update route with an existing file', async t => {
   const config = await configWithDefaults()
   useFakeFs(config)
   const docName = fakeFs.rndName()
-  fakeFs.writeFile(docFilenameFor(docName), 'Hello 41!')
   const route = new Route(config)
+  fakeFs.writeFile(route.docHelpers.docFilenameFor(docName), 'Hello 41!')
   const render = sinon.stub(route, 'render')
 
   const request = {
@@ -188,7 +186,7 @@ test('get update route with an existing file', async t => {
   const expectedScope = {
     content: 'Hello 41!',
     docName,
-    docTitle: unwikify(docName)
+    docTitle: route.wikiHelpers.unwikify(docName)
   }
   t.is(render.calledWith(request, null, 'doc-update', expectedScope), true)
 })
@@ -200,14 +198,14 @@ test('post update route is a failure if the file already exists (rename fails)',
   const render = sinon.stub(route, 'render')
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
-  fakeFs.writeFile(docFilenameFor(docName2), 'Hello 41!')
+  fakeFs.writeFile(route.docHelpers.docFilenameFor(docName2), 'Hello 41!')
 
   sinon.stub(route, 'inspectRequest').callsFake(req => {
     return {
       data: {
         content: 'blah',
         docName: docName1,
-        docTitle: unwikify(docName2)
+        docTitle: route.wikiHelpers.unwikify(docName2)
       },
       errors: null
     }
@@ -224,7 +222,7 @@ test('post update route is a failure if the file already exists (rename fails)',
   const expectedScope = {
     content: 'blah',
     docName: docName1,
-    docTitle: unwikify(docName2),
+    docTitle: route.wikiHelpers.unwikify(docName2),
     errors: ['Cannot rename a document to an already existant one']
   }
 
@@ -237,14 +235,14 @@ test('post update route is a success (renaming)', async t => {
   const route = new Route(config)
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
-  fakeFs.writeFile(docFilenameFor(docName1), 'Hello 41!')
+  fakeFs.writeFile(route.docHelpers.docFilenameFor(docName1), 'Hello 41!')
 
   sinon.stub(route, 'inspectRequest').callsFake(req => {
     return {
       data: {
         content: 'blah',
         docName: docName1,
-        docTitle: unwikify(docName2)
+        docTitle: route.wikiHelpers.unwikify(docName2)
       },
       errors: null
     }
@@ -263,9 +261,9 @@ test('post update route is a success (renaming)', async t => {
 
   await route.didUpdate(request as any, response as any, _nop)
 
-  const content = fakeFs.readFile(docFilenameFor(docName2))
+  const content = fakeFs.readFile(route.docHelpers.docFilenameFor(docName2))
   t.is(content, 'blah')
-  t.is(redirect.calledWith(wikiPathFor(docName2)), true)
+  t.is(redirect.calledWith(route.wikiHelpers.wikiPathFor(docName2)), true)
 })
 
 test('post update route is a success (not renaming)', async t => {
@@ -274,14 +272,14 @@ test('post update route is a success (not renaming)', async t => {
   const route = new Route(config)
   const docName1 = fakeFs.rndName()
   const docName2 = docName1
-  fakeFs.writeFile(docFilenameFor(docName1), 'Hello 41!')
+  fakeFs.writeFile(route.docHelpers.docFilenameFor(docName1), 'Hello 41!')
 
   sinon.stub(route, 'inspectRequest').callsFake(req => {
     return {
       data: {
         content: 'blah',
         docName: docName1,
-        docTitle: unwikify(docName2)
+        docTitle: route.wikiHelpers.unwikify(docName2)
       },
       errors: null
     }
@@ -300,9 +298,9 @@ test('post update route is a success (not renaming)', async t => {
 
   await route.didUpdate(request as any, response as any, _nop)
 
-  const content = fakeFs.readFile(docFilenameFor(docName2))
+  const content = fakeFs.readFile(route.docHelpers.docFilenameFor(docName2))
   t.is(content, 'blah')
-  t.is(redirect.calledWith(wikiPathFor(docName2)), true)
+  t.is(redirect.calledWith(route.wikiHelpers.wikiPathFor(docName2)), true)
 })
 
 test('get delete route for a non-existing doc', async t => {
@@ -331,7 +329,7 @@ test('get delete route for a existing doc', async t => {
   useFakeFs(config)
   const route = new Route(config)
   const docName = fakeFs.rndName()
-  fakeFs.writeFile(docFilenameFor(docName), 'Hello 41!')
+  fakeFs.writeFile(route.docHelpers.docFilenameFor(docName), 'Hello 41!')
   const render = sinon.stub(route, 'render')
 
   const request = {
@@ -346,7 +344,7 @@ test('get delete route for a existing doc', async t => {
 
   const expectedScope = {
     docName,
-    docTitle: unwikify(docName)
+    docTitle: route.wikiHelpers.unwikify(docName)
   }
 
   t.is(render.calledWith(request, null, 'doc-delete', expectedScope), true)
@@ -376,7 +374,7 @@ test('post delete route for a existing doc', async t => {
   useFakeFs(config)
   const route = new Route(config)
   const docName = fakeFs.rndName()
-  fakeFs.writeFile(docFilenameFor(docName), 'Hello 41!')
+  fakeFs.writeFile(route.docHelpers.docFilenameFor(docName), 'Hello 41!')
 
   const request = {
     body: {
@@ -390,7 +388,7 @@ test('post delete route for a existing doc', async t => {
   }
 
   await route.didDelete(request as any, response as any, _nop)
-  t.is(fakeFs.readFile(docFilenameFor(docName)), null)
+  t.is(fakeFs.readFile(route.docHelpers.docFilenameFor(docName)), null)
 
   t.is(redirect.calledWith('/?e=0'), true)
 })

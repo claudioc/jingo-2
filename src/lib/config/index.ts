@@ -5,6 +5,7 @@ import * as cjson from 'comment-json'
 import {
   get as _get,
   has as _has,
+  isUndefined as _isUndefined,
   merge as _merge,
   set as _set } from 'lodash'
 import * as path from 'path'
@@ -18,6 +19,7 @@ export type TIpcSettings = {
 
 export type TWikiSettings = {
   index: string
+  wiki: string
 }
 
 export type TConfig = {
@@ -61,7 +63,6 @@ export class Config {
     return this
   }
 
-  // @TODO check if we should throw in case the value is undefined (the fixers should avoid that)
   public get (configPath: string): TConfigValue {
     // @TODO Check if we can safely load the defaults here
     // If we load the defaults here, the method becomes async, which is less
@@ -69,7 +70,13 @@ export class Config {
     if (this.values === null) {
       throw new Error('Cannot get an empty config')
     }
-    return _get(this.values, configPath)
+
+    const value = _get(this.values, configPath)
+    if (_isUndefined(value)) {
+      throw new Error(`Cannot get an unknown config key "${configPath}"`)
+    }
+
+    return value
   }
 
   public getDefault (configPath: string): TConfigValue {
@@ -114,13 +121,14 @@ export class Config {
   protected fixConfig (): Config {
     this.values.documentRoot = fixers.fixDocumentRoot(this.values.documentRoot)
     this.values.ipc = fixers.fixIpc(this.values.ipc)
-    this.values.wiki = fixers.fixWiki(this.values.wiki, this.getDefault('wiki.index'))
+    this.values.wiki = fixers.fixWiki(this.values.wiki, this.getDefault('wiki'))
     return this
   }
 
   protected async checkConfig (): Promise<Config> {
     await validators.checkDocumentRoot(this, this.values.documentRoot)
     validators.checkIpc(this.values.ipc)
+    validators.checkWiki(this.values.wiki)
     return this
   }
 }

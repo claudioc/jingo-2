@@ -1,8 +1,10 @@
 import { Config } from '@lib/config'
-import { docPathFor } from '@lib/doc'
-import { wikiPathFor } from '@lib/wiki'
+import doc from '@lib/doc'
+import wiki from '@lib/wiki'
 
 export default function viewHelpers (config: Config) {
+  const wikiHelpers = wiki(config)
+  const docHelpers = doc(config)
   return {
     urlFor (params) {
       const { resource, id, action } = params.hash
@@ -10,17 +12,17 @@ export default function viewHelpers (config: Config) {
       switch (resource) {
         // Access to any document
         case 'doc':
-          path = docPathFor(id, action || 'create')
+          path = docHelpers.docPathFor(id, action || 'create')
           break
 
         // Access to any wiki page
         case 'wiki':
-          path =  wikiPathFor(id)
+          path =  wikiHelpers.wikiPathFor(id)
           break
 
         // Access to the home page of the system
         case 'home':
-          path =  wikiPathFor(config.get('wiki.index'))
+          path =  wikiHelpers.wikiPathFor(config.get('wiki.index'))
           break
       }
 

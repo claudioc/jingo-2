@@ -1,5 +1,5 @@
 import { Config } from '@lib/config'
-import { docFullpathFor } from '@lib/doc'
+import doc, { Doc } from '@lib/doc'
 import fs from '@lib/fs'
 import ipc from '@lib/ipc'
 import * as path from 'path'
@@ -19,7 +19,10 @@ function api (config: Config): Api {
 }
 
 class Api {
+  public docHelpers: Doc
+
   constructor (public config: Config) {
+    this.docHelpers = doc(config)
   }
 
   /**
@@ -111,7 +114,7 @@ class Api {
    */
   protected docFullpathFor (docName: string): any {
     const docRoot = this.config.get('documentRoot') as any
-    return docFullpathFor(docRoot, docName)
+    return this.docHelpers.docFullpathFor(docRoot, docName)
   }
 
   /**
