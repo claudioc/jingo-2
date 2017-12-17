@@ -31,11 +31,8 @@ export default class WikiRoute extends BaseRoute {
       }
 
       req.params.path = path
-      if (path.endsWith('/')) {
-        new WikiRoute(config).list(req, res, next)
-      } else {
-        new WikiRoute(config).read(req, res, next)
-      }
+      const method = path.endsWith('/') ? 'list' : 'read';
+      (new WikiRoute(config))[method](req, res, next)
     })
   }
 
@@ -60,8 +57,10 @@ export default class WikiRoute extends BaseRoute {
   }
 
   public async list (req: Request, res: Response, next: NextFunction) {
+    const { dirName } = this.docHelpers.parsePath(req.params.path)
+
     this.title = `Jingo – List of documents`
-    const list = await api(this.config).listDocs()
+    const list = await api(this.config).listDocs(dirName)
 
     const scope = {
       list

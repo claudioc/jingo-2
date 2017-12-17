@@ -51,10 +51,27 @@ export class Doc {
     return path.resolve(documentRoot, this.docFilenameFor(docName))
   }
 
+  /**
+   * Parses a path and split it into a `dirName` and a `docName`
+   * For consistency we always returns the dirname as a relative
+   * path, which means that `` represents the `documentRoot`
+   * @param unparsed The full path to parse
+   * @returns PathParts
+   */
   public parsePath (unparsed: string): PathParts {
-    const { dir, name } = path.parse(unparsed)
+    const normalizedPath = (unparsed || '').trim()
+
+    // The `path.parse` method ignores leading slashes and
+    // uses the last part of the path as the `name` so we need
+    // to put that piece back in place
+    let { dir, name } = path.parse(normalizedPath)
+    if (normalizedPath.endsWith('/')) {
+      dir = path.join(dir, name)
+      name = ''
+    }
+
     return {
-      dirName: dir || '/',
+      dirName: dir.replace(/^\/+/g, ''),
       docName: name
     }
   }

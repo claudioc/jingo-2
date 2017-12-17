@@ -51,3 +51,5 @@
 - Added the basePath configuration
 - Move the doc and wiki helpers to use dependency injection
 - 3812 sloc
+16/12/17
+- use promisify from Node 8+ for the fs wrappers

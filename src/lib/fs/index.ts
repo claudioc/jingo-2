@@ -1,87 +1,48 @@
 import * as fs_ from 'fs'
+import { promisify } from 'util'
 
 // About returning promises inside an async ts method
 // https://github.com/Microsoft/TypeScript/issues/5254
 
-const unlink = (useFs, path: fs_.PathLike): Promise<void> => {
-  const fs = useFs || fs_
-  return new Promise<void>((resolve, reject) => {
-    fs.unlink(path, err => {
-      if (err) {
-        return reject(err)
-      }
-      resolve()
-    })
-  })
+const unlink = async  (useFs, path: fs_.PathLike): Promise<void> => {
+  const fn = promisify((useFs || fs_).unlink)
+  await fn(path)
 }
 
-const rename = (useFs, oldPath: fs_.PathLike, newPath: fs_.PathLike): Promise<void> => {
-  const fs = useFs || fs_
-  return new Promise<void>((resolve, reject) => {
-    fs.rename(oldPath, newPath, err => {
-      if (err) {
-        return reject(err)
-      }
-      resolve()
-    })
-  })
+const rename = async (useFs, oldPath: fs_.PathLike, newPath: fs_.PathLike): Promise<void> => {
+  const fn = promisify((useFs || fs_).rename)
+  await fn(oldPath, newPath)
 }
 
 const stat = async (useFs, filename: fs_.PathLike): Promise<fs_.Stats> => {
-  const fs = useFs || fs_
-  return new Promise<fs_.Stats>((resolve, reject) => {
-    fs.stat(filename, (err, stats) => {
-      if (err) {
-        return reject(err)
-      }
-      resolve(stats)
-    })
-  })
+  const fn = promisify((useFs || fs_).stat)
+  return await fn(filename)
 }
 
 const writeFile = async (useFs, filename: fs_.PathLike, content: string): Promise<void> => {
-  const fs = useFs || fs_
-  return new Promise<void>((resolve, reject) => {
-    fs.writeFile(filename, content, 'utf8', (err) => {
-      if (err) {
-        return reject(err)
-      }
-      resolve()
-    })
-  })
+  const fn = promisify((useFs || fs_).writeFile)
+  await fn(filename, content, 'utf8')
 }
 
 const readFile = async (useFs, filename: fs_.PathLike): Promise<string> => {
-  const fs = useFs || fs_
-  return new Promise<string>((resolve, reject) => {
-    fs.readFile(filename, 'utf8', (err, data) => {
-      if (err) {
-        return reject(err)
-      }
-      resolve(data.toString())
-    })
-  })
+  const fn = promisify((useFs || fs_).readFile)
+  const content = await fn(filename, 'utf8')
+  return content.toString()
 }
 
 const readdir = async (useFs, root: fs_.PathLike): Promise<string[]> => {
-  const fs = useFs || fs_
-  return new Promise<string[]>((resolve, reject) => {
-    fs.readdir(root, (err, files) => {
-      if (err) {
-        return reject(err)
-      }
-      resolve(files)
-    })
-  })
+  const fn = promisify((useFs || fs_).readdir)
+  return await fn(root)
 }
 
 const access = async (useFs, filename: fs_.PathLike, mode: number): Promise<boolean> => {
-  const fs = useFs || fs_
-  return new Promise<boolean>((resolve, reject) => {
-    fs.access(filename, mode, err => {
-      resolve(err === null)
-    })
-  })
+  const fn = promisify((useFs || fs_).access)
+  try {
+    await fn(filename, mode)
+    return true
+  } catch (err) {
+    return false
+  }
 }
 
 export default {
