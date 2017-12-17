@@ -44,11 +44,11 @@ export class Doc {
 
   /**
    * Returns the full file system path of a document
-   * @param documentRoot The document root (usually defined in the config)
    * @param docName The id of the document
    */
-  public docFullpathFor (documentRoot: string, docName: string): fs_.PathLike {
-    return path.resolve(documentRoot, this.docFilenameFor(docName))
+  public docFullpathFor (docName: string): fs_.PathLike {
+    const docRoot = this.config.get('documentRoot')
+    return path.resolve(docRoot, this.docFilenameFor(docName))
   }
 
   /**

@@ -2,8 +2,8 @@ import api from '@api'
 import { Config } from '@lib/config'
 import BaseRoute from '@routes/route'
 import { NextFunction, Request, Response, Router } from 'express'
-import { check, validationResult } from 'express-validator/check'
-import { matchedData, sanitize } from 'express-validator/filter'
+import { check } from 'express-validator/check'
+import { sanitize } from 'express-validator/filter'
 import { assign as _assign } from 'lodash'
 
 // Returns a validator chains for the new document
@@ -183,19 +183,5 @@ export default class DocRoute extends BaseRoute {
     await api(this.config).deleteDoc(docName)
 
     res.redirect('/?e=0')
-  }
-
-  public inspectRequest (req: Request) {
-    const validationErrors = validationResult(req)
-
-    return {
-      data: matchedData(req),
-      errors: validationErrors.isEmpty() ? null : validationErrorsToArray()
-    }
-
-    function validationErrorsToArray () {
-      const map = validationErrors.mapped()
-      return Object.keys(map).map(key => map[key].msg)
-    }
   }
 }

@@ -1,8 +1,8 @@
 import { configWithDefaults } from '@lib/config'
 import test from 'ava'
-import wiki from '.'
+import wiki, { Wiki } from '.'
 
-let helpers
+let helpers: Wiki
 test.before(async () => {
   const config = await configWithDefaults()
   helpers = wiki(config)

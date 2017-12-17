@@ -60,7 +60,14 @@ export default class WikiRoute extends BaseRoute {
     const { dirName } = this.docHelpers.parsePath(req.params.path)
 
     this.title = `Jingo – List of documents`
-    const list = await api(this.config).listDocs(dirName)
+
+    let list
+    try {
+      list = await api(this.config).listDocs(dirName)
+    } catch (err) {
+      res.status(404).render('404')
+      return
+    }
 
     const scope = {
       list

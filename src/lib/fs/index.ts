@@ -19,6 +19,11 @@ const stat = async (useFs, filename: fs_.PathLike): Promise<fs_.Stats> => {
   return await fn(filename)
 }
 
+const mkdir = async (useFs, fullFolderName: fs_.PathLike): Promise<void> => {
+  const fn = promisify((useFs || fs_).mkdir)
+  return await fn(fullFolderName)
+}
+
 const writeFile = async (useFs, filename: fs_.PathLike, content: string): Promise<void> => {
   const fn = promisify((useFs || fs_).writeFile)
   await fn(filename, content, 'utf8')
@@ -48,6 +53,7 @@ const access = async (useFs, filename: fs_.PathLike, mode: number): Promise<bool
 export default {
   access,
   constants: fs_.constants,
+  mkdir,
   readFile,
   readdir,
   rename,

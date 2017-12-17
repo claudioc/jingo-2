@@ -1,7 +1,7 @@
 import { Config } from '@lib/config'
 import * as ipc_ from 'node-ipc'
 
-type IIpcOp = 'CREATE' | 'UPDATE' | 'DELETE'
+type IIpcOp = 'CREATE DOC' | 'CREATE FOLDER' | 'UPDATE' | 'DELETE'
 
 interface IIpc {
   connect (): void

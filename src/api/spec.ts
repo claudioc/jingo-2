@@ -131,7 +131,7 @@ test('renameDoc with a different name and new file already exists', async t => {
   t.is(actual, expected)
 })
 
-test('listDocs in a subdir', async t => {
+test('listDocs in an existing subdir', async t => {
   const config = await configWithDefaults()
   useFakeFs(config)
   const docName1 = fakeFs.rndName()
@@ -142,4 +142,11 @@ test('listDocs in a subdir', async t => {
   const actual: any = await api(config).listDocs('mmh')
   const expected: any = [docName2, docName1].sort()
   t.deepEqual(actual, expected)
+})
+
+test('listDocs in a non-existing subdir', async t => {
+  const config = await configWithDefaults()
+  useFakeFs(config)
+  const error = await t.throws(api(config).listDocs('not-exists'))
+  t.regex(error.message, /ENOENT: no such/)
 })

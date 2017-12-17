@@ -12,6 +12,7 @@ import * as path from 'path'
 import config from '@lib/config'
 import viewHelpers from '@lib/view-helpers'
 import DocRoute from '@routes/doc'
+import FolderRoute from '@routes/folder'
 import IndexRoute from '@routes/index'
 import WikiRoute from '@routes/wiki'
 
@@ -47,6 +48,7 @@ export default class Server {
     IndexRoute.create(router, config)
     WikiRoute.create(router, config)
     DocRoute.create(router, config)
+    FolderRoute.create(router, config)
 
     this.app.use(router)
   }

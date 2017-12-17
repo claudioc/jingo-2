@@ -1,10 +1,11 @@
 import { configWithDefaults } from '@lib/config'
 import test from 'ava'
-import doc from '.'
+import doc, { Doc } from '.'
 
-let helpers
+let helpers: Doc
 test.before(async () => {
   const config = await configWithDefaults()
+  config.set('documentRoot', '/home/jingo')
   helpers = doc(config)
 })
 
@@ -39,25 +40,18 @@ test('docFilenameFor with the extension already', t => {
 })
 
 test('docFullpathFor', t => {
-  const actual = helpers.docFullpathFor('/hello/world', 'My_Test')
-  const expected = '/hello/world/My_Test.md'
+  const actual = helpers.docFullpathFor('My_Test')
+  const expected = '/home/jingo/My_Test.md'
   t.is(actual, expected)
 })
 
 test('parsePath with empty string', t => {
-  const actual0 = helpers.parsePath()
+  const actual0 = helpers.parsePath('')
   const expected0 = {
     dirName: '',
     docName: ''
   }
   t.deepEqual(actual0, expected0)
-
-  const actual1 = helpers.parsePath('')
-  const expected1 = {
-    dirName: '',
-    docName: ''
-  }
-  t.deepEqual(actual1, expected1)
 })
 
 test('parsePath with only the docname', t => {

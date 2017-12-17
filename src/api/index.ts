@@ -1,5 +1,6 @@
 import { Config } from '@lib/config'
 import doc, { Doc } from '@lib/doc'
+import folder, { Folder } from '@lib/folder'
 import fs from '@lib/fs'
 import ipc from '@lib/ipc'
 import * as path from 'path'
@@ -20,9 +21,11 @@ function api (config: Config): Api {
 
 class Api {
   public docHelpers: Doc
+  public folderHelpers: Folder
 
   constructor (public config: Config) {
     this.docHelpers = doc(config)
+    this.folderHelpers = folder(config)
   }
 
   /**
@@ -42,7 +45,7 @@ class Api {
    * @param docContent
    */
   public async createDoc (docName: string, docContent: string): Promise<void> {
-    ipc(this.config).send('CREATE', docName)
+    ipc(this.config).send('CREATE DOC', docName)
     return this.saveDoc(docName, docContent)
   }
 
@@ -67,7 +70,7 @@ class Api {
    */
   public async deleteDoc (docName: string): Promise<void> {
     ipc(this.config).send('DELETE', docName)
-    return fs.unlink(this.config.fs, this.docFullpathFor(docName))
+    return fs.unlink(this.config.fs, this.docHelpers.docFullpathFor(docName))
   }
 
   /**
@@ -75,7 +78,7 @@ class Api {
    * @param docName Id of the document to check
    */
   public async docExists (docName: string): Promise<boolean> {
-    return await fs.access(this.config.fs, this.docFullpathFor(docName), fs.constants.F_OK)
+    return await fs.access(this.config.fs, this.docHelpers.docFullpathFor(docName), fs.constants.F_OK)
   }
 
   /**
@@ -93,7 +96,7 @@ class Api {
       return false
     }
 
-    await fs.rename(this.config.fs, this.docFullpathFor(oldDocName), this.docFullpathFor(newDocName))
+    await fs.rename(this.config.fs, this.docHelpers.docFullpathFor(oldDocName), this.docHelpers.docFullpathFor(newDocName))
     return true
   }
 
@@ -102,19 +105,29 @@ class Api {
    * @param docName Id of the document to load
    */
   public async loadDoc (docName: string): Promise<IDoc> {
-    const content = await fs.readFile(this.config.fs, this.docFullpathFor(docName))
+    const content = await fs.readFile(this.config.fs, this.docHelpers.docFullpathFor(docName))
     return {
       content
     } as IDoc
   }
 
   /**
-   * Returns the absolute file system path of the document
-   * @param docName Id of the document
+   * Returns whether a folder exists or not
+   * @param docName Id of the document to check
    */
-  protected docFullpathFor (docName: string): any {
-    const docRoot = this.config.get('documentRoot') as any
-    return this.docHelpers.docFullpathFor(docRoot, docName)
+  public async folderExists (folderName: string): Promise<boolean> {
+    const fullFolderName = this.folderHelpers.fullpathFor(folderName)
+    return await fs.access(this.config.fs, fullFolderName, fs.constants.F_OK)
+  }
+
+  /**
+   * Create a folder
+   * @param folderName
+   */
+  public async createFolder (folderName: string): Promise<void> {
+    const fullFolderName = this.folderHelpers.fullpathFor(folderName)
+    ipc(this.config).send('CREATE FOLDER', folderName)
+    await fs.mkdir(this.config.fs, fullFolderName)
   }
 
   /**
@@ -123,7 +136,7 @@ class Api {
    * @param docContent Content of the document
    */
   protected async saveDoc (docName: string, docContent: string): Promise<void> {
-    await fs.writeFile(this.config.fs, this.docFullpathFor(docName), docContent)
+    await fs.writeFile(this.config.fs, this.docHelpers.docFullpathFor(docName), docContent)
   }
 }
 
