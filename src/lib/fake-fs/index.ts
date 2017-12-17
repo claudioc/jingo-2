@@ -17,7 +17,7 @@ export default class FakeFs {
     return this
   }
 
-  writeFile (pathName, content) {
+  writeFile (pathName, content = '') {
     this.theFs.writeFileSync(path.join(this.mountPoint, pathName), content)
     return this
   }

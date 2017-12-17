@@ -1,8 +1,17 @@
 <h1>List of documents</h1>
+
 <ul>
-{{#each list}}
+{{#each folderList}}
+  <li><a href="{{urlFor resource="folder" action="list" id=this}}">{{this}}</a></li>
+{{/each}}
+</ul>
+
+<hr>
+
+<ul>
+{{#each docList}}
   <li><a href="{{urlFor resource="wiki" id=this}}">{{this}}</a></li>
 {{else}}
-This folder is empty
+No documents in this folder
 {{/each}}
 </ul>

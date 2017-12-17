@@ -53,3 +53,6 @@
 - 3812 sloc
 16/12/17
 - use promisify from Node 8+ for the fs wrappers
+- We can create folders now
+- We show documents together with folders in list
+- sloc 4272

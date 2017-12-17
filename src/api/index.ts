@@ -34,9 +34,32 @@ class Api {
    */
   public async listDocs (subdir: string = ''): Promise<IDocItem[] | any> {
     const docRoot = this.config.get('documentRoot')
-    let files = await fs.readdir(this.config.fs, path.join(docRoot, subdir))
-    files = files.filter(file => /\.md$/.test(file.toLowerCase())).map(file => file.slice(0, -3))
-    return files.sort()
+
+    let files = await fs.readFolder(this.config.fs, path.join(docRoot, subdir), {
+      exclude: /^\./,
+      includeDirs: false,
+      includeFiles: true,
+      match: /\.md$/
+    })
+
+    files = files.map(file => file.slice(0, -3))
+    return files
+  }
+
+  /**
+   * Returns the list of folders in the path
+   * @param subdir A sub directory below the root
+   */
+  public async listFolders (subdir: string = ''): Promise<IDocItem[] | any> {
+    const docRoot = this.config.get('documentRoot')
+
+    const folders = await fs.readFolder(this.config.fs, path.join(docRoot, subdir), {
+      exclude: /^\./,
+      includeDirs: true,
+      includeFiles: false
+    })
+
+    return folders
   }
 
   /**
