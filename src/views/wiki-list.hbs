@@ -1,17 +1,25 @@
-<h1>List of documents</h1>
+<div>{{{breadcrumb dirName=dirName}}}</div>
 
+<h3>Folders</h3>
+
+{{#if folderList.length}}
 <ul>
-{{#each folderList}}
-  <li><a href="{{urlFor resource="folder" action="list" id=this}}">{{this}}</a></li>
-{{/each}}
+  {{#each folderList as |folder|}}
+  <li><a href="{{urlFor resource="folder" action="list" id=(concat ../dirName "/" folder)}}">{{this}}</a></li>
+  {{/each}}
 </ul>
-
-<hr>
-
-<ul>
-{{#each docList}}
-  <li><a href="{{urlFor resource="wiki" id=this}}">{{this}}</a></li>
 {{else}}
-No documents in this folder
-{{/each}}
+  <p>No folders in this folder.</p>
+{{/if}}
+
+<h3>Documents</h3>
+
+{{#if docList.length}}
+<ul>
+  {{#each docList}}
+  <li><a href="{{urlFor resource="wiki" id=this}}">{{this}}</a></li>
+  {{/each}}
 </ul>
+{{else}}
+  <p>No documents in this folder.</p>
+{{/if}}

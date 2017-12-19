@@ -6,9 +6,16 @@ import * as MarkdownIt from 'markdown-it'
 
 export default class WikiRoute extends BaseRoute {
   parser: MarkdownIt.MarkdownIt
+  dirName: string
+  docName: string
 
-  constructor (config) {
+  constructor (config, reqPath) {
     super(config)
+
+    const { dirName, docName } = this.docHelpers.parsePath(reqPath)
+    this.dirName = dirName
+    this.docName = docName
+
     this.parser = new MarkdownIt()
   }
 
@@ -22,31 +29,29 @@ export default class WikiRoute extends BaseRoute {
      * - /wiki/dir/docname: will render docname in `dir`
      */
     router.get(`/${basePath}*`, (req: Request, res: Response, next: NextFunction) => {
-      const path = req.params[0]
+      const reqPath = req.params[0]
       delete req.params[0]
 
-      if (path.length === 0) {
+      if (reqPath.length === 0) {
         res.redirect(`/${basePath}/`)
         return
       }
 
-      req.params.path = path
-      const method = path.endsWith('/') ? 'list' : 'read';
-      (new WikiRoute(config))[method](req, res, next)
+      const method = reqPath.endsWith('/') ? 'list' : 'read';
+      (new WikiRoute(config, reqPath))[method](req, res, next)
     })
   }
 
   public async read (req: Request, res: Response, next: NextFunction) {
-    const { docName } = this.docHelpers.parsePath(req.params.path)
-    const docTitle = this.wikiHelpers.unwikify(docName)
+    const docTitle = this.wikiHelpers.unwikify(this.docName)
 
     this.title = `Jingo – ${docTitle}`
 
     try {
-      const doc = await api(this.config).loadDoc(docName)
+      const doc = await api(this.config).loadDoc(this.docName)
       const scope: object = {
         content: this.parser.render(doc.content),
-        docName,
+        docName: this.docName,
         docTitle
       }
       this.render(req, res, 'wiki-read', scope)
@@ -57,7 +62,6 @@ export default class WikiRoute extends BaseRoute {
   }
 
   public async list (req: Request, res: Response, next: NextFunction) {
-    const { dirName } = this.docHelpers.parsePath(req.params.path)
     const apiMethods = api(this.config)
 
     this.title = `Jingo – List of documents`
@@ -65,14 +69,15 @@ export default class WikiRoute extends BaseRoute {
     let docList
     let folderList
     try {
-      docList = await apiMethods.listDocs(dirName)
-      folderList = await apiMethods.listFolders(dirName)
+      docList = await apiMethods.listDocs(this.dirName)
+      folderList = await apiMethods.listFolders(this.dirName)
     } catch (err) {
       res.status(404).render('404')
       return
     }
 
     const scope = {
+      dirName: this.dirName,
       docList,
       folderList
     }

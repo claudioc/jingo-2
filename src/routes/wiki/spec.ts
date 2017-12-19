@@ -5,7 +5,7 @@ import * as sinon from 'sinon'
 import Route from '.'
 
 test('Send a 404 if folder doesn\'t exist', async t => {
-  const route = new Route(await configWithDefaults())
+  const route = new Route(await configWithDefaults(), 'x/y')
   sinon.stub(route, 'render')
 
   const request = {
@@ -17,7 +17,9 @@ test('Send a 404 if folder doesn\'t exist', async t => {
   const response = {
     status: sinon.stub().callsFake(() => {
       return {
-        render: () => {}
+        render: () => {
+          //
+        }
       }
     })
   }

@@ -17,3 +17,18 @@ form > div {
 form input[type=text] {
   width: 100%;
 }
+
+.breadcrumb {
+  display: inline-block;
+  list-style-type: none;
+  padding: 0;
+}
+
+.breadcrumb li {
+  display: inline
+}
+
+.breadcrumb li:not(:last-child):after {
+  content: '/';
+  padding: 0 1rem;
+}

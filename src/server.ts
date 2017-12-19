@@ -16,6 +16,8 @@ import FolderRoute from '@routes/folder'
 import IndexRoute from '@routes/index'
 import WikiRoute from '@routes/wiki'
 
+import * as moreHelpers from 'just-handlebars-helpers'
+
 import ipc from '@lib/ipc'
 
 const cookieSession = require('cookie-session')
@@ -75,7 +77,7 @@ export default class Server {
     // whitelist (not a blacklist)
     this.app.use([/(.*)\.md/, '/public'], express.static(path.join(__dirname, 'public'), staticOptions))
 
-    this.app.engine('.hbs', expressHandlebars({
+    const expressHbs = expressHandlebars.create({
       defaultLayout: 'main',
       extname: '.hbs',
       helpers: viewHelpers(config),
@@ -83,7 +85,11 @@ export default class Server {
       partialsDir: [
         path.join(__dirname, '../src/views/partials')
       ]
-    }))
+    })
+
+    moreHelpers.registerHelpers(expressHbs.handlebars)
+
+    this.app.engine('.hbs', expressHbs.engine)
 
     this.app.set('views', path.join(__dirname, '../src/views'))
     this.app.set('view engine', '.hbs')

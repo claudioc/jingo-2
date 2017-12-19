@@ -33,6 +33,12 @@ test('pathFor list with full path - 2', t => {
   t.is(actual, expected)
 })
 
+test('pathFor list with slashes', t => {
+  const actual = helpers.pathFor('list', 'one/or two/levels/')
+  const expected = '/wiki/one/or%20two/levels/'
+  t.is(actual, expected)
+})
+
 test('fullpathFor', t => {
   const actual = helpers.fullpathFor('My Test')
   const expected = '/home/jingo/My Test'

@@ -13,14 +13,15 @@ export class Folder {
   }
 
   /**
-   * Returns the URL path for a document action
+   * Returns the URL path for a folder action
    * @param action FolderAction
    * @param folderName the name of the folder
    */
   public pathFor (action: FolderAction, folderName: string = ''): string {
     let actionPath = `/folder/${action}`
     if (action === 'list') {
-      folderName = encodeURIComponent(folderName.replace(/^\/+|\/+$/g, '').trim())
+      // Encode the name, but do not encode slashes
+      folderName = encodeURIComponent(folderName.replace(/^\/+|\/+$/g, '').trim()).replace(/%2F/g, '/')
       folderName += folderName.length > 0 ? '/' : ''
       actionPath = `/${this.config.get('wiki.basePath')}/${folderName}`
     }

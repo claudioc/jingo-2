@@ -2,12 +2,30 @@ import { Config } from '@lib/config'
 import doc from '@lib/doc'
 import folder from '@lib/folder'
 import wiki from '@lib/wiki'
+import {
+  take as _take
+} from 'lodash'
 
 export default function viewHelpers (config: Config) {
   const wikiHelpers = wiki(config)
   const docHelpers = doc(config)
   const folderHelpers = folder(config)
   return {
+    breadcrumb (params) {
+      const { dirName } = params.hash
+      const parts = dirName.split('/')
+      const breadcrumb = ['<ul class="breadcrumb">']
+      breadcrumb.push(`<li><a href="/wiki/">..</a></li>`)
+      for (let i = 0; i < parts.length - 1; i++) {
+        const bite = _take(parts, i + 1)
+        const path = bite.join('/')
+        const text = bite[bite.length - 1]
+        breadcrumb.push(`<li><a href="/wiki/${path}/">${text}</a></li>`)
+      }
+      breadcrumb.push(`<li>${parts[parts.length - 1]}</li></ul>`)
+      return breadcrumb.join('')
+    },
+
     urlFor (params) {
       const { resource, id, action } = params.hash
       let path

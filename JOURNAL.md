@@ -56,3 +56,7 @@
 - We can create folders now
 - We show documents together with folders in list
 - sloc 4272
+19/12/17
+- Added more Handlebars helpers with just-handlebar-helper
+- Added the breadcrumb
+- sloc 4320
