@@ -3,8 +3,13 @@ import doc from '@lib/doc'
 import folder from '@lib/folder'
 import wiki from '@lib/wiki'
 import {
+  isEmpty as _isEmpty,
+  omit as _omit,
+  omitBy as _omitBy,
   take as _take
 } from 'lodash'
+
+import * as qs from 'querystring'
 
 export default function viewHelpers (config: Config) {
   const wikiHelpers = wiki(config)
@@ -27,6 +32,7 @@ export default function viewHelpers (config: Config) {
     },
 
     urlFor (params) {
+      const KNOWN_PARAMS = ['resource', 'id', 'action']
       const { resource, id, action } = params.hash
       let path
       switch (resource) {
@@ -51,7 +57,10 @@ export default function viewHelpers (config: Config) {
           break
       }
 
-      return path
+      // Gather all the unknown params, and mutate them in a query string
+      const aliens = _omitBy(_omit(params.hash, KNOWN_PARAMS), _isEmpty)
+      const queryString = (Object.keys(aliens).length > 0 ? `?${qs.stringify(aliens)}` : '')
+      return `${path}${queryString}`
     }
   }
 }

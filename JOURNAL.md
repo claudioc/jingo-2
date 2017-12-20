@@ -60,3 +60,6 @@
 - Added more Handlebars helpers with just-handlebar-helper
 - Added the breadcrumb
 - sloc 4320
+20/12/17
+- Create subfolders
+- sloc 4391

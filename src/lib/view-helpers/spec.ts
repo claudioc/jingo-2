@@ -68,3 +68,32 @@ test('urlFor home (custom page)', async t => {
   }
   t.is(helpers.urlFor(params), '/wiki/Super')
 })
+
+test('urlFor with extra params', async t => {
+  const config = await configWithDefaults()
+  config.set('wiki.index', 'Super')
+  helpers = viewHelpers(config)
+  const params = {
+    hash: {
+      antani: 'monic elli',
+      baluba: 'Milano',
+      resource: 'home'
+    }
+  }
+  t.is(helpers.urlFor(params), '/wiki/Super?antani=monic%20elli&baluba=Milano')
+})
+
+test('urlFor with extra params and an empty one', async t => {
+  const config = await configWithDefaults()
+  config.set('wiki.index', 'Super')
+  helpers = viewHelpers(config)
+  const params = {
+    hash: {
+      antani: 'monic elli',
+      baluba: 'Milano',
+      coriolis: '',
+      resource: 'home'
+    }
+  }
+  t.is(helpers.urlFor(params), '/wiki/Super?antani=monic%20elli&baluba=Milano')
+})

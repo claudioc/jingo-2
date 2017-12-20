@@ -2,6 +2,7 @@
 <h1>Creating a new folder</h1>
 <form id="editor-form" method="post" action="{{urlFor resource="folder" action="create"}}">
   <div>
+    <input type="hidden" name="into" value="{{into}}">
     <input autofocus type="text" name="folderName" required>
   </div>
   <div>

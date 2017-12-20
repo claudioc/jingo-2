@@ -137,18 +137,20 @@ class Api {
   /**
    * Returns whether a folder exists or not
    * @param docName Id of the document to check
+   * @param into The directory where the folder should be
    */
-  public async folderExists (folderName: string): Promise<boolean> {
-    const fullFolderName = this.folderHelpers.fullpathFor(folderName)
+  public async folderExists (folderName: string, into: string = ''): Promise<boolean> {
+    const fullFolderName = path.join(this.folderHelpers.fullpathFor(into) as any, folderName)
     return await fs.access(this.config.fs, fullFolderName, fs.constants.F_OK)
   }
 
   /**
    * Create a folder
    * @param folderName
+   * @param into The directory where to create the folder
    */
-  public async createFolder (folderName: string): Promise<void> {
-    const fullFolderName = this.folderHelpers.fullpathFor(folderName)
+  public async createFolder (folderName: string, into: string = ''): Promise<void> {
+    const fullFolderName = path.join(this.folderHelpers.fullpathFor(into) as any, folderName)
     ipc(this.config).send('CREATE FOLDER', folderName)
     await fs.mkdir(this.config.fs, fullFolderName)
   }

@@ -12,8 +12,8 @@
   <nav class="sans">
     <a href="{{urlFor resource="home"}}">Home</a>
     <a href="{{urlFor resource="wiki"}}">Documents list</a>
-    <a href="{{urlFor resource="doc"}}">New doc here</a>
-    <a href="{{urlFor resource="folder"}}">New folder here in {{dirName}}</a>
+    <a href="{{urlFor resource="doc" into=dirName}}">New doc here</a>
+    <a href="{{urlFor resource="folder" into=dirName}}">New folder here</a>
   </nav>
 {{{body}}}
 </body>
