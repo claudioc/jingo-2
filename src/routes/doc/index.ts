@@ -65,10 +65,11 @@ export default class DocRoute extends BaseRoute {
       }
     }
 
+    const wikiIndex = this.config.get('wiki.index')
     const docTitle = this.wikiHelpers.unwikify(docName) || 'Unnamed document'
-
     const scope: object = {
-      docTitle
+      docTitle,
+      wikiIndex
     }
 
     this.render(req, res, 'doc-create', scope)
@@ -88,6 +89,7 @@ export default class DocRoute extends BaseRoute {
     }
 
     const docName = this.wikiHelpers.wikify(data.docTitle)
+
     const itExists = await api(this.config).docExists(docName)
     if (itExists) {
       this.render(req, res, 'doc-create', _assign(scope, { errors: ['A document with this title already exists'] }))
@@ -111,13 +113,15 @@ export default class DocRoute extends BaseRoute {
     }
 
     const doc = await api(this.config).loadDoc(docName)
+    const wikiIndex = this.config.get('wiki.index')
 
     const docTitle = this.wikiHelpers.unwikify(docName)
 
     const scope: object = {
       content: doc.content,
       docName,
-      docTitle
+      docTitle,
+      wikiIndex
     }
 
     this.render(req, res, 'doc-update', scope)

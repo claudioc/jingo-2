@@ -44,6 +44,7 @@ export default class WikiRoute extends BaseRoute {
 
   public async read (req: Request, res: Response, next: NextFunction) {
     const docTitle = this.wikiHelpers.unwikify(this.docName)
+    const isIndex = this.config.get('wiki.index') === this.docName
 
     this.title = `Jingo – ${docTitle}`
 
@@ -52,12 +53,16 @@ export default class WikiRoute extends BaseRoute {
       const scope: object = {
         content: this.parser.render(doc.content),
         docName: this.docName,
-        docTitle
+        docTitle: isIndex ? '' : docTitle
       }
       this.render(req, res, 'wiki-read', scope)
     } catch (e) {
-      const createPageUrl = this.docHelpers.docPathFor(docTitle, 'create')
-      res.redirect(createPageUrl)
+      if (isIndex) {
+        res.redirect('/?welcome')
+      } else {
+        const createPageUrl = this.docHelpers.docPathFor(docTitle, 'create')
+        res.redirect(createPageUrl)
+      }
     }
   }
 

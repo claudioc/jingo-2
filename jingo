@@ -107,7 +107,7 @@ async function parseCommandLine () {
   }
 
   if (!fs.existsSync(program.config)) {
-    console.error('The specified config file doesn\'t exists')
+    console.error('The specified config file doesn\'t exist')
     process.exit(-1)
   }
 

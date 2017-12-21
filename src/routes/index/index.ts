@@ -1,6 +1,7 @@
 import { Config } from '@lib/config'
 import BaseRoute from '@routes/route'
 import { NextFunction, Request, Response, Router } from 'express'
+import { isUndefined as _isUndefined } from 'lodash'
 
 export default class IndexRoute extends BaseRoute {
   public static create (router: Router, config: Config) {
@@ -10,7 +11,15 @@ export default class IndexRoute extends BaseRoute {
   }
 
   public index (req: Request, res: Response, next: NextFunction) {
-    const indexPageUrl = this.wikiHelpers.wikiPathFor('Home')
-    res.redirect(indexPageUrl)
+    if (!_isUndefined(req.query.welcome)) {
+      this.render(req, res, 'welcome', {
+        documentRoot: this.config.get('documentRoot'),
+        wikiIndex: this.config.get('wiki.index')
+      })
+    } else {
+      const index = this.config.get('wiki.index')
+      const indexPageUrl = this.wikiHelpers.wikiPathFor(index)
+      res.redirect(indexPageUrl)
+    }
   }
 }

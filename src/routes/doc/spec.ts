@@ -30,7 +30,8 @@ test('get create route receiving a name in the url', async t => {
   t.is(route.title, 'Jingo – Creating a document')
 
   const expectedScope = {
-    docTitle: 'hello world'
+    docTitle: 'hello world',
+    wikiIndex: 'Home'
   }
 
   t.is(render.calledWith(request, null, 'doc-create', expectedScope), true)
@@ -49,7 +50,8 @@ test('get create route not receiving a name in the url', async t => {
   t.is(route.title, 'Jingo – Creating a document')
 
   const expectedScope = {
-    docTitle: 'Unnamed document'
+    docTitle: 'Unnamed document',
+    wikiIndex: 'Home'
   }
 
   t.is(render.calledWith(request, null, 'doc-create', expectedScope), true)
@@ -186,7 +188,8 @@ test('get update route with an existing file', async t => {
   const expectedScope = {
     content: 'Hello 41!',
     docName,
-    docTitle: route.wikiHelpers.unwikify(docName)
+    docTitle: route.wikiHelpers.unwikify(docName),
+    wikiIndex: 'Home'
   }
   t.is(render.calledWith(request, null, 'doc-update', expectedScope), true)
 })

@@ -7,7 +7,7 @@ import fs from '@lib/fs'
 
 const checkDocumentRoot = async (config: Config, documentRoot: string): Promise<void> => {
   if (!documentRoot) {
-    throw new Error('The document root is empty')
+    throw new Error('The document root is not defined')
   }
 
   if (!await fs.access(config.fs, documentRoot, fs.constants.R_OK | fs.constants.W_OK)) {

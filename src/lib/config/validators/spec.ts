@@ -5,7 +5,7 @@ import validators from '.'
 test('checkDocumentRoot fails when document root is empty', async t => {
   const config = await configWithDefaults()
   const error = await t.throws(validators.checkDocumentRoot(config, undefined))
-  t.regex(error.message, /The document root is empty/)
+  t.regex(error.message, /The document root is not defined/)
 })
 
 test('checkDocumentRoot fails if the document root is not writable', async t => {
