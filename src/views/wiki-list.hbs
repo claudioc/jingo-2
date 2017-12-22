@@ -9,7 +9,7 @@
   {{/each}}
 </ul>
 {{else}}
-  <p>No folders in this folder.</p>
+  <p>No other folders in this folder.</p>
 {{/if}}
 
 <h3>Documents</h3>
@@ -17,7 +17,7 @@
 {{#if docList.length}}
 <ul>
   {{#each docList}}
-  <li><a href="{{urlFor resource="wiki" id=this}}">{{this}}</a></li>
+  <li><a href="{{urlFor resource="wiki" id=this into=../dirName}}">{{this}}</a></li>
   {{/each}}
 </ul>
 {{else}}

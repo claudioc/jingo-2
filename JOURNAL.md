@@ -63,3 +63,8 @@
 20/12/17
 - Create subfolders
 - sloc 4391
+21/12/17
+- Added the welcome page
+22/12/17
+- I finished managing the directory part in all the the routes
+- 4588 sloc

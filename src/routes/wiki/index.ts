@@ -49,9 +49,10 @@ export default class WikiRoute extends BaseRoute {
     this.title = `Jingo – ${docTitle}`
 
     try {
-      const doc = await api(this.config).loadDoc(this.docName)
+      const doc = await api(this.config).loadDoc(this.docName, this.dirName)
       const scope: object = {
         content: this.parser.render(doc.content),
+        dirName: this.dirName,
         docName: this.docName,
         docTitle: isIndex ? '' : docTitle
       }
@@ -60,7 +61,7 @@ export default class WikiRoute extends BaseRoute {
       if (isIndex) {
         res.redirect('/?welcome')
       } else {
-        const createPageUrl = this.docHelpers.docPathFor(docTitle, 'create')
+        const createPageUrl = this.docHelpers.pathFor('create', docTitle)
         res.redirect(createPageUrl)
       }
     }

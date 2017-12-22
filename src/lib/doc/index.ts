@@ -1,6 +1,5 @@
 import { Config } from '@lib/config'
 import wiki, { Wiki } from '@lib/wiki'
-import * as fs_ from 'fs'
 import * as path from 'path'
 
 type DocAction = 'delete' | 'update' | 'create'
@@ -23,12 +22,17 @@ export class Doc {
   /**
    * Returns the URL path for a document action
    * @param docName Id of the document
+   * @param into The folder the document is in
    * @param action DocAction
    */
-  public docPathFor (docName: string, action: DocAction): string {
+  public pathFor (action: DocAction, docName: string, into: string = ''): string {
     let docPath = `/doc/${action}`
     if (docName) {
       docPath += `/${this.wikiHelpers.wikify(docName)}`
+    }
+
+    if (into && into.length > 0) {
+      docPath += `?into=${encodeURIComponent(into)}`
     }
 
     return docPath
@@ -38,17 +42,8 @@ export class Doc {
    * Returns the formatted Md filename of a document
    * @param docName Id of the document
    */
-  public docFilenameFor (docName: string): string {
+  public filenameFor (docName: string): string {
     return docName.endsWith('.md') ? docName : `${docName}.md`
-  }
-
-  /**
-   * Returns the full file system path of a document
-   * @param docName The id of the document
-   */
-  public docFullpathFor (docName: string): fs_.PathLike {
-    const docRoot = this.config.get('documentRoot')
-    return path.resolve(docRoot, this.docFilenameFor(docName))
   }
 
   /**

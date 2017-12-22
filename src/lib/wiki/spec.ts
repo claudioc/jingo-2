@@ -33,7 +33,8 @@ test('unwikify', t => {
 
 test('wikiPathFor', t => {
   t.is(helpers.wikiPathFor(undefined), '/wiki')
-  t.is(helpers.wikiPathFor(undefined, 'show'), '/wiki')
-  t.is(helpers.wikiPathFor('petto', 'show'), '/wiki/petto')
+  t.is(helpers.wikiPathFor(undefined, '', 'show'), '/wiki')
+  t.is(helpers.wikiPathFor('petto', '', 'show'), '/wiki/petto')
   t.is(helpers.wikiPathFor('Petto'), '/wiki/Petto')
+  t.is(helpers.wikiPathFor('Petto', 'folder'), '/wiki/folder/Petto')
 })

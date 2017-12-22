@@ -14,12 +14,15 @@ const validatesCreate = () => {
       .withMessage('The document title cannot be empty')
       .trim(),
 
+    check('into')
+      .trim(),
+
     check('content')
       .isLength({ min: 1 })
       .withMessage('The document content cannot be empty')
       .trim(),
 
-    sanitize(['docTitle', 'content'])
+    sanitize(['docTitle', 'content', 'into'])
   ]
 }
 
@@ -55,10 +58,11 @@ export default class DocRoute extends BaseRoute {
 
     // The document name can be part of the URL or not
     const docName = req.params.docName || ''
+    const into = req.query.into || ''
 
     // If a document with this name already exists, bring the user there
     if (docName) {
-      const itExists = await api(this.config).docExists(docName)
+      const itExists = await api(this.config).docExists(docName, into)
       if (itExists) {
         res.redirect(this.wikiHelpers.wikiPathFor(docName))
         return
@@ -69,6 +73,7 @@ export default class DocRoute extends BaseRoute {
     const docTitle = this.wikiHelpers.unwikify(docName) || 'Unnamed document'
     const scope: object = {
       docTitle,
+      into,
       wikiIndex
     }
 
@@ -77,10 +82,12 @@ export default class DocRoute extends BaseRoute {
 
   public async didCreate (req: Request, res: Response, next: NextFunction): Promise<void> {
     const { errors, data } = this.inspectRequest(req)
+    const into = data.into
 
     const scope: object = {
       content: data.content,
-      docTitle: data.docTitle
+      docTitle: data.docTitle,
+      into
     }
 
     if (errors) {
@@ -90,29 +97,30 @@ export default class DocRoute extends BaseRoute {
 
     const docName = this.wikiHelpers.wikify(data.docTitle)
 
-    const itExists = await api(this.config).docExists(docName)
+    const itExists = await api(this.config).docExists(docName, into)
     if (itExists) {
       this.render(req, res, 'doc-create', _assign(scope, { errors: ['A document with this title already exists'] }))
       return
     }
 
-    await api(this.config).createDoc(docName, data.content)
+    await api(this.config).createDoc(docName, data.content, into)
 
     // All done, go to the just saved page
-    res.redirect(this.wikiHelpers.wikiPathFor(data.docTitle))
+    res.redirect(this.wikiHelpers.wikiPathFor(data.docTitle, into))
   }
 
   public async update (req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Editing a document'
     const docName = req.params.docName
+    const into = req.query.into || ''
 
-    const itExists = await api(this.config).docExists(docName)
+    const itExists = await api(this.config).docExists(docName, into)
     if (!itExists) {
-      res.redirect(this.docHelpers.docPathFor(docName, 'create'))
+      res.redirect(this.docHelpers.pathFor('create', docName, into))
       return
     }
 
-    const doc = await api(this.config).loadDoc(docName)
+    const doc = await api(this.config).loadDoc(docName, into)
     const wikiIndex = this.config.get('wiki.index')
 
     const docTitle = this.wikiHelpers.unwikify(docName)
@@ -121,6 +129,7 @@ export default class DocRoute extends BaseRoute {
       content: doc.content,
       docName,
       docTitle,
+      into,
       wikiIndex
     }
 
@@ -130,11 +139,13 @@ export default class DocRoute extends BaseRoute {
   public async didUpdate (req: Request, res: Response, next: NextFunction): Promise<void> {
     const { errors, data } = this.inspectRequest(req)
     const oldDocName = req.body.docName
+    const into = data.into
 
     const scope: object = {
       content: data.content,
       docName: oldDocName,
-      docTitle: data.docTitle
+      docTitle: data.docTitle,
+      into
     }
 
     if (errors) {
@@ -145,21 +156,22 @@ export default class DocRoute extends BaseRoute {
     const newDocName = this.wikiHelpers.wikify(data.docTitle)
 
     try {
-      await api(this.config).updateDoc(newDocName, oldDocName, data.content)
+      await api(this.config).updateDoc(newDocName, oldDocName, data.content, into)
     } catch (err) {
       this.render(req, res, 'doc-update', _assign(scope, { errors: [err.message] }))
       return
     }
 
     // All done, go to the just saved page
-    res.redirect(this.wikiHelpers.wikiPathFor(data.docTitle))
+    res.redirect(this.wikiHelpers.wikiPathFor(data.docTitle, into))
   }
 
   public async delete (req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Deleting a document'
     const docName = req.params.docName
+    const into = req.query.into || ''
 
-    const itExists = await api(this.config).docExists(docName)
+    const itExists = await api(this.config).docExists(docName, into)
     if (!itExists) {
       res.redirect('/?e=1')
       return
@@ -169,7 +181,8 @@ export default class DocRoute extends BaseRoute {
 
     const scope: object = {
       docName,
-      docTitle
+      docTitle,
+      into
     }
 
     this.render(req, res, 'doc-delete', scope)
@@ -177,15 +190,16 @@ export default class DocRoute extends BaseRoute {
 
   public async didDelete (req: Request, res: Response, next: NextFunction): Promise<void> {
     const docName = req.body.docName
+    const into = req.body.into
 
-    const itExists = await api(this.config).docExists(docName)
+    const itExists = await api(this.config).docExists(docName, into)
     if (!itExists) {
       res.redirect('/?e=1')
       return
     }
 
-    await api(this.config).deleteDoc(docName)
+    await api(this.config).deleteDoc(docName, into)
 
-    res.redirect('/?e=0')
+    res.redirect(this.folderHelpers.pathFor('list', into) + '?e=0')
   }
 }

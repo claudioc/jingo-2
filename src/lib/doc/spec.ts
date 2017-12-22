@@ -9,39 +9,39 @@ test.before(async () => {
   helpers = doc(config)
 })
 
-test('docPathFor new, with name', t => {
-  const actual = helpers.docPathFor('my test', 'create')
+test('pathFor new, with name', t => {
+  const actual = helpers.pathFor('create', 'my test')
   const expected = '/doc/create/my_test'
   t.is(actual, expected)
 })
 
-test('docPathFor new, without name', t => {
-  const actual = helpers.docPathFor(undefined, 'create')
+test('pathFor new, without name', t => {
+  const actual = helpers.pathFor('create', undefined)
   const expected = '/doc/create'
   t.is(actual, expected)
 })
 
-test('docPathFor create', t => {
-  const actual = helpers.docPathFor(undefined, 'create')
+test('pathFor create', t => {
+  const actual = helpers.pathFor('create', undefined)
   const expected = '/doc/create'
   t.is(actual, expected)
 })
 
-test('docFilenameFor', t => {
-  const actual = helpers.docFilenameFor('My_Test')
+test('pathFor create with into', t => {
+  const actual = helpers.pathFor('create', undefined, 'stupinigi bingo')
+  const expected = '/doc/create?into=stupinigi%20bingo'
+  t.is(actual, expected)
+})
+
+test('filenameFor', t => {
+  const actual = helpers.filenameFor('My_Test')
   const expected = 'My_Test.md'
   t.is(actual, expected)
 })
 
-test('docFilenameFor with the extension already', t => {
-  const actual = helpers.docFilenameFor('My_Test.md')
+test('filenameFor with the extension already', t => {
+  const actual = helpers.filenameFor('My_Test.md')
   const expected = 'My_Test.md'
-  t.is(actual, expected)
-})
-
-test('docFullpathFor', t => {
-  const actual = helpers.docFullpathFor('My_Test')
-  const expected = '/home/jingo/My_Test.md'
   t.is(actual, expected)
 })
 

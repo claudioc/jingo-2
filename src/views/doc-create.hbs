@@ -3,6 +3,7 @@
 {{>errors}}
 <h1>Creating {{docTitle}}</h1>
 <form id="editor-form" method="post" action="{{urlFor resource="doc" action="create"}}">
+  <input type="hidden" name="into" value="{{into}}">
   {{#if (eq docTitle wikiIndex)}}
   <input type="hidden" name="docTitle" value={{wikiIndex}}>
   {{else}}

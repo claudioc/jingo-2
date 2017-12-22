@@ -32,23 +32,23 @@ export default function viewHelpers (config: Config) {
     },
 
     urlFor (params) {
-      const KNOWN_PARAMS = ['resource', 'id', 'action']
-      const { resource, id, action } = params.hash
+      const KNOWN_PARAMS = ['action', 'id', 'into', 'resource']
+      const { resource, id, action, into } = params.hash
       let path
       switch (resource) {
         // Access to any document
         case 'doc':
-          path = docHelpers.docPathFor(id, action || 'create')
+          path = docHelpers.pathFor(action || 'create', id, into)
           break
 
         // Access to any wiki page
         case 'wiki':
-          path =  wikiHelpers.wikiPathFor(id)
+          path =  wikiHelpers.wikiPathFor(id, into)
           break
 
         // Access to any folder
         case 'folder':
-          path = folderHelpers.pathFor(action || 'create', id)
+          path = folderHelpers.pathFor(action || 'create', id, into)
           break
 
         // Access to the home page of the system
