@@ -111,6 +111,7 @@ class Api {
    * Returns true if the rename is succesful, false otherwise
    * @param oldDocName
    * @param newDocName
+   * @param into directory where the document resides
    */
   public async renameDoc (oldDocName: string, newDocName: string, into: string = ''): Promise<boolean> {
     if (oldDocName === newDocName) {
@@ -157,6 +158,38 @@ class Api {
     const fullFolderName = this.makeFoldername(folderName, into)
     ipc(this.config).send('CREATE FOLDER', folderName)
     await fs.mkdir(this.config.fs, fullFolderName)
+  }
+
+  /**
+   * Renames a folder taking care of not overwriting the destination
+   * Returns true if the rename is succesful, false otherwise
+   * @param oldFolderName
+   * @param newFolderName
+   * @param into The directory where old and new reside
+   */
+  public async renameFolder (oldFolderName: string, newFolderName: string, into: string = ''): Promise<boolean> {
+    if (oldFolderName === newFolderName) {
+      return true
+    }
+
+    if (await this.folderExists(newFolderName, into)) {
+      return false
+    }
+    const fullFolderName1 = this.makeFoldername(oldFolderName, into)
+    const fullFolderName2 = this.makeFoldername(newFolderName, into)
+    await fs.rename(this.config.fs, fullFolderName1, fullFolderName2)
+    return true
+  }
+
+  /**
+   * Deletes a folder from the file system
+   * @param folderName Id of the folder to delete
+   * @into into Locatio of the folder
+   */
+  public async deleteFolder (folderName: string, into: string = ''): Promise<void> {
+    const fullFolderName = this.makeFoldername(folderName, into)
+    ipc(this.config).send('DELETE', folderName)
+    return fs.rmdir(this.config.fs, fullFolderName)
   }
 
   /**

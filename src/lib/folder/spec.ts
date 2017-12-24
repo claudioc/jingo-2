@@ -33,7 +33,7 @@ test('pathFor rename with folderName and into', t => {
   t.is(actual, expected)
 })
 
-test('pathFor list with empty path', t => {
+test('pathFor list with empty path and no into', t => {
   const actual = helpers.pathFor('list')
   const expected = '/wiki/'
   t.is(actual, expected)
@@ -58,8 +58,8 @@ test('pathFor list with slashes', t => {
 })
 
 test('pathFor list with into', t => {
-  const actual = helpers.pathFor('list', 'one/or two/levels/', 'summer night')
-  const expected = '/wiki/one/or%20two/levels/?into=summer%20night'
+  const actual = helpers.pathFor('list', 'one/', 'a/summer/night')
+  const expected = '/wiki/a/summer/night/one/'
   t.is(actual, expected)
 })
 

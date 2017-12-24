@@ -55,6 +55,14 @@ export default class FolderRoute extends BaseRoute {
     router.post('/folder/rename', validatesRename(), (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).didRename(req, res, next)
     })
+
+    router.get('/folder/delete', (req: Request, res: Response, next: NextFunction) => {
+      new FolderRoute(config).delete(req, res, next)
+    })
+
+    router.post('/folder/delete', (req: Request, res: Response, next: NextFunction) => {
+      new FolderRoute(config).didDelete(req, res, next)
+    })
   }
 
   public async create (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -115,7 +123,7 @@ export default class FolderRoute extends BaseRoute {
   public async didRename (req: Request, res: Response, next: NextFunction): Promise<void> {
     const { errors, data } = this.inspectRequest(req)
     const folderName = data.folderName
-//    const currentFolderName = data.currentFolderName
+    const currentFolderName = data.currentFolderName
     const into = data.into
 
     const scope: object = {
@@ -127,6 +135,42 @@ export default class FolderRoute extends BaseRoute {
       return this.render(req, res, 'folder-rename', _assign(scope, { errors }))
     }
 
+    await api(this.config).renameFolder(currentFolderName, folderName, into)
+
     res.redirect(this.folderHelpers.pathFor('list', into))
+  }
+
+  public async delete (req: Request, res: Response, next: NextFunction): Promise<void> {
+    this.title = 'Jingo – Deleting a folder'
+    const folderName = req.query.folderName
+    const into = req.query.into || ''
+
+    const itExists = await api(this.config).folderExists(folderName, into)
+    if (!itExists) {
+      res.redirect('/?e=1')
+      return
+    }
+
+    const scope: object = {
+      folderName,
+      into
+    }
+
+    this.render(req, res, 'folder-delete', scope)
+  }
+
+  public async didDelete (req: Request, res: Response, next: NextFunction): Promise<void> {
+    const folderName = req.body.folderName
+    const into = req.body.into
+
+    const itExists = await api(this.config).folderExists(folderName, into)
+    if (!itExists) {
+      res.redirect('/?e=1')
+      return
+    }
+
+    await api(this.config).deleteFolder(folderName, into)
+
+    res.redirect(this.folderHelpers.pathFor('list', into) + '?e=0')
   }
 }

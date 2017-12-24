@@ -67,6 +67,11 @@ const unlink = async  (useFs, fullPath: fs_.PathLike): Promise<void> => {
   await fn(fullPath)
 }
 
+const rmdir = async  (useFs, fullPath: fs_.PathLike): Promise<void> => {
+  const fn = promisify((useFs || fs_).rmdir)
+  await fn(fullPath)
+}
+
 const rename = async (useFs, oldPath: fs_.PathLike, newPath: fs_.PathLike): Promise<void> => {
   const fn = promisify((useFs || fs_).rename)
   await fn(oldPath, newPath)
@@ -120,6 +125,7 @@ export default {
   readFolder,
   readdir,
   rename,
+  rmdir,
   stat,
   unlink,
   writeFile

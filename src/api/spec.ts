@@ -230,6 +230,30 @@ test('renameDoc with a different name and new file already exists in a folder', 
   t.is(actual, expected)
 })
 
+test('renameFolder with the same name', async t => {
+  const config = await configWithDefaults()
+  const folderName1 = fakeFs.rndName()
+  const actual = await api(config).renameFolder(folderName1, folderName1)
+  const expected = true
+  t.is(actual, expected)
+})
+
+test('renameFolder with a different name', async t => {
+  const config = await configWithDefaults()
+  useFakeFs(config)
+  const folderName1 = fakeFs.rndName()
+  const folderName2 = fakeFs.rndName()
+  fakeFs.mkdir(folderName1)
+  fakeFs.access(folderName1)
+  const actual: any = await api(config).renameFolder(folderName1, folderName2)
+  const error = t.throws(() => fakeFs.access(folderName1) as any)
+  t.regex(error.message, /ENOENT: no such/)
+  fakeFs.access(folderName2)
+
+  const expected: any = true
+  t.is(actual, expected)
+})
+
 test('listDocs in an existing subdir', async t => {
   const config = await configWithDefaults()
   useFakeFs(config)

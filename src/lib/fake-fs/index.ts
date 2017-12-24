@@ -35,6 +35,10 @@ export default class FakeFs {
     }
   }
 
+  access (pathName): void {
+    this.theFs.accessSync(path.join(this.mountPoint, pathName))
+  }
+
   rndName () {
     return `tmp${crypto.randomBytes(4).readUInt32LE(0)}pmt`
   }

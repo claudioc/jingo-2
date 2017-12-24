@@ -1,0 +1,9 @@
+<h1>Deleting "{{folderName}}"</h1>
+<form method="post" action="{{urlFor resource="folder" action="delete"}}">
+  <input type="hidden" value="{{into}}" name="into">
+  <input type="hidden" value="{{folderName}}" name="folderName">
+  <p>Are you sure? This operation cannot be undone!</p>
+  <div>
+    <input type="submit" value="Yes, delete"> or <a href="{{urlFor resource="folder" id=folderName action="list" into=into}}">Cancel</a>
+  </div>
+</form>

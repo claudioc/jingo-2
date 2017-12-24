@@ -3,7 +3,7 @@ import * as fs_ from 'fs'
 import * as path from 'path'
 import * as qs from 'querystring'
 
-type FolderAction = 'create' | 'list' | 'rename'
+type FolderAction = 'create' | 'list' | 'rename' | 'delete'
 type FolderPathParts = {
   parentDirName: string
   folderName: string
@@ -30,14 +30,16 @@ export class Folder {
       // Encode the name, but do not encode slashes in it
       let folderPath = encodeURIComponent(folderName.replace(/^\/+|\/+$/g, '').trim()).replace(/%2F/g, '/')
       folderPath += folderPath.length > 0 ? '/' : ''
+      // When into and folderPath are empty, path.join returns a '.'
+      folderPath = path.join(into, folderPath).replace(/^\.$/, '')
       actionPath = `/${this.config.get('wiki.basePath')}/${folderPath}`
     }
 
-    if (action === 'rename' && folderName.length > 0) {
+    if ((action === 'rename' || action === 'delete') && folderName.length > 0) {
       queryMap.set('folderName', folderName)
     }
 
-    if (into && into.length > 0) {
+    if (action !== 'list' && into && into.length > 0) {
       queryMap.set('into', into)
     }
 
