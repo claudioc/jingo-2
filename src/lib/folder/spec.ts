@@ -15,6 +15,24 @@ test('pathFor create', t => {
   t.is(actual, expected)
 })
 
+test('pathFor rename', t => {
+  const actual = helpers.pathFor('rename')
+  const expected = '/folder/rename'
+  t.is(actual, expected)
+})
+
+test('pathFor rename with folderName', t => {
+  const actual = helpers.pathFor('rename', 'foobar')
+  const expected = '/folder/rename?folderName=foobar'
+  t.is(actual, expected)
+})
+
+test('pathFor rename with folderName and into', t => {
+  const actual = helpers.pathFor('rename', 'foobar', 'champagne')
+  const expected = '/folder/rename?folderName=foobar&into=champagne'
+  t.is(actual, expected)
+})
+
 test('pathFor list with empty path', t => {
   const actual = helpers.pathFor('list')
   const expected = '/wiki/'
@@ -49,4 +67,49 @@ test('fullpathFor', t => {
   const actual = helpers.fullpathFor('My Test')
   const expected = '/home/jingo/My Test'
   t.is(actual, expected)
+})
+
+test('parsePath with empty string', t => {
+  const actual0 = helpers.parsePath('')
+  const expected0 = {
+    folderName: '',
+    parentDirName: ''
+  }
+  t.deepEqual(actual0, expected0)
+})
+
+test('parsePath with only the docname', t => {
+  const actual = helpers.parsePath('foobar')
+  const expected = {
+    folderName: 'foobar',
+    parentDirName: ''
+  }
+  t.deepEqual(actual, expected)
+})
+
+test('parsePath with a full path', t => {
+  const actual = helpers.parsePath('this/is/the/path/foobar')
+  const expected = {
+    folderName: 'foobar',
+    parentDirName: 'this/is/the/path'
+  }
+  t.deepEqual(actual, expected)
+})
+
+test('parsePath with a full, absolute path', t => {
+  const actual = helpers.parsePath('/this/is/the/path/foobar')
+  const expected = {
+    folderName: 'foobar',
+    parentDirName: '/this/is/the/path'
+  }
+  t.deepEqual(actual, expected)
+})
+
+test('parsePath with only the path', t => {
+  const actual = helpers.parsePath('/this/is/the/path/')
+  const expected = {
+    folderName: 'path',
+    parentDirName: '/this/is/the'
+  }
+  t.deepEqual(actual, expected)
 })

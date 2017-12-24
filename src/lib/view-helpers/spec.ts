@@ -97,3 +97,53 @@ test('urlFor with extra params and an empty one', async t => {
   }
   t.is(helpers.urlFor(params), '/wiki/Super?antani=monic%20elli&baluba=Milano')
 })
+
+test('urlFor folder create', async t => {
+  const config = await configWithDefaults()
+  helpers = viewHelpers(config)
+  const params = {
+    hash: {
+      resource: 'folder'
+    }
+  }
+  t.is(helpers.urlFor(params), '/folder/create')
+})
+
+test('urlFor folder create with into', async t => {
+  const config = await configWithDefaults()
+  helpers = viewHelpers(config)
+  const params = {
+    hash: {
+      into: 'bazinga 2',
+      resource: 'folder'
+    }
+  }
+  t.is(helpers.urlFor(params), '/folder/create?into=bazinga%202')
+})
+
+test('urlFor folder list', async t => {
+  const config = await configWithDefaults()
+  helpers = viewHelpers(config)
+  const params = {
+    hash: {
+      action: 'list',
+      id: 'bazinga/zoo',
+      resource: 'folder'
+    }
+  }
+  t.is(helpers.urlFor(params), '/wiki/bazinga/zoo/')
+})
+
+test('urlFor folder rename', async t => {
+  const config = await configWithDefaults()
+  helpers = viewHelpers(config)
+  const params = {
+    hash: {
+      action: 'rename',
+      id: 'bazinga',
+      into: 'zoo',
+      resource: 'folder'
+    }
+  }
+  t.is(helpers.urlFor(params), '/folder/rename?folderName=bazinga&into=zoo')
+})

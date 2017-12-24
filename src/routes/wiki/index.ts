@@ -69,6 +69,7 @@ export default class WikiRoute extends BaseRoute {
 
   public async list (req: Request, res: Response, next: NextFunction) {
     const apiMethods = api(this.config)
+    const dirParts = this.folderHelpers.parsePath(this.dirName)
 
     this.title = `Jingo – List of documents`
 
@@ -85,8 +86,10 @@ export default class WikiRoute extends BaseRoute {
     const scope = {
       dirName: this.dirName,
       docList,
-      folderList
-    }
+      folderList,
+      folderName: dirParts.folderName,
+      parentDirName: dirParts.parentDirName
+  }
 
     this.render(req, res, 'wiki-list', scope)
   }

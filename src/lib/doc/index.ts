@@ -21,14 +21,14 @@ export class Doc {
 
   /**
    * Returns the URL path for a document action
-   * @param docName Id of the document
+   * @param id Id of the document
    * @param into The folder the document is in
    * @param action DocAction
    */
-  public pathFor (action: DocAction, docName: string, into: string = ''): string {
+  public pathFor (action: DocAction, id: string, into: string = ''): string {
     let docPath = `/doc/${action}`
-    if (docName) {
-      docPath += `/${this.wikiHelpers.wikify(docName)}`
+    if (id) {
+      docPath += `/${this.wikiHelpers.wikify(id)}`
     }
 
     if (into && into.length > 0) {

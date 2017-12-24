@@ -68,3 +68,7 @@
 22/12/17
 - I finished managing the directory part in all the the routes
 - 4588 sloc
+24/12/17
+- Working on renaming the folders
+- Try to get around the complexities of docName/folderName/dirName and so on
+- Added the 400 error page
