@@ -21,10 +21,9 @@ test('get create route receiving a name in the url', async t => {
   const render = sinon.stub(route, 'render')
 
   const request = {
-    params: {
+    query: {
       docName: 'hello_world'
-    },
-    query: {}
+    }
   }
   await route.create(request as any, null, _nop)
 
@@ -155,14 +154,15 @@ test('post create renders again with a validation error', async t => {
   t.is(render.calledWith(request, null, 'doc-create', expectedScope), true)
 })
 
+test.todo('get update route without a docName')
+
 test('get update route with a non-existing file', async t => {
   const route = new Route(await configWithDefaults())
 
   const request = {
-    params: {
+    query: {
       docName: 'lovely_sugar'
-    },
-    query: {}
+    }
   }
 
   const redirect = sinon.spy()
@@ -184,10 +184,9 @@ test('get update route with an existing file', async t => {
   const render = sinon.stub(route, 'render')
 
   const request = {
-    params: {
+    query: {
       docName
-    },
-    query: {}
+    }
   }
 
   await route.update(request as any, null, _nop)
@@ -322,10 +321,8 @@ test('get delete route for a non-existing doc', async t => {
   const route = new Route(await configWithDefaults())
 
   const request = {
-    params: {
-      docName: 'hello_world'
-    },
     query: {
+      docName: 'hello_world',
       into: ''
     }
   }
@@ -351,10 +348,8 @@ test('get delete route for a existing doc', async t => {
   const render = sinon.stub(route, 'render')
 
   const request = {
-    params: {
-      docName
-    },
     query: {
+      docName,
       into: ''
     }
   }

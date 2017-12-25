@@ -28,7 +28,7 @@ const validatesCreate = () => {
 
 export default class DocRoute extends BaseRoute {
   public static create (router: Router, config: Config) {
-    router.get('/doc/create/:docName?', (req: Request, res: Response, next: NextFunction) => {
+    router.get('/doc/create', (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).create(req, res, next)
     })
 
@@ -36,7 +36,7 @@ export default class DocRoute extends BaseRoute {
       new DocRoute(config).didCreate(req, res, next)
     })
 
-    router.get('/doc/update/:docName', (req: Request, res: Response, next: NextFunction) => {
+    router.get('/doc/update', (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).update(req, res, next)
     })
 
@@ -44,7 +44,7 @@ export default class DocRoute extends BaseRoute {
       new DocRoute(config).didUpdate(req, res, next)
     })
 
-    router.get('/doc/delete/:docName', (req: Request, res: Response, next: NextFunction) => {
+    router.get('/doc/delete', (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).delete(req, res, next)
     })
 
@@ -57,7 +57,7 @@ export default class DocRoute extends BaseRoute {
     this.title = 'Jingo – Creating a document'
 
     // The document name can be part of the URL or not
-    const docName = req.params.docName || ''
+    const docName = req.query.docName || ''
     const into = req.query.into || ''
 
     // If a document with this name already exists, bring the user there
@@ -111,8 +111,12 @@ export default class DocRoute extends BaseRoute {
 
   public async update (req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Editing a document'
-    const docName = req.params.docName
+    const docName = req.query.docName || ''
     const into = req.query.into || ''
+
+    if (docName === '') {
+      return res.status(400).render('400')
+    }
 
     const itExists = await api(this.config).docExists(docName, into)
     if (!itExists) {
@@ -168,8 +172,12 @@ export default class DocRoute extends BaseRoute {
 
   public async delete (req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Deleting a document'
-    const docName = req.params.docName
+    const docName = req.query.docName
     const into = req.query.into || ''
+
+    if (docName === '') {
+      return res.status(400).render('400')
+    }
 
     const itExists = await api(this.config).docExists(docName, into)
     if (!itExists) {

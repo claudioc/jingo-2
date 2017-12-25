@@ -18,14 +18,15 @@ export default function viewHelpers (config: Config) {
   return {
     breadcrumb (params) {
       const { dirName } = params.hash
+      const basePath = config.get('wiki.basePath')
       const parts = dirName.split('/')
       const breadcrumb = ['<ul class="breadcrumb">']
-      breadcrumb.push(`<li><a href="/wiki/">..</a></li>`)
+      breadcrumb.push(`<li><a href="/${basePath}/">Index</a></li>`)
       for (let i = 0; i < parts.length - 1; i++) {
         const bite = _take(parts, i + 1)
         const path = bite.join('/')
         const text = bite[bite.length - 1]
-        breadcrumb.push(`<li><a href="/wiki/${path}/">${text}</a></li>`)
+        breadcrumb.push(`<li><a href="/${basePath}/${path}/">${text}</a></li>`)
       }
       breadcrumb.push(`<li>${parts[parts.length - 1]}</li></ul>`)
       return breadcrumb.join('')

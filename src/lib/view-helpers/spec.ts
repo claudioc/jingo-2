@@ -25,7 +25,7 @@ test('urlFor doc update', t => {
       resource: 'doc'
     }
   }
-  t.is(helpers.urlFor(params), '/doc/update/pan_european')
+  t.is(helpers.urlFor(params), '/doc/update?docName=pan%20european')
 })
 
 test('urlFor read wiki', t => {

@@ -1,4 +1,5 @@
 import { Config } from '@lib/config'
+import Queso from '@lib/queso'
 import wiki, { Wiki } from '@lib/wiki'
 import * as path from 'path'
 
@@ -21,21 +22,23 @@ export class Doc {
 
   /**
    * Returns the URL path for a document action
-   * @param id Id of the document
-   * @param into The folder the document is in
+   * @param docName Id of the document
+   * @param into The directory the document is in
    * @param action DocAction
    */
-  public pathFor (action: DocAction, id: string, into: string = ''): string {
-    let docPath = `/doc/${action}`
-    if (id) {
-      docPath += `/${this.wikiHelpers.wikify(id)}`
+  public pathFor (action: DocAction, docName: string, into: string = ''): string {
+    const docPath = `/doc/${action}`
+    const queso = new Queso()
+
+    if (docName) {
+      queso.add('docName', docName)
     }
 
     if (into && into.length > 0) {
-      docPath += `?into=${encodeURIComponent(into)}`
+      queso.add('into', into)
     }
 
-    return docPath
+    return docPath + queso.stringify()
   }
 
   /**

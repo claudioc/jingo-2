@@ -1,7 +1,7 @@
 import { Config } from '@lib/config'
+import Queso from '@lib/queso'
 import * as fs_ from 'fs'
 import * as path from 'path'
-import * as qs from 'querystring'
 
 type FolderAction = 'create' | 'list' | 'rename' | 'delete'
 type FolderPathParts = {
@@ -25,7 +25,8 @@ export class Folder {
    */
   public pathFor (action: FolderAction, folderName: string = '', into: string = ''): string {
     let actionPath = `/folder/${action}`
-    const queryMap = new Map()
+    const queso = new Queso()
+
     if (action === 'list') {
       // Encode the name, but do not encode slashes in it
       let folderPath = encodeURIComponent(folderName.replace(/^\/+|\/+$/g, '').trim()).replace(/%2F/g, '/')
@@ -36,20 +37,14 @@ export class Folder {
     }
 
     if ((action === 'rename' || action === 'delete') && folderName.length > 0) {
-      queryMap.set('folderName', folderName)
+      queso.add('folderName', folderName)
     }
 
     if (action !== 'list' && into && into.length > 0) {
-      queryMap.set('into', into)
+      queso.add('into', into)
     }
 
-    if (queryMap.size > 0) {
-      const query = {}
-      queryMap.forEach((v, k) => query[k] = v)
-      actionPath += `?${qs.stringify(query)}`
-    }
-
-    return actionPath
+    return actionPath + queso.stringify()
   }
 
   /**

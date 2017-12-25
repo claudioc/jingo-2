@@ -11,7 +11,13 @@ test.before(async () => {
 
 test('pathFor new, with name', t => {
   const actual = helpers.pathFor('create', 'my test')
-  const expected = '/doc/create/my_test'
+  const expected = '/doc/create?docName=my%20test'
+  t.is(actual, expected)
+})
+
+test('pathFor new, with name and into', t => {
+  const actual = helpers.pathFor('create', 'my test', 'some/dir')
+  const expected = '/doc/create?docName=my%20test&into=some%2Fdir'
   t.is(actual, expected)
 })
 

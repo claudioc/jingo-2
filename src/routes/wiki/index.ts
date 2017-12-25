@@ -61,7 +61,7 @@ export default class WikiRoute extends BaseRoute {
       if (isIndex) {
         res.redirect('/?welcome')
       } else {
-        const createPageUrl = this.docHelpers.pathFor('create', docTitle)
+        const createPageUrl = this.docHelpers.pathFor('create', this.docName, this.dirName)
         res.redirect(createPageUrl)
       }
     }
