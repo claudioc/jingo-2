@@ -18,7 +18,7 @@
     "start-dev": "npm run clean; npm test; NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -w jingo -w config.json jingo -c config.json'"
   },
   "_moduleAliases": {
-    "@api": "dist/api/index",
+    "@sdk": "dist/sdk/index",
     "@lib": "dist/lib",
     "@routes": "dist/routes"
   },

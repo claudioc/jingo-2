@@ -11,6 +11,7 @@ import * as path from 'path'
 
 import config from '@lib/config'
 import viewHelpers from '@lib/view-helpers'
+import ApiRoute from '@routes/api'
 import DocRoute from '@routes/doc'
 import FolderRoute from '@routes/folder'
 import IndexRoute from '@routes/index'
@@ -28,14 +29,12 @@ const cookieSession = require('cookie-session')
  * @class Server
  */
 export default class Server {
-
   public app: express.Application
 
   constructor () {
     this.app = express()
     this.setup()
     this.routes()
-    this.api()
     this.ipc()
   }
 
@@ -51,12 +50,9 @@ export default class Server {
     WikiRoute.create(router, config)
     DocRoute.create(router, config)
     FolderRoute.create(router, config)
+    ApiRoute.create(router, config)
 
     this.app.use(router)
-  }
-
-  public api () {
-    // empty
   }
 
   /**
@@ -112,6 +108,8 @@ export default class Server {
       extended: true,
       limit: '500kb'
     }))
+
+    this.app.use(express.json())
 
     this.app.use(cookieParser('SECRET_GOES_HERE'))
 

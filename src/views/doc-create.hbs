@@ -1,22 +1,33 @@
 <link rel="stylesheet" href="/public/vendor/codemirror/lib/codemirror.css">
 <link rel="stylesheet" href="/public/css/codemirror-ext.css">
 {{>errors}}
-<h1>Creating {{docTitle}}</h1>
-<form id="editor-form" method="post" action="{{urlFor resource="doc" action="create"}}">
-  <input type="hidden" name="into" value="{{into}}">
-  {{#if (eq docTitle wikiIndex)}}
-  <input type="hidden" name="docTitle" value={{wikiIndex}}>
-  {{else}}
-  <div>
-    <input autofocus type="text" value="{{docTitle}}" name="docTitle" required>
-  </div>
-  {{/if}}
-  <div>
-    <textarea id="editor-content" name="content"></textarea>
-  </div>
-  <div>
-    <input type="submit" value="Save">
-  </div>
-</form>
+<p>
+  <span class="sans do-preview">Preview</span>
+  <span class="sans do-edit hidden">Back to edit</span>
+</p>
+<section class="editor">
+  <h1>Creating {{#if (eq docTitle '')}}a new document{{else}}{{docTitle}}{{/if}}</h1>
+  <form id="editor-form" method="post" action="{{urlFor resource="doc" action="create"}}">
+    <input type="hidden" name="into" value="{{into}}">
+    {{#if (eq docTitle wikiIndex)}}
+    <input type="hidden" name="docTitle" value={{wikiIndex}}>
+    {{else}}
+    <div>
+      <input autofocus type="text" value="{{docTitle}}" name="docTitle" required>
+    </div>
+    {{/if}}
+    <div>
+      <textarea id="editor-content" name="content"></textarea>
+    </div>
+    <div>
+      <input type="submit" value="Save">
+    </div>
+  </form>
+</section>
+<section class="preview hidden">
+  <h1>Previewing</h1>
+  <div class="content"></div>
+</section>
 <script src="/public/vendor/codemirror/lib/codemirror.min.js"></script>
 <script src="/public/js/editor.js"></script>
+<script src="/public/js/app.js"></script>

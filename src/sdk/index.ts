@@ -3,6 +3,7 @@ import doc, { Doc } from '@lib/doc'
 import folder, { Folder } from '@lib/folder'
 import fs from '@lib/fs'
 import ipc from '@lib/ipc'
+import * as MarkdownIt from 'markdown-it'
 import * as path from 'path'
 
 interface IDoc {
@@ -15,17 +16,27 @@ interface IDocItem {
   updatedAt: string
 }
 
-function api (config: Config): Api {
-  return new Api(config)
+function sdk (config: Config): Sdk {
+  return new Sdk(config)
 }
 
-class Api {
+class Sdk {
   public docHelpers: Doc
   public folderHelpers: Folder
+  public parser: MarkdownIt.MarkdownIt
 
   constructor (public config: Config) {
     this.docHelpers = doc(config)
     this.folderHelpers = folder(config)
+    this.parser = new MarkdownIt()
+  }
+
+  /**
+   * Render a markdown string to HTML
+   * @param content A markdown string
+   */
+  public renderToHtml (content: string) {
+    return this.parser.render(content)
   }
 
   /**
@@ -212,4 +223,4 @@ class Api {
   }
 }
 
-export default api
+export default sdk

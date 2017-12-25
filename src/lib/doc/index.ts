@@ -46,17 +46,17 @@ export class Doc {
    * @param docName Id of the document
    */
   public filenameFor (docName: string): string {
-    return docName.endsWith('.md') ? docName : `${docName}.md`
+    return docName ? (docName.endsWith('.md') ? docName : `${docName}.md`) : ''
   }
 
   /**
-   * Parses a path and split it into a `dirName` and a `docName`
+   * Parses and split a path and split it into a `dirName` and a `docName`
    * For consistency we always returns the dirname as a relative
    * path, which means that `` represents the `documentRoot`
    * @param unparsed The full path to parse
    * @returns PathParts
    */
-  public parsePath (unparsed: string): PathParts {
+  public splitPath (unparsed: string): PathParts {
     const normalizedPath = (unparsed || '').trim()
 
     // The `path.parse` method ignores leading slashes and

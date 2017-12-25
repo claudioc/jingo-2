@@ -39,6 +39,18 @@ test('pathFor create with into', t => {
   t.is(actual, expected)
 })
 
+test('filenameFor without parameter', t => {
+  const actual = helpers.filenameFor(undefined)
+  const expected = ''
+  t.is(actual, expected)
+})
+
+test('filenameFor with empty parameter', t => {
+  const actual = helpers.filenameFor('')
+  const expected = ''
+  t.is(actual, expected)
+})
+
 test('filenameFor', t => {
   const actual = helpers.filenameFor('My_Test')
   const expected = 'My_Test.md'
@@ -51,8 +63,8 @@ test('filenameFor with the extension already', t => {
   t.is(actual, expected)
 })
 
-test('parsePath with empty string', t => {
-  const actual0 = helpers.parsePath('')
+test('splitPath with empty string', t => {
+  const actual0 = helpers.splitPath('')
   const expected0 = {
     dirName: '',
     docName: ''
@@ -60,8 +72,8 @@ test('parsePath with empty string', t => {
   t.deepEqual(actual0, expected0)
 })
 
-test('parsePath with only the docname', t => {
-  const actual = helpers.parsePath('foobar')
+test('splitPath with only the docName', t => {
+  const actual = helpers.splitPath('foobar')
   const expected = {
     dirName: '',
     docName: 'foobar'
@@ -69,8 +81,8 @@ test('parsePath with only the docname', t => {
   t.deepEqual(actual, expected)
 })
 
-test('parsePath with a full path', t => {
-  const actual = helpers.parsePath('this/is/the/path/foobar')
+test('splitPath with a full path', t => {
+  const actual = helpers.splitPath('this/is/the/path/foobar')
   const expected = {
     dirName: 'this/is/the/path',
     docName: 'foobar'
@@ -78,8 +90,8 @@ test('parsePath with a full path', t => {
   t.deepEqual(actual, expected)
 })
 
-test('parsePath with a full, absolute path', t => {
-  const actual = helpers.parsePath('/this/is/the/path/foobar')
+test('splitPath with a full, absolute path', t => {
+  const actual = helpers.splitPath('/this/is/the/path/foobar')
   const expected = {
     dirName: 'this/is/the/path',
     docName: 'foobar'
@@ -87,8 +99,8 @@ test('parsePath with a full, absolute path', t => {
   t.deepEqual(actual, expected)
 })
 
-test('parsePath with only the path', t => {
-  const actual = helpers.parsePath('/this/is/the/path/')
+test('splitPath with only the path', t => {
+  const actual = helpers.splitPath('/this/is/the/path/')
   const expected = {
     dirName: 'this/is/the/path',
     docName: ''

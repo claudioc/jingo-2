@@ -1,6 +1,6 @@
-import api from '@api'
 import { Config } from '@lib/config'
 import BaseRoute from '@routes/route'
+import sdk from '@sdk'
 import { NextFunction, Request, Response, Router } from 'express'
 import { check } from 'express-validator/check'
 import { sanitize } from 'express-validator/filter'
@@ -62,7 +62,7 @@ export default class DocRoute extends BaseRoute {
 
     // If a document with this name already exists, bring the user there
     if (docName) {
-      const itExists = await api(this.config).docExists(docName, into)
+      const itExists = await sdk(this.config).docExists(docName, into)
       if (itExists) {
         res.redirect(this.wikiHelpers.wikiPathFor(docName))
         return
@@ -70,7 +70,7 @@ export default class DocRoute extends BaseRoute {
     }
 
     const wikiIndex = this.config.get('wiki.index')
-    const docTitle = this.wikiHelpers.unwikify(docName) || 'Unnamed document'
+    const docTitle = this.wikiHelpers.unwikify(docName) || ''
     const scope: object = {
       docTitle,
       into,
@@ -97,13 +97,13 @@ export default class DocRoute extends BaseRoute {
 
     const docName = this.wikiHelpers.wikify(data.docTitle)
 
-    const itExists = await api(this.config).docExists(docName, into)
+    const itExists = await sdk(this.config).docExists(docName, into)
     if (itExists) {
       this.render(req, res, 'doc-create', _assign(scope, { errors: ['A document with this title already exists'] }))
       return
     }
 
-    await api(this.config).createDoc(docName, data.content, into)
+    await sdk(this.config).createDoc(docName, data.content, into)
 
     // All done, go to the just saved page
     res.redirect(this.wikiHelpers.wikiPathFor(data.docTitle, into))
@@ -118,13 +118,13 @@ export default class DocRoute extends BaseRoute {
       return res.status(400).render('400')
     }
 
-    const itExists = await api(this.config).docExists(docName, into)
+    const itExists = await sdk(this.config).docExists(docName, into)
     if (!itExists) {
       res.redirect(this.docHelpers.pathFor('create', docName, into))
       return
     }
 
-    const doc = await api(this.config).loadDoc(docName, into)
+    const doc = await sdk(this.config).loadDoc(docName, into)
     const wikiIndex = this.config.get('wiki.index')
 
     const docTitle = this.wikiHelpers.unwikify(docName)
@@ -160,7 +160,7 @@ export default class DocRoute extends BaseRoute {
     const newDocName = this.wikiHelpers.wikify(data.docTitle)
 
     try {
-      await api(this.config).updateDoc(newDocName, oldDocName, data.content, into)
+      await sdk(this.config).updateDoc(newDocName, oldDocName, data.content, into)
     } catch (err) {
       this.render(req, res, 'doc-update', _assign(scope, { errors: [err.message] }))
       return
@@ -179,7 +179,7 @@ export default class DocRoute extends BaseRoute {
       return res.status(400).render('400')
     }
 
-    const itExists = await api(this.config).docExists(docName, into)
+    const itExists = await sdk(this.config).docExists(docName, into)
     if (!itExists) {
       res.redirect('/?e=1')
       return
@@ -200,13 +200,13 @@ export default class DocRoute extends BaseRoute {
     const docName = req.body.docName
     const into = req.body.into
 
-    const itExists = await api(this.config).docExists(docName, into)
+    const itExists = await sdk(this.config).docExists(docName, into)
     if (!itExists) {
       res.redirect('/?e=1')
       return
     }
 
-    await api(this.config).deleteDoc(docName, into)
+    await sdk(this.config).deleteDoc(docName, into)
 
     res.redirect(this.folderHelpers.pathFor('list', into) + '?e=0')
   }

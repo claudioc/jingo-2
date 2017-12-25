@@ -1,22 +1,18 @@
-import api from '@api'
 import { Config } from '@lib/config'
 import BaseRoute from '@routes/route'
+import sdk from '@sdk'
 import { NextFunction, Request, Response, Router } from 'express'
-import * as MarkdownIt from 'markdown-it'
 
 export default class WikiRoute extends BaseRoute {
-  parser: MarkdownIt.MarkdownIt
   dirName: string
   docName: string
 
   constructor (config, reqPath) {
     super(config)
 
-    const { dirName, docName } = this.docHelpers.parsePath(reqPath)
+    const { dirName, docName } = this.docHelpers.splitPath(reqPath)
     this.dirName = dirName
     this.docName = docName
-
-    this.parser = new MarkdownIt()
   }
 
   public static create (router: Router, config: Config) {
@@ -49,9 +45,9 @@ export default class WikiRoute extends BaseRoute {
     this.title = `Jingo – ${docTitle}`
 
     try {
-      const doc = await api(this.config).loadDoc(this.docName, this.dirName)
+      const doc = await sdk(this.config).loadDoc(this.docName, this.dirName)
       const scope: object = {
-        content: this.parser.render(doc.content),
+        content: sdk(this.config).renderToHtml(doc.content),
         dirName: this.dirName,
         docName: this.docName,
         docTitle: isIndex ? '' : docTitle
@@ -68,8 +64,8 @@ export default class WikiRoute extends BaseRoute {
   }
 
   public async list (req: Request, res: Response, next: NextFunction) {
-    const apiMethods = api(this.config)
-    const dirParts = this.folderHelpers.parsePath(this.dirName)
+    const apiMethods = sdk(this.config)
+    const dirParts = this.folderHelpers.splitPath(this.dirName)
 
     this.title = `Jingo – List of documents`
 

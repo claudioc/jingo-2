@@ -15,7 +15,7 @@
     ],
     "baseUrl": "src",
     "paths": {
-      "@api": ["api/index"],
+      "@sdk": ["sdk/index"],
       "@lib/*": ["lib/*"],
       "@routes/*": ["routes/*"]
     }

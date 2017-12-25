@@ -51,9 +51,9 @@ export class Folder {
    * Returns the full file system path of a folder
    * @param id The path of the folder
    */
-  public fullpathFor (id: string): fs_.PathLike {
+  public fullpathFor (folderName: string): fs_.PathLike {
     const docRoot = this.config.get('documentRoot')
-    return path.resolve(docRoot, id)
+    return path.resolve(docRoot, folderName || '')
   }
 
   /**
@@ -61,7 +61,7 @@ export class Folder {
    * @param unparsed The full path to parse
    * @returns FolderPathParts
    */
-  public parsePath (unparsed: string): FolderPathParts {
+  public splitPath (unparsed: string): FolderPathParts {
     const normalizedPath = (unparsed || '').trim()
 
     const { dir, name } = path.parse(normalizedPath)

@@ -32,3 +32,8 @@ form input[type=text] {
   content: '/';
   padding: 0 1rem;
 }
+
+.hidden {
+  display: none;
+}
+

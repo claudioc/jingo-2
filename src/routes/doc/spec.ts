@@ -51,7 +51,7 @@ test('get create route not receiving a name in the url', async t => {
   t.is(route.title, 'Jingo – Creating a document')
 
   const expectedScope = {
-    docTitle: 'Unnamed document',
+    docTitle: '',
     into: '',
     wikiIndex: 'Home'
   }

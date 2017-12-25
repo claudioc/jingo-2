@@ -1,6 +1,6 @@
-import api from '@api'
 import { Config } from '@lib/config'
 import BaseRoute from '@routes/route'
+import sdk from '@sdk'
 import { NextFunction, Request, Response, Router } from 'express'
 import { check } from 'express-validator/check'
 import { sanitize } from 'express-validator/filter'
@@ -88,14 +88,14 @@ export default class FolderRoute extends BaseRoute {
       return
     }
 
-    const itExists = await api(this.config).folderExists(folderName, into)
+    const itExists = await sdk(this.config).folderExists(folderName, into)
     if (itExists) {
       this.render(req, res, 'folder-create', _assign(scope, { errors: ['A folder or file with this name already exists'] }))
       return
     }
 
     try {
-      await api(this.config).createFolder(folderName, into)
+      await sdk(this.config).createFolder(folderName, into)
       // All done, go to the just created folder
       res.redirect(this.folderHelpers.pathFor('list', into))
     } catch (err) {
@@ -135,7 +135,7 @@ export default class FolderRoute extends BaseRoute {
       return this.render(req, res, 'folder-rename', _assign(scope, { errors }))
     }
 
-    await api(this.config).renameFolder(currentFolderName, folderName, into)
+    await sdk(this.config).renameFolder(currentFolderName, folderName, into)
 
     res.redirect(this.folderHelpers.pathFor('list', into))
   }
@@ -145,7 +145,7 @@ export default class FolderRoute extends BaseRoute {
     const folderName = req.query.folderName
     const into = req.query.into || ''
 
-    const itExists = await api(this.config).folderExists(folderName, into)
+    const itExists = await sdk(this.config).folderExists(folderName, into)
     if (!itExists) {
       res.redirect('/?e=1')
       return
@@ -163,13 +163,13 @@ export default class FolderRoute extends BaseRoute {
     const folderName = req.body.folderName
     const into = req.body.into
 
-    const itExists = await api(this.config).folderExists(folderName, into)
+    const itExists = await sdk(this.config).folderExists(folderName, into)
     if (!itExists) {
       res.redirect('/?e=1')
       return
     }
 
-    await api(this.config).deleteFolder(folderName, into)
+    await sdk(this.config).deleteFolder(folderName, into)
 
     res.redirect(this.folderHelpers.pathFor('list', into) + '?e=0')
   }

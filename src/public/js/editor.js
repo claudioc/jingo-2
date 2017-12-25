@@ -9,10 +9,6 @@
     extraKeys: {
       'Cmd-Enter': (cm) => {
         form.submit()
-        // Jingo.toggleFullscreen();
-      },
-      'Ctrl-S': (cm) => {
-        // Jingo.save();
       }
     }
   })
@@ -20,4 +16,6 @@
   form.addEventListener('submit', (evt) => {
     cm.save()
   }, false)
+
+  window.editorInstance = cm
 })()
