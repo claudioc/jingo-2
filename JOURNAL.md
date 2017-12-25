@@ -72,3 +72,8 @@
 - Working on renaming the folders
 - Try to get around the complexities of docName/folderName/dirName and so on
 - Added the 400 error page
+25/12/17
+- Added the preview
+- Renamed api to sdk
+- Created the api routes
+- 5042 sloc
