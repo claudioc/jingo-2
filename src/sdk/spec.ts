@@ -28,7 +28,7 @@ test('docExists with a non-existant file', async t => {
 test('docExists with a existant file and no folder', async t => {
   const cfg = await configUsingFakeFs()
   const docName = fakeFs.rndName()
-  fakeFs.writeFile(doc(cfg).filenameFor(docName), 'Hi!')
+  fakeFs.writeFile(doc(cfg).docNameToFilename(docName), 'Hi!')
   const expected = true
   const actual = await sdk(cfg).docExists(docName)
   t.is(actual, expected)
@@ -48,7 +48,7 @@ test('docExists with a existant file in an existant folder', async t => {
   const docName = fakeFs.rndName()
   const into = fakeFs.rndName()
   fakeFs.mkdir(into)
-  fakeFs.writeFile(path.join(into, doc(cfg).filenameFor(docName)))
+  fakeFs.writeFile(path.join(into, doc(cfg).docNameToFilename(docName)))
   const expected = true
   const actual = await sdk(cfg).docExists(docName, into)
   t.is(actual, expected)
@@ -65,10 +65,31 @@ test('loadDoc failure', async t => {
   }
 })
 
+test('findDocTitle, case sensitive', async t => {
+  const cfg = await configUsingFakeFs()
+  const docName = 'any case'
+  fakeFs.writeFile(doc(cfg).docNameToFilename('Any Case'), 'Hi!')
+
+  const expected = 'any case'
+  const actual = await sdk(cfg).findDocTitle(docName)
+  t.is(actual, expected)
+})
+
+test('findDocTitle, case insensitive', async t => {
+  const cfg = await configUsingFakeFs()
+  cfg.sys.fileSystemIsCaseSensitive = false
+  const docName = 'any case'
+  fakeFs.writeFile(doc(cfg).docNameToFilename('Any Case'), 'Hi!')
+
+  const expected = 'Any Case'
+  const actual = await sdk(cfg).findDocTitle(docName)
+  t.is(actual, expected)
+})
+
 test('loadDoc success', async t => {
   const cfg = await configUsingFakeFs()
   const docName = fakeFs.rndName()
-  fakeFs.writeFile(doc(cfg).filenameFor(docName), 'Hi!')
+  fakeFs.writeFile(doc(cfg).docNameToFilename(docName), 'Hi!')
   const actual = await sdk(cfg).loadDoc(docName)
   const expected = 'Hi!'
   t.is(actual.content, expected)
@@ -79,7 +100,7 @@ test('loadDoc success with a folder', async t => {
   const docName = fakeFs.rndName()
   const from = fakeFs.rndName()
   fakeFs.mkdir(from)
-  fakeFs.writeFile(path.join(from, doc(cfg).filenameFor(docName)), 'Hi!')
+  fakeFs.writeFile(path.join(from, doc(cfg).docNameToFilename(docName)), 'Hi!')
   const actual = await sdk(cfg).loadDoc(docName, from)
   const expected = 'Hi!'
   t.is(actual.content, expected)
@@ -89,7 +110,7 @@ test('createDoc success', async t => {
   const cfg = await configUsingFakeFs()
   const docName = fakeFs.rndName()
   await sdk(cfg).createDoc(docName, 'Today is nöt yestarday')
-  const actual = fakeFs.readFile(doc(cfg).filenameFor(docName))
+  const actual = fakeFs.readFile(doc(cfg).docNameToFilename(docName))
   const expected = 'Today is nöt yestarday'
   t.is(actual, expected)
 })
@@ -100,7 +121,7 @@ test('createDoc success in a folder', async t => {
   const into = fakeFs.rndName()
   fakeFs.mkdir(into)
   await sdk(cfg).createDoc(docName, 'Today is nöt yestarday', into)
-  const actual = fakeFs.readFile(path.join(into, doc(cfg).filenameFor(docName)))
+  const actual = fakeFs.readFile(path.join(into, doc(cfg).docNameToFilename(docName)))
   const expected = 'Today is nöt yestarday'
   t.is(actual, expected)
 })
@@ -108,7 +129,7 @@ test('createDoc success in a folder', async t => {
 test('updateDoc success', async t => {
   const cfg = await configUsingFakeFs()
   const docName = fakeFs.rndName()
-  const docFilename = doc(cfg).filenameFor(docName)
+  const docFilename = doc(cfg).docNameToFilename(docName)
   fakeFs.writeFile(docFilename, 'Hello')
   await sdk(cfg).updateDoc(docName, docName, 'Today is nöt yestarday')
   const actual = fakeFs.readFile(docFilename)
@@ -121,7 +142,7 @@ test('updateDoc success in a folder', async t => {
   const docName = fakeFs.rndName()
   const into = fakeFs.rndName()
   fakeFs.mkdir(into)
-  const docFilename = doc(cfg).filenameFor(docName)
+  const docFilename = doc(cfg).docNameToFilename(docName)
   fakeFs.writeFile(path.join(into, docFilename), 'Hello')
   await sdk(cfg).updateDoc(docName, docName, 'Today is nöt yestarday', into)
   const actual = fakeFs.readFile(path.join(into, docFilename))
@@ -133,8 +154,8 @@ test('updateDoc failure', async t => {
   const cfg = await configUsingFakeFs()
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
-  const docFilename1 = doc(cfg).filenameFor(docName1)
-  const docFilename2 = doc(cfg).filenameFor(docName2)
+  const docFilename1 = doc(cfg).docNameToFilename(docName1)
+  const docFilename2 = doc(cfg).docNameToFilename(docName2)
   fakeFs.writeFile(docFilename1, 'Hello')
     .writeFile(docFilename2, 'Hello')
   // This must fail because docName2 already exists
@@ -154,16 +175,16 @@ test('renameDoc with a different name', async t => {
   const cfg = await configUsingFakeFs()
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
-  fakeFs.writeFile(doc(cfg).filenameFor(docName1), 'zot')
+  fakeFs.writeFile(doc(cfg).docNameToFilename(docName1), 'zot')
   let actual: any = await sdk(cfg).renameDoc(docName1, docName2)
   let expected: any = true
   t.is(actual, expected)
 
-  actual = fakeFs.readFile(doc(cfg).filenameFor(docName1))
+  actual = fakeFs.readFile(doc(cfg).docNameToFilename(docName1))
   expected = null
   t.is(actual, expected)
 
-  actual = fakeFs.readFile(doc(cfg).filenameFor(docName2))
+  actual = fakeFs.readFile(doc(cfg).docNameToFilename(docName2))
   expected = 'zot'
   t.is(actual, expected)
 })
@@ -174,17 +195,17 @@ test('renameDoc with a different name in a folder', async t => {
   const docName2 = fakeFs.rndName()
   const into = fakeFs.rndName()
   fakeFs.mkdir(into)
-  const docFilename = doc(cfg).filenameFor(docName1)
+  const docFilename = doc(cfg).docNameToFilename(docName1)
   fakeFs.writeFile(path.join(into, docFilename), 'zot')
   let actual: any = await sdk(cfg).renameDoc(docName1, docName2, into)
   let expected: any = true
   t.is(actual, expected)
 
-  actual = fakeFs.readFile(path.join(into, doc(cfg).filenameFor(docName1)))
+  actual = fakeFs.readFile(path.join(into, doc(cfg).docNameToFilename(docName1)))
   expected = null
   t.is(actual, expected)
 
-  actual = fakeFs.readFile(path.join(into, doc(cfg).filenameFor(docName2)))
+  actual = fakeFs.readFile(path.join(into, doc(cfg).docNameToFilename(docName2)))
   expected = 'zot'
   t.is(actual, expected)
 })
@@ -193,8 +214,8 @@ test('renameDoc with a different name and new file already exists', async t => {
   const cfg = await configUsingFakeFs()
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
-  fakeFs.writeFile(doc(cfg).filenameFor(docName1), 'zot')
-    .writeFile(doc(cfg).filenameFor(docName2), 'zot')
+  fakeFs.writeFile(doc(cfg).docNameToFilename(docName1), 'zot')
+    .writeFile(doc(cfg).docNameToFilename(docName2), 'zot')
   const actual: any = await sdk(cfg).renameDoc(docName1, docName2)
   const expected: any = false
   t.is(actual, expected)
@@ -205,8 +226,8 @@ test('renameDoc with a different name and new file already exists in a folder', 
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
   const into = fakeFs.rndName()
-  const docFilename1 = doc(cfg).filenameFor(docName1)
-  const docFilename2 = doc(cfg).filenameFor(docName2)
+  const docFilename1 = doc(cfg).docNameToFilename(docName1)
+  const docFilename2 = doc(cfg).docNameToFilename(docName2)
   fakeFs.mkdir(into)
   fakeFs.writeFile(path.join(into, docFilename1), 'zot')
   fakeFs.writeFile(path.join(into, docFilename2), 'zot')
@@ -243,8 +264,8 @@ test('listDocs in an existing subdir', async t => {
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
   fakeFs.mkdir('mmh')
-    .writeFile('mmh/' + doc(cfg).filenameFor(docName1), 'zot')
-    .writeFile('mmh/' + doc(cfg).filenameFor(docName2), 'zot')
+    .writeFile('mmh/' + doc(cfg).docNameToFilename(docName1), 'zot')
+    .writeFile('mmh/' + doc(cfg).docNameToFilename(docName2), 'zot')
   const actual: any = await sdk(cfg).listDocs('mmh')
   const expected: any = [docName2, docName1].sort()
   t.deepEqual(actual, expected)

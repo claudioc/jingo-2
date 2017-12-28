@@ -1,6 +1,5 @@
 import { Config } from '@lib/config'
 import BaseRoute from '@routes/route'
-import sdk from '@sdk'
 import { NextFunction, Request, Response, Router } from 'express'
 
 export default class WikiRoute extends BaseRoute {
@@ -39,19 +38,17 @@ export default class WikiRoute extends BaseRoute {
   }
 
   public async read (req: Request, res: Response, next: NextFunction) {
-    const docTitle = this.wikiHelpers.unwikify(this.docName)
     const isIndex = this.config.get('wiki.index') === this.docName
 
-    this.title = `Jingo – ${docTitle}`
-
     try {
-      const doc = await sdk(this.config).loadDoc(this.docName, this.dirName)
+      const doc = await this.sdk.loadDoc(this.docName, this.dirName)
       const scope: object = {
-        content: sdk(this.config).renderToHtml(doc.content),
+        content: this.sdk.renderToHtml(doc.content),
         dirName: this.dirName,
         docName: this.docName,
-        docTitle: isIndex ? '' : docTitle
+        docTitle: isIndex ? '' : doc.title
       }
+      this.title = `Jingo – ${doc.title}`
       this.render(req, res, 'wiki-read', scope)
     } catch (e) {
       if (isIndex) {
@@ -64,7 +61,6 @@ export default class WikiRoute extends BaseRoute {
   }
 
   public async list (req: Request, res: Response, next: NextFunction) {
-    const apiMethods = sdk(this.config)
     const dirParts = this.folderHelpers.splitPath(this.dirName)
 
     this.title = `Jingo – List of documents`
@@ -72,8 +68,8 @@ export default class WikiRoute extends BaseRoute {
     let docList
     let folderList
     try {
-      docList = await apiMethods.listDocs(this.dirName)
-      folderList = await apiMethods.listFolders(this.dirName)
+      docList = await this.sdk.listDocs(this.dirName)
+      folderList = await this.sdk.listFolders(this.dirName)
     } catch (err) {
       res.status(404).render('404')
       return

@@ -3,11 +3,13 @@ import doc, { Doc } from '@lib/doc'
 import folder, { Folder } from '@lib/folder'
 import fsApi, { FileSystemApi } from '@lib/fs-api'
 import ipc, { IIpc } from '@lib/ipc'
+import wiki, { Wiki } from '@lib/wiki'
 import * as fs from 'fs'
 import * as MarkdownIt from 'markdown-it'
 import * as path from 'path'
 
 interface IDoc {
+  title?: string
   content: string
 }
 
@@ -21,14 +23,16 @@ function sdk (config: Config): Sdk {
   return new Sdk(config)
 }
 
-class Sdk {
+export class Sdk {
   public docHelpers: Doc
   public folderHelpers: Folder
   public parser: MarkdownIt.MarkdownIt
   public fsApi: FileSystemApi
   public ipc: IIpc
+  public wikiHelpers: Wiki
 
   constructor (public config: Config) {
+    this.wikiHelpers = wiki(config)
     this.docHelpers = doc(config)
     this.folderHelpers = folder(config)
     this.parser = new MarkdownIt()
@@ -51,7 +55,7 @@ class Sdk {
   public async listDocs (into: string = ''): Promise<IDocItem[] | any> {
     const docRoot = this.config.get('documentRoot')
 
-    let files = await this.fsApi.readFolder(path.join(docRoot, into), {
+    let files = await this.fsApi.scanDir(path.join(docRoot, into), {
       exclude: /^\./,
       includeDirs: false,
       includeFiles: true,
@@ -69,7 +73,7 @@ class Sdk {
   public async listFolders (into: string = ''): Promise<IDocItem[] | any> {
     const docRoot = this.config.get('documentRoot')
 
-    const folders = await this.fsApi.readFolder(path.join(docRoot, into), {
+    const folders = await this.fsApi.scanDir(path.join(docRoot, into), {
       exclude: /^\./,
       includeDirs: true,
       includeFiles: false
@@ -116,6 +120,7 @@ class Sdk {
   /**
    * Returns whether a document exists or not
    * @param docName Id of the document to check
+   * @param into The directory where the document supposedly exists
    */
   public async docExists (docName: string, into: string = ''): Promise<boolean> {
     const fullDocName = this.makeFilename(docName, into)
@@ -134,13 +139,47 @@ class Sdk {
       return true
     }
 
-    if (await this.docExists(newDocName, into)) {
+    const isOverwritable = await this.isOverwritableBy(oldDocName, newDocName, into)
+    const docExists = await this.docExists(newDocName, into)
+
+    // A document by the same name already exists and the documents are not
+    // really the same (can happen on a case insensitive file system)
+    if (docExists && !isOverwritable) {
       return false
     }
+
     const fullDocName1 = this.makeFilename(oldDocName, into)
     const fullDocName2 = this.makeFilename(newDocName, into)
     await this.fsApi.rename(fullDocName1, fullDocName2)
     return true
+  }
+
+  /**
+   * Check if two docNames point to the same file (the check is
+   * needed on case insensitive file systems) thus considering the first
+   * docName overwritable by the second docName (as file names) without consequences
+   * @param docName1 Name of the first doc
+   * @param docName2 Name of the second doc
+   * @param into directory where the document resides
+   */
+  public async isOverwritableBy (docName1: string, docName2: string, into: string) {
+    if (this.config.sys.fileSystemIsCaseSensitive && docName1 !== docName2) {
+      return false
+    }
+
+    const fullDocName1 = this.makeFilename(docName1, into)
+    const fullDocName2 = this.makeFilename(docName2, into)
+    let stat1
+    let stat2
+    try {
+      stat1 = await this.fsApi.stat(fullDocName1)
+      stat2 = await this.fsApi.stat(fullDocName2)
+    } catch (e) {
+      // If one of the files doesn't exist, obviously it's OK
+      return true
+    }
+
+    return stat1.ino === stat2.ino && stat1.dev === stat2.dev
   }
 
   /**
@@ -150,10 +189,39 @@ class Sdk {
    */
   public async loadDoc (docName: string, from: string = ''): Promise<IDoc> {
     const fullDocName = this.makeFilename(docName, from)
+    const title = await this.findDocTitle(docName, from)
     const content = await this.fsApi.readFile(fullDocName)
+
     return {
-      content
+      content,
+      title
     } as IDoc
+  }
+
+  /**
+   * With case insensitive file systems, we need to recover
+   * the real title of the document from the real title of
+   * the file as we can only get via readdir
+   * @param docName The docName
+   * @param from The folder the docName is in
+   */
+  public async findDocTitle (docName: string, from: string = ''): Promise<string> {
+    if (this.config.sys.fileSystemIsCaseSensitive) {
+      return this.wikiHelpers.unwikify(docName)
+    }
+
+    const fullDirname = this.folderHelpers.fullpathFor(from)
+    const filenames = await this.fsApi.scanDir(fullDirname as any, {
+      includeDirs: false
+    })
+    const fullFilename = this.docHelpers.docNameToFilename(docName).toUpperCase()
+    const titles = filenames.filter(filename => filename.toUpperCase() === fullFilename)
+
+    if (titles.length === 0) {
+      throw new Error(`Unable to find anything similar to ${docName}`)
+    }
+
+    return this.wikiHelpers.unwikify(this.docHelpers.filenameToDocName(titles[0]))
   }
 
   /**
@@ -162,7 +230,7 @@ class Sdk {
    * @param into The directory where the folder should be
    */
   public async folderExists (folderName: string, into: string = ''): Promise<boolean> {
-    const fullFolderName = this.makeFoldername(folderName, into)
+    const fullFolderName = this.makeDirname(folderName, into)
     return await this.fsApi.access(fullFolderName, fs.constants.F_OK)
   }
 
@@ -172,7 +240,7 @@ class Sdk {
    * @param into The directory where to create the folder
    */
   public async createFolder (folderName: string, into: string = ''): Promise<void> {
-    const fullFolderName = this.makeFoldername(folderName, into)
+    const fullFolderName = this.makeDirname(folderName, into)
     this.ipc.send('CREATE FOLDER', folderName)
     await this.fsApi.mkdir(fullFolderName)
   }
@@ -192,8 +260,8 @@ class Sdk {
     if (await this.folderExists(newFolderName, into)) {
       return false
     }
-    const fullFolderName1 = this.makeFoldername(oldFolderName, into)
-    const fullFolderName2 = this.makeFoldername(newFolderName, into)
+    const fullFolderName1 = this.makeDirname(oldFolderName, into)
+    const fullFolderName2 = this.makeDirname(newFolderName, into)
     await this.fsApi.rename(fullFolderName1, fullFolderName2)
     return true
   }
@@ -204,7 +272,7 @@ class Sdk {
    * @into into Locatio of the folder
    */
   public async deleteFolder (folderName: string, into: string = ''): Promise<void> {
-    const fullFolderName = this.makeFoldername(folderName, into)
+    const fullFolderName = this.makeDirname(folderName, into)
     this.ipc.send('DELETE', folderName)
     return this.fsApi.rmdir(fullFolderName)
   }
@@ -219,12 +287,12 @@ class Sdk {
     await this.fsApi.writeFile(fullDocName, docContent)
   }
 
-  protected makeFoldername (folderName: string, parentFolder: string) {
+  protected makeDirname (folderName: string, parentFolder: string) {
     return path.join(this.folderHelpers.fullpathFor(parentFolder) as any, folderName)
   }
 
   protected makeFilename (docName: string, parentFolder: string) {
-    const docFilename = this.docHelpers.filenameFor(docName)
+    const docFilename = this.docHelpers.docNameToFilename(docName)
     return path.join(this.folderHelpers.fullpathFor(parentFolder) as any, docFilename as any)
   }
 }

@@ -32,6 +32,10 @@ export type TConfig = {
   wiki?: TWikiSettings
 }
 
+type ConfigSys = {
+  fileSystemIsCaseSensitive: boolean
+}
+
 export const config = async (fsDriver = fs, defaultsFilename?): Promise<Config> => {
   const cfg = new Config(fsDriver)
   if (defaultsFilename) {
@@ -42,9 +46,10 @@ export const config = async (fsDriver = fs, defaultsFilename?): Promise<Config> 
 }
 
 export class Config {
-  values: TConfig
-  defaults: TConfig
-  defaultsFilename: string
+  public values: TConfig
+  public defaults: TConfig
+  public defaultsFilename: string
+  public sys: ConfigSys
   protected defaultValues: TConfig
   protected fsApi: FileSystemApi
 
@@ -55,6 +60,9 @@ export class Config {
     // @FIXME The default config file should probably be moved somewhere
     // by the build process. Right now it is symlinked by the `npm clean` step
     this.defaultsFilename = path.join(process.cwd(), 'dist/config-defaults.json')
+    this.sys = {
+      fileSystemIsCaseSensitive: true
+    }
   }
 
   // Load both the defaults and the configuration from a config file
@@ -68,6 +76,10 @@ export class Config {
     }
     this.fixConfig()
     await this.checkConfig()
+
+    // At this point we must have the documentRoot defined and we can use
+    // it to probe the case-sensitiveness of the fs
+    this.sys.fileSystemIsCaseSensitive = await this.fsApi.isCaseSensitive(this.get('documentRoot'))
     return this
   }
 

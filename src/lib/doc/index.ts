@@ -45,8 +45,16 @@ export class Doc {
    * Returns the formatted Md filename of a document
    * @param docName Id of the document
    */
-  public filenameFor (docName: string): string {
+  public docNameToFilename (docName: string): string {
     return docName ? (docName.endsWith('.md') ? docName : `${docName}.md`) : ''
+  }
+
+  /**
+   * Returns the docName from the filename
+   * @param docName Id of the document
+   */
+  public filenameToDocName (filename: string): string {
+    return filename.replace(/\.md$/, '')
   }
 
   /**

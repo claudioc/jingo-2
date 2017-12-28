@@ -77,3 +77,7 @@
 - Renamed api to sdk
 - Created the api routes
 - 5042 sloc
+28/12/17
+- Addressed a lot of problems with case insensitive file systems
+- Find aliens in the config
+- 5135 sloc

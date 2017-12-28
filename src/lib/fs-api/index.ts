@@ -5,7 +5,7 @@ import { promisify } from 'util'
 // About returning promises inside an async ts method
 // https://github.com/Microsoft/TypeScript/issues/5254
 
-type ReadFolderOptions = {
+type ScanDirOptions = {
   match?: RegExp
   exclude?: RegExp
   includeDirs?: boolean
@@ -78,13 +78,29 @@ export class FileSystemApi {
   }
 
   /**
-   * High level folder reading method.
-   * @param useFs
-   * @param folderName
-   * @param options ReadFolderOptions
+   * Probe file system for case sensitiveness
+   * @param tester A file or directory to use as test
    */
-  public async readFolder (folderName: string, options: ReadFolderOptions = {}): Promise<string[]> {
-    const items = await this.readdir(folderName)
+  public async isCaseSensitive (tester: string) {
+    let stat1
+    let stat2
+    try {
+      stat1 = await this.stat(tester)
+      stat2 = await this.stat(tester.toUpperCase())
+    } catch (e) {
+      return true
+    }
+
+    return !(stat1.ino === stat2.ino && stat1.dev === stat2.dev)
+  }
+
+  /**
+   * High level folder reading method.
+   * @param dirname
+   * @param options ScanDirOptions
+   */
+  public async scanDir (dirname: string, options: ScanDirOptions = {}): Promise<string[]> {
+    const items = await this.readdir(dirname)
 
     if (typeof options.includeFiles === 'undefined') {
       options.includeFiles = true
@@ -102,7 +118,7 @@ export class FileSystemApi {
         return false
       }
 
-      const fullPath = path.join(folderName, item)
+      const fullPath = path.join(dirname, item)
       const itemStat = this.statSync(fullPath)
       if (!options.includeDirs && itemStat.isDirectory()) {
         return false

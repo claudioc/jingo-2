@@ -39,27 +39,33 @@ test('pathFor create with into', t => {
   t.is(actual, expected)
 })
 
-test('filenameFor without parameter', t => {
-  const actual = helpers.filenameFor(undefined)
+test('docNameToFilename without parameter', t => {
+  const actual = helpers.docNameToFilename(undefined)
   const expected = ''
   t.is(actual, expected)
 })
 
-test('filenameFor with empty parameter', t => {
-  const actual = helpers.filenameFor('')
+test('docNameToFilename with empty parameter', t => {
+  const actual = helpers.docNameToFilename('')
   const expected = ''
   t.is(actual, expected)
 })
 
-test('filenameFor', t => {
-  const actual = helpers.filenameFor('My_Test')
+test('docNameToFilename', t => {
+  const actual = helpers.docNameToFilename('My_Test')
   const expected = 'My_Test.md'
   t.is(actual, expected)
 })
 
-test('filenameFor with the extension already', t => {
-  const actual = helpers.filenameFor('My_Test.md')
+test('docNameToFilename with the extension already', t => {
+  const actual = helpers.docNameToFilename('My_Test.md')
   const expected = 'My_Test.md'
+  t.is(actual, expected)
+})
+
+test('filenameToDocName', t => {
+  const actual = helpers.filenameToDocName('My_Test.md')
+  const expected = 'My_Test'
   t.is(actual, expected)
 })
 
