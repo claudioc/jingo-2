@@ -3,7 +3,7 @@ import * as ipc_ from 'node-ipc'
 
 type IIpcOp = 'CREATE DOC' | 'CREATE FOLDER' | 'UPDATE' | 'DELETE'
 
-interface IIpc {
+export interface IIpc {
   connect (): void
   send (op: IIpcOp, subject): void
 }
@@ -23,7 +23,7 @@ const ipc = (config: Config): Ipc | IIpc => {
   return new Ipc(config)
 }
 
-class Ipc implements IIpc {
+export class Ipc implements IIpc {
   private server
   private enabled
 

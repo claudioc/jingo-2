@@ -1,7 +1,9 @@
 import fixers from '@lib/config/fixers'
 import validators from '@lib/config/validators'
-import fs from '@lib/fs'
+import fsApi, { FileSystemApi } from '@lib/fs-api'
 import * as cjson from 'comment-json'
+import * as fs from 'fs'
+
 import {
   get as _get,
   has as _has,
@@ -28,15 +30,25 @@ export type TConfig = {
   wiki?: TWikiSettings
 }
 
+export const config = async (fsDriver = fs, defaultsFilename?): Promise<Config> => {
+  const cfg = new Config(fsDriver)
+  if (defaultsFilename) {
+    cfg.setDefaultsFilename(defaultsFilename)
+  }
+  await cfg.loadDefaults()
+  return cfg
+}
+
 export class Config {
   values: TConfig
   defaults: TConfig
   defaultsFilename: string
-  fs = null
+  protected fsApi: FileSystemApi
 
-  constructor () {
+  constructor (public fsDriver = fs) {
     this.values = null
     this.defaults = null
+    this.fsApi = fsApi(this.fsDriver)
     // @FIXME The default config file should probably be moved somewhere
     // by the build process. Right now it is symlinked by the `npm clean` step
     this.defaultsFilename = path.join(process.cwd(), 'dist/config-defaults.json')
@@ -45,7 +57,7 @@ export class Config {
   // Load both the defaults and the configuration from a config file
   public async load (filename: string): Promise<Config> {
     await this.loadDefaults()
-    const fileContent = await fs.readFile(this.fs, filename)
+    const fileContent = await this.fsApi.readFile(filename)
     _merge(this.values, cjson.parse(fileContent, null, true))
     this.fixConfig()
     await this.checkConfig()
@@ -96,7 +108,7 @@ export class Config {
   }
 
   public async loadDefaults (): Promise<Config> {
-    const defaultContents = await fs.readFile(this.fs, this.getDefaultsFilename())
+    const defaultContents = await this.fsApi.readFile(this.getDefaultsFilename())
     // Keeps comments in the defaults (so we can dump them to the console)
     this.defaults = cjson.parse(defaultContents)
     // Strip comments for the default values
@@ -113,11 +125,6 @@ export class Config {
     return this
   }
 
-  public setFs (useFs): Config {
-    this.fs = useFs
-    return this
-  }
-
   protected fixConfig (): Config {
     this.values.documentRoot = fixers.fixDocumentRoot(this.values.documentRoot)
     this.values.ipc = fixers.fixIpc(this.values.ipc)
@@ -131,15 +138,6 @@ export class Config {
     validators.checkWiki(this.values.wiki)
     return this
   }
-}
-
-export async function configWithDefaults (defaultsFilename?: string): Promise<Config> {
-  const config = new Config()
-  if (defaultsFilename) {
-    config.setDefaultsFilename(defaultsFilename)
-  }
-  await config.loadDefaults()
-  return config
 }
 
 export default new Config()

@@ -1,20 +1,23 @@
+import fsApi from '@lib/fs-api'
+import * as fs from 'fs'
+
 import {
   Config,
   TIpcSettings,
   TWikiSettings
 } from '@lib/config'
-import fs from '@lib/fs'
 
 const checkDocumentRoot = async (config: Config, documentRoot: string): Promise<void> => {
+  const fsapi = fsApi(config.fsDriver)
   if (!documentRoot) {
     throw new Error('The document root is not defined')
   }
 
-  if (!await fs.access(config.fs, documentRoot, fs.constants.R_OK | fs.constants.W_OK)) {
+  if (!await fsapi.access(documentRoot, fs.constants.R_OK | fs.constants.W_OK)) {
     throw new Error(`EACCES The document root is not accessible by Jingo (${documentRoot})`)
   }
 
-  const stat = await fs.stat(config.fs, documentRoot)
+  const stat = await fsapi.stat(documentRoot)
   if (!stat.isDirectory()) {
     throw new Error(`EACCES The document root must be a directory (${documentRoot})`)
   }

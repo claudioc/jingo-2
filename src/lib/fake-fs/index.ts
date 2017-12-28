@@ -5,38 +5,38 @@ import * as MountFs from 'mountfs'
 import * as path from 'path'
 
 export default class FakeFs {
-  theFs
+  fsDriver
 
   constructor (public mountPoint: string) {
-    this.theFs = new MountFs(fs)
-    this.theFs.mount(this.mountPoint, memfs)
+    this.fsDriver = new MountFs(fs)
+    this.fsDriver.mount(this.mountPoint, memfs)
   }
 
   unmount () {
-    this.theFs.unmount(this.mountPoint)
+    this.fsDriver.unmount(this.mountPoint)
     return this
   }
 
   writeFile (pathName, content = '') {
-    this.theFs.writeFileSync(path.join(this.mountPoint, pathName), content)
+    this.fsDriver.writeFileSync(path.join(this.mountPoint, pathName), content)
     return this
   }
 
   mkdir (dir) {
-    this.theFs.mkdirSync(path.join(this.mountPoint, dir))
+    this.fsDriver.mkdirSync(path.join(this.mountPoint, dir))
     return this
   }
 
   readFile (pathName) {
     try {
-      return this.theFs.readFileSync(path.join(this.mountPoint, pathName)).toString()
+      return this.fsDriver.readFileSync(path.join(this.mountPoint, pathName)).toString()
     } catch (err) {
       return null
     }
   }
 
   access (pathName): void {
-    this.theFs.accessSync(path.join(this.mountPoint, pathName))
+    this.fsDriver.accessSync(path.join(this.mountPoint, pathName))
   }
 
   rndName () {

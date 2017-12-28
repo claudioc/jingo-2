@@ -1,11 +1,11 @@
-import { configWithDefaults } from '@lib/config'
+import { config } from '@lib/config'
 import test from 'ava'
 import { nop as _nop } from 'lodash'
 import * as sinon from 'sinon'
 import Route from '.'
 
 test('Send a 404 if folder doesn\'t exist', async t => {
-  const route = new Route(await configWithDefaults(), 'x/y')
+  const route = new Route(await config(), 'x/y')
   sinon.stub(route, 'render')
 
   const request = {

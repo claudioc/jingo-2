@@ -1,11 +1,11 @@
-import { configWithDefaults } from '@lib/config'
+import { config } from '@lib/config'
 import test from 'ava'
 import viewHelpers from '.'
 
 let helpers
 
 test.before(async () => {
-  helpers = viewHelpers(await configWithDefaults())
+  helpers = viewHelpers(await config())
 })
 
 test('urlFor doc create', t => {
@@ -48,19 +48,19 @@ test('urlFor list wiki', t => {
 })
 
 test('urlFor home (default)', async t => {
-  const config = await configWithDefaults()
+  const cfg = await config()
   const params = {
     hash: {
       resource: 'home'
     }
   }
-  t.is(helpers.urlFor(params), `/wiki/${config.getDefault('wiki.index')}`)
+  t.is(helpers.urlFor(params), `/wiki/${cfg.getDefault('wiki.index')}`)
 })
 
 test('urlFor home (custom page)', async t => {
-  const config = await configWithDefaults()
-  config.set('wiki.index', 'Super')
-  helpers = viewHelpers(config)
+  const cfg = await config()
+  cfg.set('wiki.index', 'Super')
+  helpers = viewHelpers(cfg)
   const params = {
     hash: {
       resource: 'home'
@@ -70,9 +70,9 @@ test('urlFor home (custom page)', async t => {
 })
 
 test('urlFor with extra params', async t => {
-  const config = await configWithDefaults()
-  config.set('wiki.index', 'Super')
-  helpers = viewHelpers(config)
+  const cfg = await config()
+  cfg.set('wiki.index', 'Super')
+  helpers = viewHelpers(cfg)
   const params = {
     hash: {
       antani: 'monic elli',
@@ -84,9 +84,9 @@ test('urlFor with extra params', async t => {
 })
 
 test('urlFor with extra params and an empty one', async t => {
-  const config = await configWithDefaults()
-  config.set('wiki.index', 'Super')
-  helpers = viewHelpers(config)
+  const cfg = await config()
+  cfg.set('wiki.index', 'Super')
+  helpers = viewHelpers(cfg)
   const params = {
     hash: {
       antani: 'monic elli',
@@ -99,8 +99,8 @@ test('urlFor with extra params and an empty one', async t => {
 })
 
 test('urlFor folder create', async t => {
-  const config = await configWithDefaults()
-  helpers = viewHelpers(config)
+  const cfg = await config()
+  helpers = viewHelpers(cfg)
   const params = {
     hash: {
       resource: 'folder'
@@ -110,8 +110,8 @@ test('urlFor folder create', async t => {
 })
 
 test('urlFor folder create with into', async t => {
-  const config = await configWithDefaults()
-  helpers = viewHelpers(config)
+  const cfg = await config()
+  helpers = viewHelpers(cfg)
   const params = {
     hash: {
       into: 'bazinga 2',
@@ -122,8 +122,8 @@ test('urlFor folder create with into', async t => {
 })
 
 test('urlFor folder list', async t => {
-  const config = await configWithDefaults()
-  helpers = viewHelpers(config)
+  const cfg = await config()
+  helpers = viewHelpers(cfg)
   const params = {
     hash: {
       action: 'list',
@@ -135,8 +135,8 @@ test('urlFor folder list', async t => {
 })
 
 test('urlFor folder rename', async t => {
-  const config = await configWithDefaults()
-  helpers = viewHelpers(config)
+  const cfg = await config()
+  helpers = viewHelpers(cfg)
   const params = {
     hash: {
       action: 'rename',

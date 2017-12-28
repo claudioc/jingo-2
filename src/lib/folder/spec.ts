@@ -1,12 +1,12 @@
-import { configWithDefaults } from '@lib/config'
+import { config } from '@lib/config'
 import test from 'ava'
 import folder, { Folder } from '.'
 
 let helpers: Folder
 test.before(async () => {
-  const config = await configWithDefaults()
-  config.set('documentRoot', '/home/jingo')
-  helpers = folder(config)
+  const cfg = await config()
+  cfg.set('documentRoot', '/home/jingo')
+  helpers = folder(cfg)
 })
 
 test('pathFor create', t => {

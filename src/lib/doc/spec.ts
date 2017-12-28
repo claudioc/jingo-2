@@ -1,12 +1,12 @@
-import { configWithDefaults } from '@lib/config'
+import { config } from '@lib/config'
 import test from 'ava'
 import doc, { Doc } from '.'
 
 let helpers: Doc
 test.before(async () => {
-  const config = await configWithDefaults()
-  config.set('documentRoot', '/home/jingo')
-  helpers = doc(config)
+  const cfg = await config()
+  cfg.set('documentRoot', '/home/jingo')
+  helpers = doc(cfg)
 })
 
 test('pathFor new, with name', t => {

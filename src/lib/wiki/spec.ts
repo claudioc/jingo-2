@@ -1,11 +1,11 @@
-import { configWithDefaults } from '@lib/config'
+import { config } from '@lib/config'
 import test from 'ava'
 import wiki, { Wiki } from '.'
 
 let helpers: Wiki
 test.before(async () => {
-  const config = await configWithDefaults()
-  helpers = wiki(config)
+  const cfg = await config()
+  helpers = wiki(cfg)
 })
 
 test('wikify', t => {

@@ -1,5 +1,4 @@
-import { configWithDefaults } from '@lib/config'
-import { Config } from '@lib/config'
+import { config } from '@lib/config'
 import FakeFs from '@lib/fake-fs'
 import test from 'ava'
 import { nop as _nop } from 'lodash'
@@ -9,8 +8,10 @@ import Route from '.'
 
 const fakeFs = new FakeFs('/home/jingo')
 
-const useFakeFs = (config: Config) => {
-  config.setFs(fakeFs.theFs).set('documentRoot', fakeFs.mountPoint)
+const configUsingFakeFs = async () => {
+  const cfg = await config(fakeFs.fsDriver)
+  cfg.set('documentRoot', fakeFs.mountPoint)
+  return cfg
 }
 
 test.after(() => {
@@ -18,7 +19,7 @@ test.after(() => {
 })
 
 test('get create route', async t => {
-  const route = new Route(await configWithDefaults())
+  const route = new Route(await config())
   const render = sinon.stub(route, 'render')
 
   const request = {
@@ -32,9 +33,7 @@ test('get create route', async t => {
 })
 
 test('post create fail if folder already exists', async t => {
-  const config = await configWithDefaults()
-  useFakeFs(config)
-  const route = new Route(config)
+  const route = new Route(await configUsingFakeFs())
   const folderName = fakeFs.rndName()
   const render = sinon.stub(route, 'render')
   fakeFs.mkdir(folderName)
@@ -64,9 +63,7 @@ test('post create fail if folder already exists', async t => {
 })
 
 test('post create fail if folder already exists in a subdir', async t => {
-  const config = await configWithDefaults()
-  useFakeFs(config)
-  const route = new Route(config)
+  const route = new Route(await configUsingFakeFs())
   const folderName = fakeFs.rndName()
   const intoName = fakeFs.rndName()
   const render = sinon.stub(route, 'render')
