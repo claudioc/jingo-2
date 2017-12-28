@@ -56,6 +56,21 @@ test('load will merge values with the defaults', async t => {
   t.is(cfg.get('wiki.index'), cfg.getDefault('wiki.index'))
 })
 
+test('load will detect alien or mispelled keys', async t => {
+  const cfg = await configUsingFakeFs()
+
+  fakeFs.writeFile('wrong-config.json', JSON.stringify({
+    documentFroot: '/home/jingo',
+    wiki: {
+      indes: 'popular'
+    }
+  }))
+
+  const error = await t.throws(cfg.load('/home/jingo/wrong-config.json'))
+
+  t.is(error.message, 'Unknown key(s) found in the config file: wiki.indes, documentFroot')
+})
+
 test('config WithDefaults', async t => {
   const cfg = await config()
   t.not(cfg.defaults, null)

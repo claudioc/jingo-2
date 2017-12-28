@@ -2,9 +2,11 @@ import fixers from '@lib/config/fixers'
 import validators from '@lib/config/validators'
 import fsApi, { FileSystemApi } from '@lib/fs-api'
 import * as cjson from 'comment-json'
+import * as flatten from 'flat'
 import * as fs from 'fs'
 
 import {
+  difference as _difference,
   get as _get,
   has as _has,
   isUndefined as _isUndefined,
@@ -43,6 +45,7 @@ export class Config {
   values: TConfig
   defaults: TConfig
   defaultsFilename: string
+  protected defaultValues: TConfig
   protected fsApi: FileSystemApi
 
   constructor (public fsDriver = fs) {
@@ -59,6 +62,10 @@ export class Config {
     await this.loadDefaults()
     const fileContent = await this.fsApi.readFile(filename)
     _merge(this.values, cjson.parse(fileContent, null, true))
+    const aliens = this.findAliens()
+    if (aliens.length > 0) {
+      throw new Error(`Unknown key(s) found in the config file: ${aliens.join(', ')}`)
+    }
     this.fixConfig()
     await this.checkConfig()
     return this
@@ -111,6 +118,8 @@ export class Config {
     const defaultContents = await this.fsApi.readFile(this.getDefaultsFilename())
     // Keeps comments in the defaults (so we can dump them to the console)
     this.defaults = cjson.parse(defaultContents)
+    // Keep also a copy of the defaults without comments
+    this.defaultValues = cjson.parse(defaultContents, null, true)
     // Strip comments for the default values
     this.values = cjson.parse(defaultContents, null, true)
     return this
@@ -123,6 +132,14 @@ export class Config {
   public setDefaultsFilename (filename): Config {
     this.defaultsFilename = filename
     return this
+  }
+
+  /**
+   * Walks the config and detect unknown keys
+   */
+  protected findAliens () {
+    const aliens = _difference(Object.keys(flatten(this.values)), Object.keys(flatten(this.defaultValues)))
+    return aliens
   }
 
   protected fixConfig (): Config {
