@@ -31,10 +31,10 @@ test('unwikify', t => {
   t.is(helpers.unwikify('E+anche+questa_è_fatta'), 'E/anche/questa è fatta')
 })
 
-test('wikiPathFor', t => {
-  t.is(helpers.wikiPathFor(undefined), '/wiki')
-  t.is(helpers.wikiPathFor(undefined, '', 'show'), '/wiki')
-  t.is(helpers.wikiPathFor('petto', '', 'show'), '/wiki/petto')
-  t.is(helpers.wikiPathFor('Petto'), '/wiki/Petto')
-  t.is(helpers.wikiPathFor('Petto', 'folder'), '/wiki/folder/Petto')
+test('pathFor', t => {
+  t.is(helpers.pathFor(undefined), '/wiki')
+  t.is(helpers.pathFor(undefined, '', 'show'), '/wiki')
+  t.is(helpers.pathFor('petto', '', 'show'), '/wiki/petto')
+  t.is(helpers.pathFor('Petto'), '/wiki/Petto')
+  t.is(helpers.pathFor('Petto', 'folder'), '/wiki/folder/Petto')
 })

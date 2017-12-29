@@ -71,7 +71,8 @@ export default class Server {
     // static middleware. Note: to use the static middleware
     // from the wiki pages directly we need to create a
     // whitelist (not a blacklist)
-    this.app.use([/(.*)\.md/, '/public'], express.static(path.join(__dirname, 'public'), staticOptions))
+    const proxyPath = config.get('proxyPath')
+    this.app.use([/(.*)\.md/, `${proxyPath}public`], express.static(path.join(__dirname, 'public'), staticOptions))
 
     const expressHbs = expressHandlebars.create({
       defaultLayout: 'main',

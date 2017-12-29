@@ -147,3 +147,53 @@ test('urlFor folder rename', async t => {
   }
   t.is(helpers.urlFor(params), '/folder/rename?folderName=bazinga&into=zoo')
 })
+
+test('urlFor css asset', async t => {
+  const cfg = await config()
+  helpers = viewHelpers(cfg)
+  const params = {
+    hash: {
+      id: 'bazinga.css',
+      resource: 'css'
+    }
+  }
+  t.is(helpers.urlFor(params), '/public/css/bazinga.css')
+})
+
+test('urlFor css asset and a proxypath', async t => {
+  const cfg = await config()
+  cfg.set('proxyPath', '/antani/versilia/')
+
+  helpers = viewHelpers(cfg)
+  const params = {
+    hash: {
+      id: 'bazinga.css',
+      resource: 'css'
+    }
+  }
+  t.is(helpers.urlFor(params), '/antani/versilia/public/css/bazinga.css')
+})
+
+test('urlFor js asset', async t => {
+  const cfg = await config()
+  helpers = viewHelpers(cfg)
+  const params = {
+    hash: {
+      id: 'bazinga.js',
+      resource: 'js'
+    }
+  }
+  t.is(helpers.urlFor(params), '/public/js/bazinga.js')
+})
+
+test('urlFor vendor asset', async t => {
+  const cfg = await config()
+  helpers = viewHelpers(cfg)
+  const params = {
+    hash: {
+      id: 'some/crazy/stuff/bazinga.js',
+      resource: 'vendor'
+    }
+  }
+  t.is(helpers.urlFor(params), '/public/vendor/some/crazy/stuff/bazinga.js')
+})

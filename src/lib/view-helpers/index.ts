@@ -44,7 +44,7 @@ export default function viewHelpers (config: Config) {
 
         // Access to any wiki page
         case 'wiki':
-          path =  wikiHelpers.wikiPathFor(id, into)
+          path =  wikiHelpers.pathFor(id, into)
           break
 
         // Access to any folder
@@ -54,7 +54,14 @@ export default function viewHelpers (config: Config) {
 
         // Access to the home page of the system
         case 'home':
-          path =  wikiHelpers.wikiPathFor(config.get('wiki.index'))
+          path =  wikiHelpers.pathFor(config.get('wiki.index'))
+          break
+
+        case 'vendor':
+        case 'css':
+        case 'js':
+          const proxyPath = config.get('proxyPath')
+          path = `${proxyPath}public/${resource}/${id}`
           break
       }
 

@@ -28,6 +28,7 @@ export type TWikiSettings = {
 
 export type TConfig = {
   documentRoot: string
+  proxyPath?: string
   ipc?: TIpcSettings
   wiki?: TWikiSettings
 }
@@ -156,6 +157,7 @@ export class Config {
 
   protected fixConfig (): Config {
     this.values.documentRoot = fixers.fixDocumentRoot(this.values.documentRoot)
+    this.values.proxyPath = fixers.fixProxyPath(this.values.proxyPath)
     this.values.ipc = fixers.fixIpc(this.values.ipc)
     this.values.wiki = fixers.fixWiki(this.values.wiki, this.getDefault('wiki'))
     return this

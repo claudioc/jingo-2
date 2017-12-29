@@ -18,7 +18,7 @@ export default class IndexRoute extends BaseRoute {
       })
     } else {
       const index = this.config.get('wiki.index')
-      const indexPageUrl = this.wikiHelpers.wikiPathFor(index)
+      const indexPageUrl = this.wikiHelpers.pathFor(index)
       res.redirect(indexPageUrl)
     }
   }

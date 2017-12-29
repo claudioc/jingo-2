@@ -269,7 +269,7 @@ test('post update route is a success (renaming)', async t => {
 
   const content = fakeFs.readFile(route.docHelpers.docNameToFilename(docName2))
   t.is(content, 'blah')
-  t.is(redirect.calledWith(route.wikiHelpers.wikiPathFor(docName2)), true)
+  t.is(redirect.calledWith(route.wikiHelpers.pathFor(docName2)), true)
 })
 
 test('post update route is a success (not renaming)', async t => {
@@ -304,7 +304,7 @@ test('post update route is a success (not renaming)', async t => {
 
   const content = fakeFs.readFile(route.docHelpers.docNameToFilename(docName2))
   t.is(content, 'blah')
-  t.is(redirect.calledWith(route.wikiHelpers.wikiPathFor(docName2)), true)
+  t.is(redirect.calledWith(route.wikiHelpers.pathFor(docName2)), true)
 })
 
 test('get delete route for a non-existing doc', async t => {

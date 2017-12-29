@@ -41,11 +41,12 @@ export class Wiki {
     return ret
   }
 
-  public wikiPathFor (docName: string, into: string = '', action: WikiAction = 'show'): string {
+  public pathFor (docName: string, into: string = '', action: WikiAction = 'show'): string {
     const wikied = this.wikify(docName)
     const actionPart = action !== 'show' ? `/${action}` : ''
     const basePath = path.join(this.config.get('wiki.basePath'), into)
-    return `/${basePath}/${wikied}${actionPart}`.replace(/\/$/, '')
+    const proxyPath = this.config.get('proxyPath')
+    return `${proxyPath}${basePath}/${wikied}${actionPart}`.replace(/\/$/, '')
   }
 }
 

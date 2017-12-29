@@ -1,11 +1,16 @@
 {
   // The directory from which Jingo will start reading and writing documents
   "documentRoot": "",
+
+  // Declare that the jingo server is running behind a proxy with that path
+  "proxyPath": "/",
+
   // Configuration for the IPC support
   "ipc": {
     "enabled": false,
     "server": ""
   },
+
   // Configuration of the wiki itself
   "wiki": {
     "index": "Home",
@@ -13,3 +18,4 @@
     "basePath": "wiki"
   }
 }
+

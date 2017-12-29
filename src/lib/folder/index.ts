@@ -24,7 +24,8 @@ export class Folder {
    * @param into The name of the parent folder
    */
   public pathFor (action: FolderAction, folderName: string = '', into: string = ''): string {
-    let actionPath = `/folder/${action}`
+    const proxyPath = this.config.get('proxyPath')
+    let actionPath = `${proxyPath}folder/${action}`
     const queso = new Queso()
 
     if (action === 'list') {
@@ -33,7 +34,7 @@ export class Folder {
       folderPath += folderPath.length > 0 ? '/' : ''
       // When into and folderPath are empty, path.join returns a '.'
       folderPath = path.join(into, folderPath).replace(/^\.$/, '')
-      actionPath = `/${this.config.get('wiki.basePath')}/${folderPath}`
+      actionPath = `${proxyPath}${this.config.get('wiki.basePath')}/${folderPath}`
     }
 
     if ((action === 'rename' || action === 'delete') && folderName.length > 0) {

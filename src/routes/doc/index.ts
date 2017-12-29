@@ -64,7 +64,7 @@ export default class DocRoute extends BaseRoute {
     if (docName) {
       const itExists = await sdk(this.config).docExists(docName, into)
       if (itExists) {
-        res.redirect(this.wikiHelpers.wikiPathFor(docName))
+        res.redirect(this.wikiHelpers.pathFor(docName))
         return
       }
     }
@@ -106,7 +106,7 @@ export default class DocRoute extends BaseRoute {
     await sdk(this.config).createDoc(docName, data.content, into)
 
     // All done, go to the just saved page
-    res.redirect(this.wikiHelpers.wikiPathFor(data.docTitle, into))
+    res.redirect(this.wikiHelpers.pathFor(data.docTitle, into))
   }
 
   public async update (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -167,7 +167,7 @@ export default class DocRoute extends BaseRoute {
     }
 
     // All done, go to the just saved page
-    res.redirect(this.wikiHelpers.wikiPathFor(data.docTitle, into))
+    res.redirect(this.wikiHelpers.pathFor(data.docTitle, into))
   }
 
   public async delete (req: Request, res: Response, next: NextFunction): Promise<void> {

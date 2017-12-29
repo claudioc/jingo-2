@@ -16,6 +16,7 @@ export default class WikiRoute extends BaseRoute {
 
   public static create (router: Router, config: Config) {
     const basePath = config.get('wiki.basePath')
+    const proxyPath = config.get('proxyPath')
 
     /**
      * The catch-all route for all the route request:
@@ -23,7 +24,7 @@ export default class WikiRoute extends BaseRoute {
      * - /wiki/dir/: will render the list in `dir`
      * - /wiki/dir/docname: will render docname in `dir`
      */
-    router.get(`/${basePath}*`, (req: Request, res: Response, next: NextFunction) => {
+    router.get(`${proxyPath}${basePath}*`, (req: Request, res: Response, next: NextFunction) => {
       const reqPath = req.params[0]
       delete req.params[0]
 
