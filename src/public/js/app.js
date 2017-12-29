@@ -15,7 +15,7 @@
 
     const headers = new Headers()
     headers.append('Content-Type', 'application/json')
-    const response = await fetch(`/api/render`, {
+    const response = await fetch('../api/render', {
       method: 'POST',
       body: JSON.stringify({
         content: form.querySelector('textarea').value
@@ -25,14 +25,13 @@
 
     if (response.ok) {
       previewSection.querySelector('.content').innerHTML = await response.text()
-
     }
   })
+
   doEdit.addEventListener('click', () => {
     editorSection.classList.remove('hidden')
     previewSection.classList.add('hidden')
     doEdit.classList.add('hidden')
     doPreview.classList.remove('hidden')
   })
-
 })()

@@ -35,7 +35,10 @@ export class Sdk {
     this.wikiHelpers = wiki(config)
     this.docHelpers = doc(config)
     this.folderHelpers = folder(config)
-    this.parser = new MarkdownIt()
+    this.parser = new MarkdownIt('default', {
+      linkify: true,
+      typographer: true
+    })
     this.fsApi = fsApi(config.fsDriver)
     this.ipc = ipc(config)
   }
