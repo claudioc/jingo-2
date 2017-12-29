@@ -37,4 +37,6 @@ test('pathFor', t => {
   t.is(helpers.pathFor('petto', '', 'show'), '/wiki/petto')
   t.is(helpers.pathFor('Petto'), '/wiki/Petto')
   t.is(helpers.pathFor('Petto', 'folder'), '/wiki/folder/Petto')
+  t.is(helpers.pathFor(''), '/wiki')
+  t.is(helpers.pathFor('?e=1'), '/wiki/?e=1')
 })

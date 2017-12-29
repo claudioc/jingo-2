@@ -81,3 +81,7 @@
 - Addressed a lot of problems with case insensitive file systems
 - Find aliens in the config
 - 5135 sloc
+29/12/17
+- Added support for the `proxyPath`
+- 5235 sloc
+

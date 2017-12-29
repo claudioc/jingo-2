@@ -40,27 +40,29 @@ const validatesRename = () => {
 
 export default class FolderRoute extends BaseRoute {
   public static create (router: Router, config: Config) {
-    router.get('/folder/create', (req: Request, res: Response, next: NextFunction) => {
+    const proxyPath = config.get('proxyPath')
+
+    router.get(`${proxyPath}folder/create`, (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).create(req, res, next)
     })
 
-    router.post('/folder/create', validatesCreate(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`${proxyPath}folder/create`, validatesCreate(), (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).didCreate(req, res, next)
     })
 
-    router.get('/folder/rename', (req: Request, res: Response, next: NextFunction) => {
+    router.get(`${proxyPath}folder/rename`, (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).rename(req, res, next)
     })
 
-    router.post('/folder/rename', validatesRename(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`${proxyPath}folder/rename`, validatesRename(), (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).didRename(req, res, next)
     })
 
-    router.get('/folder/delete', (req: Request, res: Response, next: NextFunction) => {
+    router.get(`${proxyPath}folder/delete`, (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).delete(req, res, next)
     })
 
-    router.post('/folder/delete', (req: Request, res: Response, next: NextFunction) => {
+    router.post(`${proxyPath}folder/delete`, (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).didDelete(req, res, next)
     })
   }
@@ -147,7 +149,7 @@ export default class FolderRoute extends BaseRoute {
 
     const itExists = await sdk(this.config).folderExists(folderName, into)
     if (!itExists) {
-      res.redirect('/?e=1')
+      res.redirect(`${this.config.get('proxyPath')}?e=1`)
       return
     }
 
@@ -165,7 +167,7 @@ export default class FolderRoute extends BaseRoute {
 
     const itExists = await sdk(this.config).folderExists(folderName, into)
     if (!itExists) {
-      res.redirect('/?e=1')
+      res.redirect(`${this.config.get('proxyPath')}?e=1`)
       return
     }
 

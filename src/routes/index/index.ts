@@ -5,7 +5,8 @@ import { isUndefined as _isUndefined } from 'lodash'
 
 export default class IndexRoute extends BaseRoute {
   public static create (router: Router, config: Config) {
-    router.get('/', (req: Request, res: Response, next: NextFunction) => {
+    const proxyPath = config.get('proxyPath')
+    router.get(proxyPath, (req: Request, res: Response, next: NextFunction) => {
       new IndexRoute(config).index(req, res, next)
     })
   }

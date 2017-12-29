@@ -28,27 +28,28 @@ const validatesCreate = () => {
 
 export default class DocRoute extends BaseRoute {
   public static create (router: Router, config: Config) {
-    router.get('/doc/create', (req: Request, res: Response, next: NextFunction) => {
+    const proxyPath = config.get('proxyPath')
+    router.get(`${proxyPath}doc/create`, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).create(req, res, next)
     })
 
-    router.post('/doc/create', validatesCreate(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`${proxyPath}doc/create`, validatesCreate(), (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).didCreate(req, res, next)
     })
 
-    router.get('/doc/update', (req: Request, res: Response, next: NextFunction) => {
+    router.get(`${proxyPath}doc/update`, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).update(req, res, next)
     })
 
-    router.post('/doc/update', validatesCreate(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`${proxyPath}doc/update`, validatesCreate(), (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).didUpdate(req, res, next)
     })
 
-    router.get('/doc/delete', (req: Request, res: Response, next: NextFunction) => {
+    router.get(`${proxyPath}doc/delete`, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).delete(req, res, next)
     })
 
-    router.post('/doc/delete', (req: Request, res: Response, next: NextFunction) => {
+    router.post(`${proxyPath}doc/delete`, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).didDelete(req, res, next)
     })
   }
@@ -181,7 +182,7 @@ export default class DocRoute extends BaseRoute {
 
     const itExists = await sdk(this.config).docExists(docName, into)
     if (!itExists) {
-      res.redirect('/?e=1')
+      res.redirect(`${this.config.get('proxyPath')}?e=1`)
       return
     }
 
@@ -202,7 +203,7 @@ export default class DocRoute extends BaseRoute {
 
     const itExists = await sdk(this.config).docExists(docName, into)
     if (!itExists) {
-      res.redirect('/?e=1')
+      res.redirect(`${this.config.get('proxyPath')}?e=1`)
       return
     }
 

@@ -29,7 +29,7 @@ export default class WikiRoute extends BaseRoute {
       delete req.params[0]
 
       if (reqPath.length === 0) {
-        res.redirect(`/${basePath}/`)
+        res.redirect(`${proxyPath}${basePath}/`)
         return
       }
 
@@ -53,7 +53,7 @@ export default class WikiRoute extends BaseRoute {
       this.render(req, res, 'wiki-read', scope)
     } catch (e) {
       if (isIndex) {
-        res.redirect('/?welcome')
+        res.redirect(`${this.config.get('proxyPath')}?welcome`)
       } else {
         const createPageUrl = this.docHelpers.pathFor('create', this.docName, this.dirName)
         res.redirect(createPageUrl)
