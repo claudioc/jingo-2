@@ -26,9 +26,15 @@ export type TWikiSettings = {
   wiki: string
 }
 
+export type TCustomSettings = {
+  styles?: string[]
+  scripts?: string[]
+}
+
 export type TConfig = {
   documentRoot: string
   proxyPath?: string
+  custom?: TCustomSettings
   ipc?: TIpcSettings
   wiki?: TWikiSettings
 }
@@ -151,7 +157,12 @@ export class Config {
    * Walks the config and detect unknown keys
    */
   protected findAliens () {
-    const aliens = _difference(Object.keys(flatten(this.values)), Object.keys(flatten(this.defaultValues)))
+    const keys1 = Object.keys(flatten(this.values))
+    const keys2 = Object.keys(flatten(this.defaultValues))
+    const skipArrays = key => !/\d+$/.test(key)
+    // Since flatten also flattens arrays, we ought to remove those
+    // values from the keys arrays
+    const aliens = _difference(keys1.filter(skipArrays), keys2.filter(skipArrays))
     return aliens
   }
 
@@ -159,6 +170,7 @@ export class Config {
     this.values.documentRoot = fixers.fixDocumentRoot(this.values.documentRoot)
     this.values.proxyPath = fixers.fixProxyPath(this.values.proxyPath)
     this.values.ipc = fixers.fixIpc(this.values.ipc)
+    this.values.custom = fixers.fixCustom(this.values.custom)
     this.values.wiki = fixers.fixWiki(this.values.wiki, this.getDefault('wiki'))
     return this
   }

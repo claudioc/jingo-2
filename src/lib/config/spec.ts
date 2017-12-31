@@ -59,16 +59,29 @@ test('load will merge values with the defaults', async t => {
 test('load will detect alien or mispelled keys', async t => {
   const cfg = await configUsingFakeFs()
 
-  fakeFs.writeFile('wrong-config.json', JSON.stringify({
+  fakeFs.writeFile('wrong-config1.json', JSON.stringify({
     documentFroot: '/home/jingo',
     wiki: {
       indes: 'popular'
     }
   }))
 
-  const error = await t.throws(cfg.load('/home/jingo/wrong-config.json'))
+  const error = await t.throws(cfg.load('/home/jingo/wrong-config1.json'))
 
   t.is(error.message, 'Unknown key(s) found in the config file: wiki.indes, documentFroot')
+})
+
+test('load will detect not detect an array as alien', async t => {
+  const cfg = await configUsingFakeFs()
+
+  fakeFs.writeFile('good-config2.json', JSON.stringify({
+    custom: {
+      scripts: ['One', 'Two']
+    },
+    documentRoot: '/home/jingo'
+  }))
+
+  await t.notThrows(cfg.load('/home/jingo/good-config2.json'))
 })
 
 test('config WithDefaults', async t => {

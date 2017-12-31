@@ -69,6 +69,24 @@ export default function viewHelpers (config: Config) {
       const aliens = _omitBy(_omit(params.hash, KNOWN_PARAMS), _isEmpty)
       const queryString = (Object.keys(aliens).length > 0 ? `?${qs.stringify(aliens)}` : '')
       return `${path}${queryString}`
+    },
+
+    customScripts () {
+      const scripts = config.get('custom.scripts')
+      if (scripts.length === 0) {
+        return ''
+      }
+      const baseUrl = `${config.get('proxyPath')}api/serve-static/`
+      return scripts.map(script => `<script src="${baseUrl}${script}"></script>`).join('\n')
+    },
+
+    customStyles () {
+      const styles = config.get('custom.styles')
+      if (styles.length === 0) {
+        return ''
+      }
+      const baseUrl = `${config.get('proxyPath')}api/serve-static/`
+      return styles.map(style => `<link rel="stylesheet" href="${baseUrl}${style}">`).join('\n')
     }
   }
 }

@@ -5,6 +5,12 @@
   // Declare that the jingo server is running behind a proxy with that path
   "proxyPath": "/",
 
+  // Customization in term of CSS stylesheets and/or JavaScript scripts
+  "custom": {
+    "styles": [],
+    "scripts": []
+  },
+
   // Configuration for the IPC support
   "ipc": {
     "enabled": false,

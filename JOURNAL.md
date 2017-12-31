@@ -84,4 +84,5 @@
 29/12/17
 - Added support for the `proxyPath`
 - 5235 sloc
-
+31/12/17
+- Added support for custom script and css

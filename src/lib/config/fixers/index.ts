@@ -1,4 +1,5 @@
 import {
+  TCustomSettings,
   TIpcSettings,
   TWikiSettings
 } from '@lib/config'
@@ -61,7 +62,30 @@ const fixProxyPath = (proxyPath: string) => {
   return setting
 }
 
+const fixCustom = (customSettings: TCustomSettings): TCustomSettings => {
+  const settings = _isUndefined(customSettings) ? {} : customSettings
+
+  if (_isUndefined(settings.styles)) {
+    settings.styles = []
+  }
+
+  if (_isUndefined(settings.scripts)) {
+    settings.scripts = []
+  }
+
+  if (!Array.isArray(settings.styles)) {
+    settings.styles = [String(settings.styles)]
+  }
+
+  if (!Array.isArray(settings.scripts)) {
+    settings.scripts = [String(settings.scripts)]
+  }
+
+  return settings
+}
+
 export default {
+  fixCustom,
   fixDocumentRoot,
   fixIpc,
   fixProxyPath,
