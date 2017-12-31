@@ -3,7 +3,7 @@
 <form method="post" action="{{urlFor resource="folder" action="create"}}">
   <div>
     <input type="hidden" name="into" value="{{into}}">
-    <input autofocus type="text" name="folderName" required>
+    <input autofocus type="text" name="folderName" value="{{folderName}}" required>
   </div>
   <div>
     <input type="submit" value="Save">

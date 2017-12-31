@@ -121,6 +121,19 @@ test('urlFor folder create with into', async t => {
   t.is(helpers.urlFor(params), '/folder/create?into=bazinga%202')
 })
 
+test('urlFor folder create with into and id', async t => {
+  const cfg = await config()
+  helpers = viewHelpers(cfg)
+  const params = {
+    hash: {
+      id: 'folderito',
+      into: 'bazinga 2',
+      resource: 'folder'
+    }
+  }
+  t.is(helpers.urlFor(params), '/folder/create?folderName=folderito&into=bazinga%202')
+})
+
 test('urlFor folder list', async t => {
   const cfg = await config()
   helpers = viewHelpers(cfg)

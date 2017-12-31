@@ -79,7 +79,7 @@ test('splitPath with empty string', t => {
   const actual0 = helpers.splitPath('')
   const expected0 = {
     folderName: '',
-    parentDirName: ''
+    parentDirname: ''
   }
   t.deepEqual(actual0, expected0)
 })
@@ -88,7 +88,7 @@ test('splitPath with only the docname', t => {
   const actual = helpers.splitPath('foobar')
   const expected = {
     folderName: 'foobar',
-    parentDirName: ''
+    parentDirname: ''
   }
   t.deepEqual(actual, expected)
 })
@@ -97,7 +97,7 @@ test('splitPath with a full path', t => {
   const actual = helpers.splitPath('this/is/the/path/foobar')
   const expected = {
     folderName: 'foobar',
-    parentDirName: 'this/is/the/path'
+    parentDirname: 'this/is/the/path'
   }
   t.deepEqual(actual, expected)
 })
@@ -106,7 +106,7 @@ test('splitPath with a full, absolute path', t => {
   const actual = helpers.splitPath('/this/is/the/path/foobar')
   const expected = {
     folderName: 'foobar',
-    parentDirName: '/this/is/the/path'
+    parentDirname: '/this/is/the/path'
   }
   t.deepEqual(actual, expected)
 })
@@ -115,7 +115,7 @@ test('splitPath with only the path', t => {
   const actual = helpers.splitPath('/this/is/the/path/')
   const expected = {
     folderName: 'path',
-    parentDirName: '/this/is/the'
+    parentDirname: '/this/is/the'
   }
   t.deepEqual(actual, expected)
 })

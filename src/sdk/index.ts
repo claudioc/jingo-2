@@ -263,6 +263,7 @@ export class Sdk {
     if (await this.folderExists(newFolderName, into)) {
       return false
     }
+
     const fullFolderName1 = this.makeDirname(oldFolderName, into)
     const fullFolderName2 = this.makeDirname(newFolderName, into)
     await this.fsApi.rename(fullFolderName1, fullFolderName2)

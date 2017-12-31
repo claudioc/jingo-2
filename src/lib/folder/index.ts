@@ -5,7 +5,7 @@ import * as path from 'path'
 
 type FolderAction = 'create' | 'list' | 'rename' | 'delete'
 type FolderPathParts = {
-  parentDirName: string
+  parentDirname: string
   folderName: string
 }
 
@@ -37,7 +37,7 @@ export class Folder {
       actionPath = `${proxyPath}${this.config.get('wiki.basePath')}/${folderPath}`
     }
 
-    if ((action === 'rename' || action === 'delete') && folderName.length > 0) {
+    if ((action === 'rename' || action === 'delete' || action === 'create') && folderName.length > 0) {
       queso.add('folderName', folderName)
     }
 
@@ -58,7 +58,7 @@ export class Folder {
   }
 
   /**
-   * Parses a path and split it into a `parentDirName` and a `folderName`
+   * Parses a path and split it into a `parentDirname` and a `folderName`
    * @param unparsed The full path to parse
    * @returns FolderPathParts
    */
@@ -69,7 +69,7 @@ export class Folder {
 
     return {
       folderName: name,
-      parentDirName: dir
+      parentDirname: dir
     }
   }
 }

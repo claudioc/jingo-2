@@ -39,6 +39,26 @@ test('get create route receiving a name in the url', async t => {
   t.is(render.calledWith(request, null, 'doc-create', expectedScope), true)
 })
 
+test('get create route with not existing into', async t => {
+  const route = new Route(await config())
+  const render = sinon.stub(route, 'render')
+
+  const request = {
+    query: {
+      into: 'hello_world'
+    }
+  }
+  await route.create(request as any, null, _nop)
+
+  const expectedScope = {
+    directory: 'hello_world',
+    folderName: 'hello_world',
+    parentDirname: ''
+  }
+
+  t.is(render.calledWith(request, null, 'doc-fail', expectedScope), true)
+})
+
 test('get create route not receiving a name in the url', async t => {
   const route = new Route(await config())
   const render = sinon.stub(route, 'render')
@@ -47,7 +67,7 @@ test('get create route not receiving a name in the url', async t => {
     params: {},
     query: {}
   }
-  route.create(request as any, null, _nop)
+  await route.create(request as any, null, _nop)
 
   t.is(route.title, 'Jingo – Creating a document')
 
@@ -57,7 +77,7 @@ test('get create route not receiving a name in the url', async t => {
     wikiIndex: 'Home'
   }
 
-  t.is(render.calledWith(request, null, 'doc-create', expectedScope), true)
+  t.true(render.calledWith(request, null, 'doc-create', expectedScope))
 })
 
 test('post create fail if document already exists', async t => {
@@ -137,7 +157,7 @@ test('post create renders again with a validation error', async t => {
     }
   }
 
-  route.didCreate(request as any, null, _nop)
+  await route.didCreate(request as any, null, _nop)
 
   const expectedScope = {
     content: 'blah',
@@ -167,7 +187,7 @@ test('get update route with a non-existing file', async t => {
 
   await route.update(request as any, response as any, _nop)
 
-  t.is(redirect.calledWith(route.docHelpers.pathFor('create', 'lovely_sugar')), true)
+  t.is(redirect.calledWith(`${route.config.get('proxyPath')}?e=1`), true)
 })
 
 // Needs to be run serially because otherwise we risk that

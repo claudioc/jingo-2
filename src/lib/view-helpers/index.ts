@@ -54,7 +54,7 @@ export default function viewHelpers (config: Config) {
 
         // Access to the home page of the system
         case 'home':
-          path =  wikiHelpers.pathFor(config.get('wiki.index'))
+          path = wikiHelpers.pathFor(config.get('wiki.index'))
           break
 
         case 'vendor':

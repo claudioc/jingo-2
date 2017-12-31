@@ -1,6 +1,5 @@
 import { Config } from '@lib/config'
 import BaseRoute from '@routes/route'
-import sdk from '@sdk'
 import { NextFunction, Request, Response, Router } from 'express'
 import { check } from 'express-validator/check'
 import { sanitize } from 'express-validator/filter'
@@ -57,17 +56,15 @@ export default class DocRoute extends BaseRoute {
   public async create (req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Creating a document'
 
-    // The document name can be part of the URL or not
     const docName = req.query.docName || ''
     const into = req.query.into || ''
 
-    // If a document with this name already exists, bring the user there
-    if (docName) {
-      const itExists = await sdk(this.config).docExists(docName, into)
-      if (itExists) {
-        res.redirect(this.wikiHelpers.pathFor(docName))
-        return
-      }
+    if (!await this.assertDirectoryExists(into, req, res)) {
+      return
+    }
+
+    if (!await this.assertDocDoesNotExist(docName, into, req, res)) {
+      return
     }
 
     const wikiIndex = this.config.get('wiki.index')
@@ -98,13 +95,13 @@ export default class DocRoute extends BaseRoute {
 
     const docName = this.wikiHelpers.wikify(data.docTitle)
 
-    const itExists = await sdk(this.config).docExists(docName, into)
+    const itExists = await this.sdk.docExists(docName, into)
     if (itExists) {
       this.render(req, res, 'doc-create', _assign(scope, { errors: ['A document with this title already exists'] }))
       return
     }
 
-    await sdk(this.config).createDoc(docName, data.content, into)
+    await this.sdk.createDoc(docName, data.content, into)
 
     // All done, go to the just saved page
     res.redirect(this.wikiHelpers.pathFor(data.docTitle, into))
@@ -119,13 +116,15 @@ export default class DocRoute extends BaseRoute {
       return res.status(400).render('400')
     }
 
-    const itExists = await sdk(this.config).docExists(docName, into)
-    if (!itExists) {
-      res.redirect(this.docHelpers.pathFor('create', docName, into))
+    if (!await this.assertDirectoryExists(into, req, res)) {
       return
     }
 
-    const doc = await sdk(this.config).loadDoc(docName, into)
+    if (!await this.assertDocExists(docName, into, req, res)) {
+      return
+    }
+
+    const doc = await this.sdk.loadDoc(docName, into)
     const wikiIndex = this.config.get('wiki.index')
 
     const docTitle = this.wikiHelpers.unwikify(docName)
@@ -161,7 +160,7 @@ export default class DocRoute extends BaseRoute {
     const newDocName = this.wikiHelpers.wikify(data.docTitle)
 
     try {
-      await sdk(this.config).updateDoc(newDocName, oldDocName, data.content, into)
+      await this.sdk.updateDoc(newDocName, oldDocName, data.content, into)
     } catch (err) {
       this.render(req, res, 'doc-update', _assign(scope, { errors: [err.message] }))
       return
@@ -180,9 +179,11 @@ export default class DocRoute extends BaseRoute {
       return res.status(400).render('400')
     }
 
-    const itExists = await sdk(this.config).docExists(docName, into)
-    if (!itExists) {
-      res.redirect(`${this.config.get('proxyPath')}?e=1`)
+    if (!await this.assertDirectoryExists(into, req, res)) {
+      return
+    }
+
+    if (!await this.assertDocExists(docName, into, req, res)) {
       return
     }
 
@@ -201,14 +202,54 @@ export default class DocRoute extends BaseRoute {
     const docName = req.body.docName
     const into = req.body.into
 
-    const itExists = await sdk(this.config).docExists(docName, into)
+    const itExists = await this.sdk.docExists(docName, into)
     if (!itExists) {
       res.redirect(`${this.config.get('proxyPath')}?e=1`)
       return
     }
 
-    await sdk(this.config).deleteDoc(docName, into)
+    await this.sdk.deleteDoc(docName, into)
 
     res.redirect(this.folderHelpers.pathFor('list', into) + '?e=0')
+  }
+
+  private async assertDirectoryExists (directory, req: Request, res: Response): Promise<boolean> {
+    if (!directory) {
+      return true
+    }
+
+    const { folderName, parentDirname } = this.folderHelpers.splitPath(directory)
+    const itExists = await this.sdk.folderExists(folderName, parentDirname)
+    if (!itExists) {
+      this.render(req, res, 'doc-fail', {
+        directory,
+        folderName,
+        parentDirname
+      })
+    }
+
+    return itExists
+  }
+
+  private async assertDocDoesNotExist (docName, into, req: Request, res: Response) {
+    if (!docName) {
+      return true
+    }
+
+    const itExists = await this.sdk.docExists(docName, into)
+    if (itExists) {
+      res.redirect(this.wikiHelpers.pathFor(docName))
+    }
+
+    return !itExists
+  }
+
+  private async assertDocExists (docName, into, req: Request, res: Response) {
+    const itExists = await this.sdk.docExists(docName, into)
+    if (!itExists) {
+      res.redirect(`${this.config.get('proxyPath')}?e=1`)
+    }
+
+    return itExists
   }
 }

@@ -26,9 +26,9 @@
 <hr>
 {{#if (neq folderName '')}}
 <p>
-  <a href="{{urlFor resource="folder" id=folderName into=parentDirName action="rename"}}" class="sans">Rename this folder</a>
+  <a href="{{urlFor resource="folder" id=folderName into=parentDirname action="rename"}}" class="sans">Rename this folder</a>
   {{#if (and (eq docList.length 0) (eq folderList.length 0))}}
-  <a href="{{urlFor resource="folder" id=folderName into=parentDirName action="delete"}}" class="sans">Delete this folder</a>
+  <a href="{{urlFor resource="folder" id=folderName into=parentDirname action="delete"}}" class="sans">Delete this folder</a>
   {{/if}}
 </p>
 {{/if}}
