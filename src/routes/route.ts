@@ -1,4 +1,4 @@
-import { Config } from '@lib/config'
+import { Config, TFeaturesSettings } from '@lib/config'
 import doc, { Doc } from '@lib/doc'
 import folder, { Folder } from '@lib/folder'
 import wiki, { Wiki } from '@lib/wiki'
@@ -12,6 +12,7 @@ export default class BaseRoute {
   public docHelpers: Doc
   public folderHelpers: Folder
   public sdk: Sdk
+  public features: TFeaturesSettings[]
 
   constructor (public config: Config, public title: string = 'Jingo') {
     this.wikiHelpers = wiki(this.config)
@@ -22,6 +23,7 @@ export default class BaseRoute {
 
   public render (req: Request, res: Response, view: string, options?: object) {
     res.locals.title = this.title
+    res.locals.featurs = this.features
     res.render(view, options)
   }
 

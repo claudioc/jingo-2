@@ -2,9 +2,7 @@ import fsApi from '@lib/fs-api'
 import * as fs from 'fs'
 
 import {
-  Config,
-  TIpcSettings,
-  TWikiSettings
+  Config
 } from '@lib/config'
 
 const checkDocumentRoot = async (config: Config, documentRoot: string): Promise<void> => {
@@ -25,16 +23,6 @@ const checkDocumentRoot = async (config: Config, documentRoot: string): Promise<
   // @TODO it must be an absolute path (`path.isAbsolute`)
 }
 
-const checkIpc = (ipcSettings: TIpcSettings): void => {
-  // NOP
-}
-
-const checkWiki = (wikiSettings: TWikiSettings): void => {
-  // NOP
-}
-
 export default {
-  checkDocumentRoot,
-  checkIpc,
-  checkWiki
+  checkDocumentRoot
 }

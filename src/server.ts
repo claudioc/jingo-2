@@ -9,7 +9,7 @@ import * as methodOverride from 'method-override'
 import * as logger from 'morgan'
 import * as path from 'path'
 
-import config from '@lib/config'
+import { Config } from '@lib/config'
 import viewHelpers from '@lib/view-helpers'
 import ApiRoute from '@routes/api'
 import DocRoute from '@routes/doc'
@@ -31,26 +31,26 @@ const cookieSession = require('cookie-session')
 export default class Server {
   public app: express.Application
 
-  constructor () {
+  constructor (public config: Config) {
     this.app = express()
     this.setup()
     this.routes()
     this.ipc()
   }
 
-  public static bootstrap (): Server {
-    return new Server()
+  public static bootstrap (config: Config): Server {
+    return new Server(config)
   }
 
   public routes () {
     let router: express.Router
     router = express.Router()
 
-    IndexRoute.create(router, config)
-    WikiRoute.create(router, config)
-    DocRoute.create(router, config)
-    FolderRoute.create(router, config)
-    ApiRoute.create(router, config)
+    IndexRoute.create(router, this.config)
+    WikiRoute.create(router, this.config)
+    DocRoute.create(router, this.config)
+    FolderRoute.create(router, this.config)
+    ApiRoute.create(router, this.config)
 
     this.app.use(router)
   }
@@ -59,7 +59,7 @@ export default class Server {
    * Setup the IPC server
    */
   public ipc () {
-    ipc(config).connect()
+    ipc(this.config).connect()
   }
 
   public setup () {
@@ -71,13 +71,13 @@ export default class Server {
     // static middleware. Note: to use the static middleware
     // from the wiki pages directly we need to create a
     // whitelist (not a blacklist)
-    const proxyPath = config.get('proxyPath')
+    const proxyPath = this.config.get('proxyPath')
     this.app.use([/(.*)\.md/, `${proxyPath}public`], express.static(path.join(__dirname, 'public'), staticOptions))
 
     const expressHbs = expressHandlebars.create({
       defaultLayout: 'main',
       extname: '.hbs',
-      helpers: viewHelpers(config),
+      helpers: viewHelpers(this.config),
       layoutsDir: path.join(__dirname, '../src/views/layouts'),
       partialsDir: [
         path.join(__dirname, '../src/views/partials')

@@ -5,8 +5,10 @@ import fsApi, { FileSystemApi } from '@lib/fs-api'
 import ipc, { IIpc } from '@lib/ipc'
 import wiki, { Wiki } from '@lib/wiki'
 import * as fs from 'fs'
+import * as hljs from 'highlight.js'
 import * as MarkdownIt from 'markdown-it'
 import * as path from 'path'
+
 
 interface IDoc {
   title?: string
@@ -26,7 +28,7 @@ function sdk (config: Config): Sdk {
 export class Sdk {
   public docHelpers: Doc
   public folderHelpers: Folder
-  public parser: MarkdownIt.MarkdownIt
+  public transpiler: MarkdownIt.MarkdownIt
   public fsApi: FileSystemApi
   public ipc: IIpc
   public wikiHelpers: Wiki
@@ -35,7 +37,17 @@ export class Sdk {
     this.wikiHelpers = wiki(config)
     this.docHelpers = doc(config)
     this.folderHelpers = folder(config)
-    this.parser = new MarkdownIt('default', {
+    this.transpiler = new MarkdownIt('default', {
+      highlight: (str, lang) => {
+        if (lang && hljs.getLanguage(lang)) {
+          try {
+            const pre = hljs.highlight(lang, str, true).value
+            return `<pre class="hljs"><code>${pre}</code></pre>`
+          } catch (__) { /**/ }
+        }
+
+        return ''
+      },
       linkify: true,
       typographer: true
     })
@@ -48,7 +60,7 @@ export class Sdk {
    * @param content A markdown string
    */
   public renderToHtml (content: string) {
-    return this.parser.render(content)
+    return this.transpiler.render(content)
   }
 
   /**

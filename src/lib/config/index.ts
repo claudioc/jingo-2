@@ -23,12 +23,16 @@ export type TIpcSettings = {
 
 export type TWikiSettings = {
   index: string
-  wiki: string
+  basePath: string
 }
 
 export type TCustomSettings = {
   styles?: string[]
   scripts?: string[]
+}
+
+export type TFeaturesSettings = {
+  codeHighlighter?: any
 }
 
 export type TConfig = {
@@ -37,6 +41,7 @@ export type TConfig = {
   custom?: TCustomSettings
   ipc?: TIpcSettings
   wiki?: TWikiSettings
+  features?: TFeaturesSettings
 }
 
 type ConfigSys = {
@@ -169,16 +174,15 @@ export class Config {
   protected fixConfig (): Config {
     this.values.documentRoot = fixers.fixDocumentRoot(this.values.documentRoot)
     this.values.proxyPath = fixers.fixProxyPath(this.values.proxyPath)
-    this.values.ipc = fixers.fixIpc(this.values.ipc)
-    this.values.custom = fixers.fixCustom(this.values.custom)
+    this.values.ipc = fixers.fixIpc(this.values.ipc, this.getDefault('ipc'))
+    this.values.custom = fixers.fixCustom(this.values.custom, this.getDefault('custom'))
     this.values.wiki = fixers.fixWiki(this.values.wiki, this.getDefault('wiki'))
+    this.values.features = fixers.fixFeatures(this.values.features, this.getDefault('features'))
     return this
   }
 
   protected async checkConfig (): Promise<Config> {
     await validators.checkDocumentRoot(this, this.values.documentRoot)
-    validators.checkIpc(this.values.ipc)
-    validators.checkWiki(this.values.wiki)
     return this
   }
 }

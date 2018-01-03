@@ -60,48 +60,48 @@ test('fixProxyPath with a number', t => {
 
 test('fixIpc enabled', t => {
   let expected = { enabled: false, server: '' }
-  let actual = fixers.fixIpc(undefined)
+  let actual = fixers.fixIpc(undefined, {})
   t.deepEqual(actual, expected)
 
   expected = { enabled: false, server: '' }
-  actual = fixers.fixIpc(null)
+  actual = fixers.fixIpc(null, {})
   t.deepEqual(actual, expected)
 
   expected = { enabled: false, server: '' } as any
-  actual = fixers.fixIpc({})
+  actual = fixers.fixIpc({}, {})
   t.deepEqual(actual, expected)
 
   expected = { enabled: false, server: '' } as any
-  actual = fixers.fixIpc({ enabled: 32 } as any)
+  actual = fixers.fixIpc({ enabled: 32 } as any, {})
   t.deepEqual(actual, expected)
 
   expected = { enabled: false, server: '' } as any
-  actual = fixers.fixIpc({ enabled: '' } as any)
+  actual = fixers.fixIpc({ enabled: '' } as any, {})
   t.deepEqual(actual, expected)
 })
 
 test('fixIpc server', t => {
   const expected = { enabled: false, server: '' }
-  const actual = fixers.fixIpc({ enabled: false })
+  const actual = fixers.fixIpc({ enabled: false }, {})
   t.deepEqual(actual, expected)
 })
 
 test('fixWiki unset', t => {
   const expected = { index: 'Home', basePath: 'lol' }
   const actual = fixers.fixWiki(undefined, { index: 'Home', basePath: 'lol' })
-  t.deepEqual(actual, expected)
+  t.deepEqual(actual, expected as any)
 })
 
 test('fixWiki index unset', t => {
   const expected = { index: 'Home', basePath: 'lol' }
   const actual = fixers.fixWiki({} as any, { index: 'Home', basePath: 'lol' })
-  t.deepEqual(actual, expected)
+  t.deepEqual(actual, expected as any)
 })
 
 test('fixWiki basePath unset', t => {
   const expected = { index: 'Home', basePath: 'bzzt' }
   const actual = fixers.fixWiki({} as any, { index: 'Home', basePath: 'bzzt' })
-  t.deepEqual(actual, expected)
+  t.deepEqual(actual, expected as any)
 })
 
 test('fixWiki basePath with leading and trailing slashes', t => {
@@ -109,13 +109,13 @@ test('fixWiki basePath with leading and trailing slashes', t => {
   const actual0 = fixers.fixWiki({
     basePath: '/tuo/nonno'
   } as any, { index: 'Home', basePath: 'bzzt' })
-  t.deepEqual(actual0, expected0)
+  t.deepEqual(actual0, expected0 as any)
 
   const expected1 = { index: 'Home', basePath: 'tuo/nonno' }
   const actual1 = fixers.fixWiki({
     basePath: '    /tuo/nonno//'
   } as any, { index: 'Home', basePath: 'bzzt' })
-  t.deepEqual(actual1, expected1)
+  t.deepEqual(actual1, expected1 as any)
 })
 
 test('fixWiki basePath empty', t => {
@@ -123,23 +123,51 @@ test('fixWiki basePath empty', t => {
   const actual0 = fixers.fixWiki({
     basePath: '///   ///'
   } as any, { index: 'Home', basePath: 'lol' })
-  t.deepEqual(actual0, expected0)
+  t.deepEqual(actual0, expected0 as any)
 })
 
 test('fixCustom when empty', t => {
   const expected = { scripts: [], styles: [] }
-  const actual = fixers.fixCustom(undefined)
+  const actual = fixers.fixCustom(undefined, {})
   t.deepEqual(actual, expected)
 })
 
 test('fixCustom when one is empty', t => {
   const expected = { scripts: [], styles: [] }
-  const actual = fixers.fixCustom({ scripts: [] })
+  const actual = fixers.fixCustom({ scripts: [] }, {})
   t.deepEqual(actual, expected)
 })
 
 test('fixCustom when content is wrong', t => {
   const expected = { scripts: ['foobar'], styles: ['123'] }
-  const actual = fixers.fixCustom({ scripts: 'foobar', styles: 123 } as any)
+  const actual = fixers.fixCustom({ scripts: 'foobar', styles: 123 } as any, {})
+  t.deepEqual(actual, expected)
+})
+
+test('fixFeatures codeHighlighter use the defaults', t => {
+  const defaults = { codeHighlighter: { enabled: true, theme: 'default' } }
+  const expected = defaults
+  const actual = fixers.fixFeatures(undefined, defaults)
+  t.deepEqual(actual, expected)
+})
+
+test('fixFeatures codeHighlighter enabled', t => {
+  const defaults = { codeHighlighter: { enabled: true, theme: 'default' } }
+  const expected = { codeHighlighter: { enabled: true, theme: 'default' } }
+  const actual = fixers.fixFeatures({}, defaults)
+  t.deepEqual(actual, expected)
+})
+
+test('fixFeatures codeHighlighter disabled', t => {
+  const defaults = { codeHighlighter: { enabled: true, theme: 'default' } }
+  const expected = { codeHighlighter: { enabled: false, theme: 'default' } }
+  const actual = fixers.fixFeatures({ codeHighlighter: { enabled: false }}, defaults)
+  t.deepEqual(actual, expected)
+})
+
+test('fixFeatures codeHighlighter broken', t => {
+  const defaults = { codeHighlighter: { enabled: true, theme: 'default' } }
+  const expected = { codeHighlighter: { enabled: true, theme: 'default' } }
+  const actual = fixers.fixFeatures({ codeHighlighter: { enabled: '0' }}, defaults)
   t.deepEqual(actual, expected)
 })

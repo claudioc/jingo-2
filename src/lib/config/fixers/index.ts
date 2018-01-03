@@ -1,14 +1,15 @@
 import {
   TCustomSettings,
+  TFeaturesSettings,
   TIpcSettings,
   TWikiSettings
 } from '@lib/config'
 
 import {
-  clone as _clone,
   isBoolean as _isBoolean,
   isObject as _isObject,
   isUndefined as _isUndefined,
+  merge as _merge,
   toString as _toString
 } from 'lodash'
 
@@ -22,8 +23,9 @@ const fixDocumentRoot = (documentRoot: string): string => {
   return _toString(documentRoot).trim()
 }
 
-const fixIpc = (ipcSettings: TIpcSettings): TIpcSettings => {
-  const settings = _clone(_isObject(ipcSettings) ? ipcSettings : {})
+const fixIpc = (ipcSettings: TIpcSettings, defaults: TIpcSettings): TIpcSettings => {
+  const settings: TIpcSettings = {} as any
+  _merge(settings, defaults, _isObject(ipcSettings) ? ipcSettings : {})
 
   if (!_isBoolean(settings.enabled)) {
     settings.enabled = false
@@ -34,8 +36,9 @@ const fixIpc = (ipcSettings: TIpcSettings): TIpcSettings => {
   return settings
 }
 
-const fixWiki = (wikiSettings: TWikiSettings, defaults) => {
-  const settings = _clone(_isObject(wikiSettings) ? wikiSettings : {})
+const fixWiki = (wikiSettings: TWikiSettings, defaults: TWikiSettings): TWikiSettings => {
+  const settings: TWikiSettings = {} as any
+  _merge(settings, defaults, _isObject(wikiSettings) ? wikiSettings : {})
 
   // Fix the index
   settings.index = _isUndefined(settings.index) ? defaults.index : _toString(settings.index).trim()
@@ -50,7 +53,7 @@ const fixWiki = (wikiSettings: TWikiSettings, defaults) => {
   return settings
 }
 
-const fixProxyPath = (proxyPath: string) => {
+const fixProxyPath = (proxyPath: string): string => {
   let setting = _isUndefined(proxyPath) ? '' : _toString(proxyPath).trim()
   if (!setting.endsWith('/')) {
     setting += '/'
@@ -62,23 +65,27 @@ const fixProxyPath = (proxyPath: string) => {
   return setting
 }
 
-const fixCustom = (customSettings: TCustomSettings): TCustomSettings => {
-  const settings = _isUndefined(customSettings) ? {} : customSettings
-
-  if (_isUndefined(settings.styles)) {
-    settings.styles = []
-  }
-
-  if (_isUndefined(settings.scripts)) {
-    settings.scripts = []
-  }
+const fixCustom = (customSettings: TCustomSettings, defaults: TCustomSettings): TCustomSettings => {
+  const settings: TCustomSettings = {}
+  _merge(settings, defaults, _isObject(customSettings) ? customSettings : {})
 
   if (!Array.isArray(settings.styles)) {
-    settings.styles = [String(settings.styles)]
+    settings.styles = settings.styles ? [String(settings.styles)] : []
   }
 
   if (!Array.isArray(settings.scripts)) {
-    settings.scripts = [String(settings.scripts)]
+    settings.scripts = settings.scripts ? [String(settings.scripts)] : []
+  }
+
+  return settings
+}
+
+const fixFeatures = (featuresSettings: TFeaturesSettings, defaults: TFeaturesSettings): TFeaturesSettings => {
+  const settings: TFeaturesSettings = {}
+  _merge(settings, defaults, _isObject(featuresSettings) ? featuresSettings : {})
+
+  if (!_isBoolean(settings.codeHighlighter.enabled)) {
+    settings.codeHighlighter.enabled = defaults.codeHighlighter.enabled
   }
 
   return settings
@@ -87,6 +94,7 @@ const fixCustom = (customSettings: TCustomSettings): TCustomSettings => {
 export default {
   fixCustom,
   fixDocumentRoot,
+  fixFeatures,
   fixIpc,
   fixProxyPath,
   fixWiki

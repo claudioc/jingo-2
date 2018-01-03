@@ -86,3 +86,6 @@
 - 5235 sloc
 31/12/17
 - Added support for custom script and css
+03/01/18
+- Added support for highlight js
+- Added the `features` configuration option

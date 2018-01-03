@@ -22,6 +22,15 @@
     "index": "Home",
     // Specify a base path common to all the pages (defaults to /wiki)
     "basePath": "wiki"
+  },
+
+  // Enable/Disable/Configure optional features
+  "features": {
+    // The code syntax highlighter
+    "codeHighlighter": {
+      "enabled": true,
+      "theme": "default"
+    }
   }
 }
 

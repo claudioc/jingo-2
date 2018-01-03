@@ -31,7 +31,7 @@ async function main () {
 
 function setupServer () {
   httpPort = normalizePort(process.env.PORT || DEFAULT_HTTP_PORT)
-  const app = Server.bootstrap().app
+  const app = Server.bootstrap(config).app
   app.set('port', httpPort)
   httpServer = http.createServer(app)
   httpServer.listen(httpPort)
