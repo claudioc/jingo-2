@@ -16,6 +16,11 @@ export default function viewHelpers (config: Config) {
   const docHelpers = doc(config)
   const folderHelpers = folder(config)
   return {
+    hasFeature (params) {
+      const feature = params
+      return config.hasFeature(feature)
+    },
+
     breadcrumb (params) {
       const { dirName } = params.hash
       const basePath = config.get('wiki.basePath')

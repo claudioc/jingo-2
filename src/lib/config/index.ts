@@ -100,6 +100,15 @@ export class Config {
     return cjson.stringify(this.defaults, null, 2)
   }
 
+  /**
+   * Checks if a feature exists and it's enabled
+   * @param feature The name of the feature to check
+   */
+  public hasFeature (featureName) {
+    const feature = this.get('features')[featureName]
+    return !!(feature && feature.enabled)
+  }
+
   public reset (): Config {
     this.defaults = null
     this.values = null

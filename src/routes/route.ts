@@ -23,7 +23,6 @@ export default class BaseRoute {
 
   public render (req: Request, res: Response, view: string, options?: object) {
     res.locals.title = this.title
-    res.locals.featurs = this.features
     res.render(view, options)
   }
 

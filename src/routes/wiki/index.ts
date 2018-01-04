@@ -44,6 +44,7 @@ export default class WikiRoute extends BaseRoute {
     try {
       const doc = await this.sdk.loadDoc(this.docName, this.dirName)
       const scope: object = {
+        codeHighlighterTheme: this.config.get('features.codeHighlighter.theme'),
         content: this.sdk.renderToHtml(doc.content),
         dirName: this.dirName,
         docName: this.docName,
