@@ -11,7 +11,7 @@ test('post renderMarkdown', async t => {
 
   const request = {
     body: {
-      content: '# Hello World!'
+      content: '### Hello World!'
     }
   }
 
@@ -27,5 +27,5 @@ test('post renderMarkdown', async t => {
   await route.renderMarkdown(request as any, response as any, _nop)
 
   t.is(response.status.calledWith(200), true)
-  t.is(send.calledWith('<h1>Hello World!</h1>\n'), true)
+  t.is(send.calledWith('<h3>Hello World!</h3>\n'), true)
 })

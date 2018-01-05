@@ -279,7 +279,7 @@ test('listDocs in a non-existing subdir', async t => {
 
 test('renderToHtml', async t => {
   const cfg = await config()
-  const expected = '<h1>foobar</h1>\n'
-  const actual = sdk(cfg).renderToHtml('# foobar')
+  const expected = '<h3>foobar</h3>\n'
+  const actual = sdk(cfg).renderToHtml('### foobar')
   t.is(actual, expected)
 })

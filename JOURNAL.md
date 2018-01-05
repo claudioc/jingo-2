@@ -89,3 +89,6 @@
 03/01/18
 - Added support for highlight js
 - Added the `features` configuration option
+05/01/18
+- Added the TOC feature and adds a permalink to all the H1 and H2
+- Added the footnotes

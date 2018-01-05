@@ -6,9 +6,13 @@ import ipc, { IIpc } from '@lib/ipc'
 import wiki, { Wiki } from '@lib/wiki'
 import * as fs from 'fs'
 import * as hljs from 'highlight.js'
-import * as MarkdownIt from 'markdown-it'
 import * as path from 'path'
 
+/* Markdown-it and its plugins */
+import * as MarkdownIt from 'markdown-it'
+import * as markdownItAnchor from 'markdown-it-anchor'
+import * as markdownItFootnote from 'markdown-it-footnote'
+import * as markdownItTableOfContents from 'markdown-it-table-of-contents'
 
 interface IDoc {
   title?: string
@@ -51,6 +55,13 @@ export class Sdk {
       linkify: true,
       typographer: true
     })
+    .use(markdownItAnchor, {
+      level: [1, 2],
+      permalink: true
+    })
+    .use(markdownItTableOfContents)
+    .use(markdownItFootnote)
+
     this.fsApi = fsApi(config.fsDriver)
     this.ipc = ipc(config)
   }

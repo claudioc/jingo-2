@@ -37,3 +37,12 @@ form input[type=text] {
   display: none;
 }
 
+h1 > a.header-anchor,
+h2 > a.header-anchor {
+  opacity: 0.2
+}
+
+h1:hover > a.header-anchor,
+h2:hover > a.header-anchor {
+  opacity: 1
+}
