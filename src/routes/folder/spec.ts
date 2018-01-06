@@ -49,8 +49,7 @@ test('get create route fails with not existing into', async t => {
 
 test('get create fails if folder already exists', async t => {
   const route = new Route(await fakeFs.config())
-  const folderName = fakeFs.rndName()
-  fakeFs.mkdir(folderName)
+  const folderName = fakeFs.mkdirRnd()
 
   const request = {
     query: {
@@ -70,9 +69,8 @@ test('get create fails if folder already exists', async t => {
 
 test('post create fails if folder already exists', async t => {
   const route = new Route(await fakeFs.config())
-  const folderName = fakeFs.rndName()
+  const folderName = fakeFs.mkdirRnd()
   const render = sinon.stub(route, 'render')
-  fakeFs.mkdir(folderName)
 
   sinon.stub(route, 'inspectRequest').callsFake(req => {
     return {

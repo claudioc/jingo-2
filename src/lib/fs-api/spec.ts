@@ -15,8 +15,7 @@ test('scanDir on a not-existant direcotry', async t => {
 })
 
 test('scanDir reports empty array on empty directory', async t => {
-  const folderName = fakeFs.rndName()
-  fakeFs.mkdir(folderName)
+  const folderName = fakeFs.mkdirRnd()
   const actual = await fsApi(fakeFs.fsDriver).scanDir(`${fakeFs.mountPoint}/${folderName}`)
   const expected = []
   t.deepEqual(actual, expected)

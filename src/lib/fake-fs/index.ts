@@ -34,6 +34,12 @@ export default class FakeFs {
     return this
   }
 
+  public mkdirRnd () {
+    const dirName = this.rndName()
+    this.fsDriver.mkdirSync(path.join(this.mountPoint, dirName))
+    return dirName
+  }
+
   public readFile (pathName) {
     try {
       return this.fsDriver.readFileSync(path.join(this.mountPoint, pathName)).toString()

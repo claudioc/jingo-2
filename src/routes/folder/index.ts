@@ -1,41 +1,8 @@
 import { Config } from '@lib/config'
+import { validateCreate, validateRename } from '@lib/validators/folder'
 import BaseRoute from '@routes/route'
 import { NextFunction, Request, Response, Router } from 'express'
-import { check } from 'express-validator/check'
-import { sanitize } from 'express-validator/filter'
 import { assign as _assign } from 'lodash'
-
-const validatesCreate = () => {
-  return [
-    check('folderName')
-      .isLength({ min: 1 })
-      .withMessage('The folder title cannot be empty')
-      .trim(),
-
-    check('into')
-      .trim(),
-
-    sanitize(['folderName', 'into'])
-  ]
-}
-
-const validatesRename = () => {
-  return [
-    check('folderName')
-      .isLength({ min: 1 })
-      .withMessage('The folder title cannot be empty')
-      .trim(),
-
-    check('currentFolderName')
-      .isLength({ min: 1 })
-      .trim(),
-
-    check('into')
-      .trim(),
-
-    sanitize(['folderName', 'currentFolderName', 'into'])
-  ]
-}
 
 export default class FolderRoute extends BaseRoute {
   public static create (router: Router, config: Config) {
@@ -45,7 +12,7 @@ export default class FolderRoute extends BaseRoute {
       new FolderRoute(config).create(req, res, next)
     })
 
-    router.post(`${proxyPath}folder/create`, validatesCreate(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`${proxyPath}folder/create`, validateCreate(), (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).didCreate(req, res, next)
     })
 
@@ -53,7 +20,7 @@ export default class FolderRoute extends BaseRoute {
       new FolderRoute(config).rename(req, res, next)
     })
 
-    router.post(`${proxyPath}folder/rename`, validatesRename(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`${proxyPath}folder/rename`, validateRename(), (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).didRename(req, res, next)
     })
 

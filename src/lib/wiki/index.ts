@@ -22,6 +22,7 @@ export class Wiki {
 
     ret = ret.replace(/[<>]/g, '')
     ret = ret.replace(/\//g, '+')
+    ret = ret.replace(/!/g, WS_REPLACEMENT)
     ret = ret.trim()
     ret = ret.replace(/\s/g, WS_REPLACEMENT)
 

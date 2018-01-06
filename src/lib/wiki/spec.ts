@@ -20,7 +20,7 @@ test('wikify', t => {
   t.is(helpers.wikify('nell - aria'),'nell_-_aria')
   t.is(helpers.wikify(' nell - aria '),'nell_-_aria')
   t.is(helpers.wikify('Caffé'),'Caffé')
-  t.is(helpers.wikify('Caffé corretto!'),'Caffé_corretto!')
+  t.is(helpers.wikify('Caffé corretto!'),'Caffé_corretto_')
   t.is(helpers.wikify('Caff<p>e</p> senza schiuma'),'Caffpe+p_senza_schiuma')
   t.is(helpers.wikify('Per favore: nessun, dico; E un punto...'),'Per_favore:_nessun,_dico;_E_un_punto...')
   t.is(helpers.wikify('prova.md'),'prova.md')

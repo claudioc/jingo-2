@@ -261,6 +261,15 @@ export class Sdk {
   }
 
   /**
+   * Returns whether a directory is accessible or not (using documentRoot as base)
+   * @param docName Id of the document to check
+   */
+  public async isDirectoryAccessible (directoryName: string): Promise<boolean> {
+    const fullDirectoryName = this.folderHelpers.fullpathFor(directoryName)
+    return await this.fsApi.access(fullDirectoryName, fs.constants.F_OK)
+  }
+
+  /**
    * Create a folder
    * @param folderName
    * @param into The directory where to create the folder

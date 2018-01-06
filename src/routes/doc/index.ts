@@ -1,29 +1,8 @@
 import { Config } from '@lib/config'
+import { validateCreate } from '@lib/validators/doc'
 import BaseRoute from '@routes/route'
 import { NextFunction, Request, Response, Router } from 'express'
-import { check } from 'express-validator/check'
-import { sanitize } from 'express-validator/filter'
 import { assign as _assign } from 'lodash'
-
-// Returns a validator chains for the new document
-const validatesCreate = () => {
-  return [
-    check('docTitle')
-      .isLength({ min: 1 })
-      .withMessage('The document title cannot be empty')
-      .trim(),
-
-    check('into')
-      .trim(),
-
-    check('content')
-      .isLength({ min: 1 })
-      .withMessage('The document content cannot be empty')
-      .trim(),
-
-    sanitize(['docTitle', 'content', 'into'])
-  ]
-}
 
 export default class DocRoute extends BaseRoute {
   public static create (router: Router, config: Config) {
@@ -32,7 +11,7 @@ export default class DocRoute extends BaseRoute {
       new DocRoute(config).create(req, res, next)
     })
 
-    router.post(`${proxyPath}doc/create`, validatesCreate(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`${proxyPath}doc/create`, validateCreate(), (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).didCreate(req, res, next)
     })
 
@@ -40,7 +19,7 @@ export default class DocRoute extends BaseRoute {
       new DocRoute(config).update(req, res, next)
     })
 
-    router.post(`${proxyPath}doc/update`, validatesCreate(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`${proxyPath}doc/update`, validateCreate(), (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).didUpdate(req, res, next)
     })
 
@@ -80,7 +59,7 @@ export default class DocRoute extends BaseRoute {
 
   public async didCreate (req: Request, res: Response, next: NextFunction): Promise<void> {
     const { errors, data } = this.inspectRequest(req)
-    const into = data.into
+    const into = data.into || ''
 
     const scope: object = {
       content: data.content,

@@ -47,3 +47,67 @@ test('get /api/wiki (200)', async t => {
   t.is(response.status, 200)
   t.is(response.text, '<h3>Solomon the King</h3>\n')
 })
+
+test('post /api/doc (invalid data)', async t => {
+  const server = Server.bootstrap(await fakeFs.config())
+  const response = await supertest(server.app)
+    .post('/api/doc')
+  t.is(response.status, 406)
+})
+
+test('post /api/doc (OK)', async t => {
+  const server = Server.bootstrap(await fakeFs.config())
+  const response = await supertest(server.app)
+    .post('/api/doc')
+    .send({
+      content: 'Hello',
+      docTitle: 'Welcome aboard!'
+    })
+  t.is(response.status, 201)
+  t.is(response.text, 'Welcome_aboard_')
+})
+
+test('post /api/doc (into not existant)', async t => {
+  const server = Server.bootstrap(await fakeFs.config())
+  const response = await supertest(server.app)
+    .post('/api/doc')
+    .send({
+      content: 'Hello',
+      docTitle: 'Welcome aboard!',
+      into: 'somedir'
+    })
+  t.is(response.status, 422)
+})
+
+test('post /api/doc (OK with into)', async t => {
+  const server = Server.bootstrap(await fakeFs.config())
+  const into = fakeFs.mkdirRnd()
+  const response = await supertest(server.app)
+    .post('/api/doc')
+    .send({
+      content: 'Hello',
+      docTitle: 'Welcome aboard!',
+      into
+    })
+  t.is(response.status, 201)
+})
+
+test('post /api/doc (conflict)', async t => {
+  const server = Server.bootstrap(await fakeFs.config())
+  const docTitle = fakeFs.rndName()
+  await supertest(server.app)
+    .post('/api/doc')
+    .send({
+      content: 'Hello',
+      docTitle
+    })
+
+  const response = await supertest(server.app)
+    .post('/api/doc')
+    .send({
+      content: 'Hello',
+      docTitle
+    })
+
+  t.is(response.status, 409)
+})

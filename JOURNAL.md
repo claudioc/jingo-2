@@ -95,4 +95,4 @@
 06/01/18
 - Added the express-boom and the global.d.ts file
 - Added supertest for testing the API
-- 5737 sloc
+- 5863 sloc
