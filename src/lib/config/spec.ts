@@ -5,12 +5,6 @@ import { Config, config } from '.'
 
 const fakeFs = new FakeFs('/home/jingo')
 
-const configUsingFakeFs = async () => {
-  const cfg = await config(fakeFs.fsDriver)
-  cfg.set('documentRoot', fakeFs.mountPoint)
-  return cfg
-}
-
 test.after(() => {
   fakeFs.unmount()
 })
@@ -43,7 +37,7 @@ test('loadDefaults', async t => {
 })
 
 test('load will merge values with the defaults', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
 
   // We do not specify the wiki index in our cfg, so that it should
   // come up from the default configuration file
@@ -57,7 +51,7 @@ test('load will merge values with the defaults', async t => {
 })
 
 test('load will detect alien or mispelled keys', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
 
   fakeFs.writeFile('wrong-config1.json', JSON.stringify({
     documentFroot: '/home/jingo',
@@ -72,7 +66,7 @@ test('load will detect alien or mispelled keys', async t => {
 })
 
 test('load will detect not detect an array as alien', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
 
   fakeFs.writeFile('good-config2.json', JSON.stringify({
     custom: {

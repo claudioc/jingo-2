@@ -1,31 +1,49 @@
 import { config } from '@lib/config'
+import FakeFs from '@lib/fake-fs'
 import test from 'ava'
-import { nop as _nop } from 'lodash'
-import * as sinon from 'sinon'
-import Route from '.'
+import * as supertest from 'supertest'
 
-test.todo('The api route')
+process.env.NODE_ENV = 'test'
 
-test('post renderMarkdown', async t => {
-  const route = new Route(await config())
+import Server from '@server'
 
-  const request = {
-    body: {
-      content: '### Hello World!'
-    }
-  }
+const fakeFs = new FakeFs('/home/jingo')
 
-  const send = sinon.stub()
-  const response = {
-    status: sinon.stub().callsFake(() => {
-      return {
-        send
-      }
-    })
-  }
+test('post /api/render', async t => {
+  const server = Server.bootstrap(await config())
+  const response = await supertest(server.app)
+    .post('/api/render')
+    .send({ content: '### Hello World!' })
 
-  await route.renderMarkdown(request as any, response as any, _nop)
+  t.is(response.status, 200)
+  t.is(response.text, '<h3>Hello World!</h3>\n')
+})
 
-  t.is(response.status.calledWith(200), true)
-  t.is(send.calledWith('<h3>Hello World!</h3>\n'), true)
+test('get /api/serve-static (404)', async t => {
+  const server = Server.bootstrap(await config())
+  const response = await supertest(server.app)
+    .get('/api/serve-static/zot.js')
+
+  t.is(response.status, 404)
+})
+
+// We cannot test the 200 because we cannot moke the file system
+// that `send()` uses
+// test('get /api/serve-static (200)', async t => {
+// })
+
+test('get /api/wiki (404)', async t => {
+  const server = Server.bootstrap(await config())
+  const response = await supertest(server.app)
+    .get('/api/wiki/does-not-exist')
+  t.is(response.status, 404)
+})
+
+test('get /api/wiki (200)', async t => {
+  const server = Server.bootstrap(await fakeFs.config())
+  fakeFs.writeFile('solomon_the_king.md', '### Solomon the King')
+  const response = await supertest(server.app)
+    .get('/api/wiki/solomon_the_king')
+  t.is(response.status, 200)
+  t.is(response.text, '<h3>Solomon the King</h3>\n')
 })

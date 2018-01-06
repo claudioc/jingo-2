@@ -1,3 +1,4 @@
+import { config } from '@lib/config'
 const memfs = require('memfs')
 import * as crypto from 'crypto'
 import * as fs from 'fs'
@@ -12,22 +13,28 @@ export default class FakeFs {
     this.fsDriver.mount(this.mountPoint, memfs)
   }
 
-  unmount () {
+  public async config () {
+    const cfg = await config(this.fsDriver)
+    cfg.set('documentRoot', this.mountPoint)
+    return cfg
+  }
+
+  public unmount () {
     this.fsDriver.unmount(this.mountPoint)
     return this
   }
 
-  writeFile (pathName, content = '') {
+  public writeFile (pathName, content = '') {
     this.fsDriver.writeFileSync(path.join(this.mountPoint, pathName), content)
     return this
   }
 
-  mkdir (dir) {
+  public mkdir (dir) {
     this.fsDriver.mkdirSync(path.join(this.mountPoint, dir))
     return this
   }
 
-  readFile (pathName) {
+  public readFile (pathName) {
     try {
       return this.fsDriver.readFileSync(path.join(this.mountPoint, pathName)).toString()
     } catch (err) {
@@ -35,11 +42,11 @@ export default class FakeFs {
     }
   }
 
-  access (pathName): void {
+  public access (pathName): void {
     this.fsDriver.accessSync(path.join(this.mountPoint, pathName))
   }
 
-  rndName () {
+  public rndName () {
     return `tmp${crypto.randomBytes(4).readUInt32LE(0)}pmt`
   }
 }

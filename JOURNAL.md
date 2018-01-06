@@ -92,3 +92,7 @@
 05/01/18
 - Added the TOC feature and adds a permalink to all the H1 and H2
 - Added the footnotes
+06/01/18
+- Added the express-boom and the global.d.ts file
+- Added supertest for testing the API
+- 5737 sloc

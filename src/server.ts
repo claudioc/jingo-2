@@ -2,6 +2,7 @@ import * as bodyParser from 'body-parser'
 import * as cookieParser from 'cookie-parser'
 import * as errorHandler from 'errorhandler'
 import * as express from 'express'
+import * as boom from 'express-boom'
 import * as expressFlash from 'express-flash'
 import * as expressHandlebars from 'express-handlebars'
 import * as session from 'express-session'
@@ -74,6 +75,7 @@ export default class Server {
     const proxyPath = this.config.get('proxyPath')
     this.app.use([/(.*)\.md/, `${proxyPath}public`], express.static(path.join(__dirname, 'public'), staticOptions))
 
+    this.app.use(boom())
     const expressHbs = expressHandlebars.create({
       defaultLayout: 'main',
       extname: '.hbs',
@@ -94,7 +96,9 @@ export default class Server {
     this.app.enable('strict routing')
 
     // 'combined' or 'dev'
-    this.app.use(logger('combined' as any))
+    if (process.env.NODE_ENV !== 'test') {
+      this.app.use(logger('combined' as any))
+    }
 
     this.app.use(methodOverride((req, res) => {
       if (req.body && typeof req.body === 'object' && '_method' in req.body) {

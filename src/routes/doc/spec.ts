@@ -7,12 +7,6 @@ import Route from '.'
 
 const fakeFs = new FakeFs('/home/jingo')
 
-const configUsingFakeFs = async () => {
-  const cfg = await config(fakeFs.fsDriver)
-  cfg.set('documentRoot', fakeFs.mountPoint)
-  return cfg
-}
-
 test.after(() => {
   fakeFs.unmount()
 })
@@ -81,7 +75,7 @@ test('get create route not receiving a name in the url', async t => {
 })
 
 test('post create fail if document already exists', async t => {
-  const route = new Route(await configUsingFakeFs())
+  const route = new Route(await fakeFs.config())
   const docName = fakeFs.rndName()
   const render = sinon.stub(route, 'render')
   fakeFs.writeFile(route.docHelpers.docNameToFilename(docName), 'Hello 41!')
@@ -112,7 +106,7 @@ test('post create fail if document already exists', async t => {
 })
 
 test('post create success redirect to the wiki page', async t => {
-  const route = new Route(await configUsingFakeFs())
+  const route = new Route(await fakeFs.config())
   sinon.stub(route, 'inspectRequest').callsFake(req => {
     return {
       data: {
@@ -137,7 +131,7 @@ test('post create success redirect to the wiki page', async t => {
 })
 
 test('post create renders again with a validation error', async t => {
-  const route = new Route(await configUsingFakeFs())
+  const route = new Route(await fakeFs.config())
   const render = sinon.stub(route, 'render')
 
   sinon.stub(route, 'inspectRequest').callsFake(req => {
@@ -193,7 +187,7 @@ test('get update route with a non-existing file', async t => {
 // Needs to be run serially because otherwise we risk that
 // the scanFolder would read a changing directory
 test.serial('get update route with an existing file', async t => {
-  const route = new Route(await configUsingFakeFs())
+  const route = new Route(await fakeFs.config())
   const docName = fakeFs.rndName()
   fakeFs.writeFile(route.docHelpers.docNameToFilename(docName), 'Hello 41!')
   const render = sinon.stub(route, 'render')
@@ -219,7 +213,7 @@ test.serial('get update route with an existing file', async t => {
 })
 
 test('post update route is a failure if the file already exists (rename fails)', async t => {
-  const route = new Route(await configUsingFakeFs())
+  const route = new Route(await fakeFs.config())
   const render = sinon.stub(route, 'render')
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
@@ -258,7 +252,7 @@ test('post update route is a failure if the file already exists (rename fails)',
 })
 
 test('post update route is a success (renaming)', async t => {
-  const route = new Route(await configUsingFakeFs())
+  const route = new Route(await fakeFs.config())
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
   fakeFs.writeFile(route.docHelpers.docNameToFilename(docName1), 'Hello 41!')
@@ -293,7 +287,7 @@ test('post update route is a success (renaming)', async t => {
 })
 
 test('post update route is a success (not renaming)', async t => {
-  const route = new Route(await configUsingFakeFs())
+  const route = new Route(await fakeFs.config())
   const docName1 = fakeFs.rndName()
   const docName2 = docName1
   fakeFs.writeFile(route.docHelpers.docNameToFilename(docName1), 'Hello 41!')
@@ -350,7 +344,7 @@ test('get delete route for a non-existing doc', async t => {
 })
 
 test('get delete route for a existing doc', async t => {
-  const route = new Route(await configUsingFakeFs())
+  const route = new Route(await fakeFs.config())
   const docName = fakeFs.rndName()
   fakeFs.writeFile(route.docHelpers.docNameToFilename(docName), 'Hello 41!')
   const render = sinon.stub(route, 'render')
@@ -395,7 +389,7 @@ test('post delete route for a non-existing doc', async t => {
 })
 
 test('post delete route for a existing doc', async t => {
-  const route = new Route(await configUsingFakeFs())
+  const route = new Route(await fakeFs.config())
   const docName = fakeFs.rndName()
   fakeFs.writeFile(route.docHelpers.docNameToFilename(docName), 'Hello 41!')
 

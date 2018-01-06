@@ -8,12 +8,6 @@ import Route from '.'
 
 const fakeFs = new FakeFs('/home/jingo')
 
-const configUsingFakeFs = async () => {
-  const cfg = await config(fakeFs.fsDriver)
-  cfg.set('documentRoot', fakeFs.mountPoint)
-  return cfg
-}
-
 test.after(() => {
   fakeFs.unmount()
 })
@@ -54,7 +48,7 @@ test('get create route fails with not existing into', async t => {
 })
 
 test('get create fails if folder already exists', async t => {
-  const route = new Route(await configUsingFakeFs())
+  const route = new Route(await fakeFs.config())
   const folderName = fakeFs.rndName()
   fakeFs.mkdir(folderName)
 
@@ -75,7 +69,7 @@ test('get create fails if folder already exists', async t => {
 })
 
 test('post create fails if folder already exists', async t => {
-  const route = new Route(await configUsingFakeFs())
+  const route = new Route(await fakeFs.config())
   const folderName = fakeFs.rndName()
   const render = sinon.stub(route, 'render')
   fakeFs.mkdir(folderName)
@@ -105,7 +99,7 @@ test('post create fails if folder already exists', async t => {
 })
 
 test('post create fail if folder already exists in a subdir', async t => {
-  const route = new Route(await configUsingFakeFs())
+  const route = new Route(await fakeFs.config())
   const folderName = fakeFs.rndName()
   const intoName = fakeFs.rndName()
   const render = sinon.stub(route, 'render')

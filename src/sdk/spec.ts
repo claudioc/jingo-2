@@ -7,12 +7,6 @@ import sdk from '.'
 
 const fakeFs = new FakeFs('/home/jingo')
 
-const configUsingFakeFs = async () => {
-  const cfg = await config(fakeFs.fsDriver)
-  cfg.set('documentRoot', fakeFs.mountPoint)
-  return cfg
-}
-
 test.after(() => {
   fakeFs.unmount()
 })
@@ -26,7 +20,7 @@ test('docExists with a non-existant file', async t => {
 })
 
 test('docExists with a existant file and no folder', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName = fakeFs.rndName()
   fakeFs.writeFile(doc(cfg).docNameToFilename(docName), 'Hi!')
   const expected = true
@@ -35,7 +29,7 @@ test('docExists with a existant file and no folder', async t => {
 })
 
 test('docExists with a non-existant file in a folder', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName = fakeFs.rndName()
   const into = fakeFs.rndName()
   const expected = false
@@ -44,7 +38,7 @@ test('docExists with a non-existant file in a folder', async t => {
 })
 
 test('docExists with a existant file in an existant folder', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName = fakeFs.rndName()
   const into = fakeFs.rndName()
   fakeFs.mkdir(into)
@@ -55,7 +49,7 @@ test('docExists with a existant file in an existant folder', async t => {
 })
 
 test('loadDoc failure', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
 
   try {
     await sdk(cfg).loadDoc(fakeFs.rndName())
@@ -66,7 +60,7 @@ test('loadDoc failure', async t => {
 })
 
 test('findDocTitle, case sensitive', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName = 'any case'
   fakeFs.writeFile(doc(cfg).docNameToFilename('Any Case'), 'Hi!')
 
@@ -76,7 +70,7 @@ test('findDocTitle, case sensitive', async t => {
 })
 
 test('findDocTitle, case insensitive', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   cfg.sys.fileSystemIsCaseSensitive = false
   const docName = 'any case'
   fakeFs.writeFile(doc(cfg).docNameToFilename('Any Case'), 'Hi!')
@@ -87,7 +81,7 @@ test('findDocTitle, case insensitive', async t => {
 })
 
 test('loadDoc success', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName = fakeFs.rndName()
   fakeFs.writeFile(doc(cfg).docNameToFilename(docName), 'Hi!')
   const actual = await sdk(cfg).loadDoc(docName)
@@ -96,7 +90,7 @@ test('loadDoc success', async t => {
 })
 
 test('loadDoc success with a folder', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName = fakeFs.rndName()
   const from = fakeFs.rndName()
   fakeFs.mkdir(from)
@@ -107,7 +101,7 @@ test('loadDoc success with a folder', async t => {
 })
 
 test('createDoc success', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName = fakeFs.rndName()
   await sdk(cfg).createDoc(docName, 'Today is nöt yestarday')
   const actual = fakeFs.readFile(doc(cfg).docNameToFilename(docName))
@@ -116,7 +110,7 @@ test('createDoc success', async t => {
 })
 
 test('createDoc success in a folder', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName = fakeFs.rndName()
   const into = fakeFs.rndName()
   fakeFs.mkdir(into)
@@ -127,7 +121,7 @@ test('createDoc success in a folder', async t => {
 })
 
 test('updateDoc success', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName = fakeFs.rndName()
   const docFilename = doc(cfg).docNameToFilename(docName)
   fakeFs.writeFile(docFilename, 'Hello')
@@ -138,7 +132,7 @@ test('updateDoc success', async t => {
 })
 
 test('updateDoc success in a folder', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName = fakeFs.rndName()
   const into = fakeFs.rndName()
   fakeFs.mkdir(into)
@@ -151,7 +145,7 @@ test('updateDoc success in a folder', async t => {
 })
 
 test('updateDoc failure', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
   const docFilename1 = doc(cfg).docNameToFilename(docName1)
@@ -172,7 +166,7 @@ test('renameDoc with the same name', async t => {
 })
 
 test('renameDoc with a different name', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
   fakeFs.writeFile(doc(cfg).docNameToFilename(docName1), 'zot')
@@ -190,7 +184,7 @@ test('renameDoc with a different name', async t => {
 })
 
 test('renameDoc with a different name in a folder', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
   const into = fakeFs.rndName()
@@ -211,7 +205,7 @@ test('renameDoc with a different name in a folder', async t => {
 })
 
 test('renameDoc with a different name and new file already exists', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
   fakeFs.writeFile(doc(cfg).docNameToFilename(docName1), 'zot')
@@ -222,7 +216,7 @@ test('renameDoc with a different name and new file already exists', async t => {
 })
 
 test('renameDoc with a different name and new file already exists in a folder', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
   const into = fakeFs.rndName()
@@ -237,7 +231,7 @@ test('renameDoc with a different name and new file already exists in a folder', 
 })
 
 test('renameFolder with the same name', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const folderName1 = fakeFs.rndName()
   const actual = await sdk(cfg).renameFolder(folderName1, folderName1)
   const expected = true
@@ -245,7 +239,7 @@ test('renameFolder with the same name', async t => {
 })
 
 test('renameFolder with a different name', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const folderName1 = fakeFs.rndName()
   const folderName2 = fakeFs.rndName()
   fakeFs.mkdir(folderName1)
@@ -260,7 +254,7 @@ test('renameFolder with a different name', async t => {
 })
 
 test('listDocs in an existing subdir', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
   fakeFs.mkdir('mmh')
@@ -272,7 +266,7 @@ test('listDocs in an existing subdir', async t => {
 })
 
 test('listDocs in a non-existing subdir', async t => {
-  const cfg = await configUsingFakeFs()
+  const cfg = await fakeFs.config()
   const error = await t.throws(sdk(cfg).listDocs('not-exists'))
   t.regex(error.message, /ENOENT: no such/)
 })

@@ -15,6 +15,7 @@
     ],
     "baseUrl": "src",
     "paths": {
+      "@server": ["server"],
       "@sdk": ["sdk/index"],
       "@lib/*": ["lib/*"],
       "@routes/*": ["routes/*"]
