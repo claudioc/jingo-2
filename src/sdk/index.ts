@@ -2,7 +2,6 @@ import { Config } from '@lib/config'
 import doc, { Doc } from '@lib/doc'
 import folder, { Folder } from '@lib/folder'
 import fsApi, { FileSystemApi } from '@lib/fs-api'
-import ipc, { IIpc } from '@lib/ipc'
 import wiki, { Wiki } from '@lib/wiki'
 import * as fs from 'fs'
 import * as hljs from 'highlight.js'
@@ -34,7 +33,6 @@ export class Sdk {
   public folderHelpers: Folder
   public transpiler: MarkdownIt.MarkdownIt
   public fsApi: FileSystemApi
-  public ipc: IIpc
   public wikiHelpers: Wiki
 
   constructor (public config: Config) {
@@ -63,7 +61,6 @@ export class Sdk {
     .use(markdownItFootnote)
 
     this.fsApi = fsApi(config.fsDriver)
-    this.ipc = ipc(config)
   }
 
   /**
@@ -114,7 +111,6 @@ export class Sdk {
    * @param docContent
    */
   public async createDoc (docName: string, docContent: string, into: string = ''): Promise<void> {
-    this.ipc.send('CREATE DOC', docName)
     return this.saveDoc(docName, docContent, into)
   }
 
@@ -129,7 +125,6 @@ export class Sdk {
       throw new Error('Cannot rename a document to an already existant one')
     }
 
-    this.ipc.send('UPDATE', oldDocName)
     return this.saveDoc(docName, docContent, into)
   }
 
@@ -139,7 +134,6 @@ export class Sdk {
    */
   public async deleteDoc (docName: string, into: string = ''): Promise<void> {
     const fullDocName = this.makeFilename(docName, into)
-    this.ipc.send('DELETE', docName)
     return this.fsApi.unlink(fullDocName)
   }
 
@@ -276,7 +270,6 @@ export class Sdk {
    */
   public async createFolder (folderName: string, into: string = ''): Promise<void> {
     const fullFolderName = this.makeDirname(folderName, into)
-    this.ipc.send('CREATE FOLDER', folderName)
     await this.fsApi.mkdir(fullFolderName)
   }
 
@@ -309,7 +302,6 @@ export class Sdk {
    */
   public async deleteFolder (folderName: string, into: string = ''): Promise<void> {
     const fullFolderName = this.makeDirname(folderName, into)
-    this.ipc.send('DELETE', folderName)
     return this.fsApi.rmdir(fullFolderName)
   }
 

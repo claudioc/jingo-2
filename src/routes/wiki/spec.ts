@@ -1,6 +1,6 @@
 import { config } from '@lib/config'
 import test from 'ava'
-import { nop as _nop } from 'lodash'
+import { noop as _noop } from 'lodash'
 import * as sinon from 'sinon'
 import Route from '.'
 
@@ -24,7 +24,7 @@ test('Send a 404 if folder doesn\'t exist', async t => {
     })
   }
 
-  await route.list(request as any, response as any, _nop)
+  await route.list(request as any, response as any, _noop)
 
   t.is(route.title, 'Jingo – List of documents')
 

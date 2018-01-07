@@ -1,3 +1,4 @@
+import { je } from '@events/index'
 import { Config } from '@lib/config'
 import { validateCreate } from '@lib/validators/doc'
 import BaseRoute from '@routes/route'
@@ -83,6 +84,7 @@ export default class DocRoute extends BaseRoute {
 
     // All done, go to the just saved page
     res.redirect(this.wikiHelpers.pathFor(data.docTitle, into))
+    req.app && req.app.emit(je('jingo.docCreated'))
   }
 
   public async update (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -146,6 +148,7 @@ export default class DocRoute extends BaseRoute {
 
     // All done, go to the just saved page
     res.redirect(this.wikiHelpers.pathFor(data.docTitle, into))
+    req.app && req.app.emit(je('jingo.docUpdated'))
   }
 
   public async delete (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -189,6 +192,7 @@ export default class DocRoute extends BaseRoute {
     await this.sdk.deleteDoc(docName, into)
 
     res.redirect(this.folderHelpers.pathFor('list', into) + '?e=0')
+    req.app && req.app.emit(je('jingo.docDeleted'))
   }
 
   private async assertDirectoryExists (directory, req: Request, res: Response): Promise<boolean> {

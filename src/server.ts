@@ -10,6 +10,11 @@ import * as methodOverride from 'method-override'
 import * as logger from 'morgan'
 import * as path from 'path'
 
+import {
+  JingoEvent,
+  jingoEventHandler,
+  jingoEvents
+} from '@events/index'
 import { Config } from '@lib/config'
 import viewHelpers from '@lib/view-helpers'
 import ApiRoute from '@routes/api'
@@ -36,6 +41,7 @@ export default class Server {
     this.app = express()
     this.setup()
     this.routes()
+    this.events()
     this.ipc()
   }
 
@@ -54,6 +60,12 @@ export default class Server {
 
     const mountPath = this.config.get('mountPath')
     this.app.use(mountPath, router)
+  }
+
+  public events () {
+    jingoEvents.forEach((event: JingoEvent) => {
+      this.app.on(event, jingoEventHandler(event, this.config))
+    })
   }
 
   /**

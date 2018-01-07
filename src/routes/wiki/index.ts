@@ -1,3 +1,4 @@
+import { je } from '@events/index'
 import { Config } from '@lib/config'
 import BaseRoute from '@routes/route'
 import { NextFunction, Request, Response, Router } from 'express'
@@ -40,7 +41,6 @@ export default class WikiRoute extends BaseRoute {
 
   public async read (req: Request, res: Response, next: NextFunction) {
     const isIndex = this.config.get('wiki.index') === this.docName
-
     try {
       const doc = await this.sdk.loadDoc(this.docName, this.dirName)
       const scope: object = {
@@ -52,6 +52,7 @@ export default class WikiRoute extends BaseRoute {
       }
       this.title = `Jingo – ${doc.title}`
       this.render(req, res, 'wiki-read', scope)
+      req.app && req.app.emit(je('jingo.wikiRead'), this.docName)
     } catch (e) {
       if (isIndex) {
         res.redirect(`${this.config.get('mountPath')}?welcome`)
@@ -86,5 +87,6 @@ export default class WikiRoute extends BaseRoute {
     }
 
     this.render(req, res, 'wiki-list', scope)
+    req.app && req.app.emit(je('jingo.wikiList'), this.dirName)
   }
 }

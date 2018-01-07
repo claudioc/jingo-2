@@ -1,5 +1,9 @@
 // @TODO find a way to import the Boom types in here
-declare namespace Express {
+declare module Express {
+  interface Application {
+    on: (event, callback) => {}
+    emit: (event, params?) => {}
+  }
   interface Response {
     boom: {
       badRequest: (message, data?) => {}

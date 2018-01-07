@@ -17,6 +17,7 @@
     "paths": {
       "@server": ["server"],
       "@sdk": ["sdk/index"],
+      "@events/*": ["events/*"],
       "@lib/*": ["lib/*"],
       "@routes/*": ["routes/*"]
     }

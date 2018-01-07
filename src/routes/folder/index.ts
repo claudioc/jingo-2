@@ -1,3 +1,4 @@
+import { je } from '@events/index'
 import { Config } from '@lib/config'
 import { validateCreate, validateRename } from '@lib/validators/folder'
 import BaseRoute from '@routes/route'
@@ -77,6 +78,7 @@ export default class FolderRoute extends BaseRoute {
       await this.sdk.createFolder(folderName, into)
       // All done, go to the just created folder
       res.redirect(this.folderHelpers.pathFor('list', into))
+      req.app && req.app.emit(je('jingo.folderCreated'))
     } catch (err) {
       res.status(500).render('500')
     }
@@ -125,6 +127,7 @@ export default class FolderRoute extends BaseRoute {
     await this.sdk.renameFolder(currentFolderName, folderName, into)
 
     res.redirect(this.folderHelpers.pathFor('list', into))
+    req.app && req.app.emit(je('jingo.folderRenamed'))
   }
 
   public async delete (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -163,6 +166,7 @@ export default class FolderRoute extends BaseRoute {
     await this.sdk.deleteFolder(folderName, into)
 
     res.redirect(this.folderHelpers.pathFor('list', into) + '?e=0')
+    req.app && req.app.emit(je('jingo.folderDeleted'))
   }
 
   private async assertDirectoryExists (directory, req: Request, res: Response): Promise<boolean> {

@@ -96,3 +96,7 @@
 - Added the express-boom and the global.d.ts file
 - Added supertest for testing the API
 - 5863 sloc
+07/01/18
+- Introduced the "events" concept in Jingo
+- Removed the IPC from the SDK and moved them in the event handlers
+- 5908 sloc

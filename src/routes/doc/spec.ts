@@ -1,7 +1,7 @@
 import { config } from '@lib/config'
 import FakeFs from '@lib/fake-fs'
 import test from 'ava'
-import { nop as _nop } from 'lodash'
+import { noop as _noop } from 'lodash'
 import * as sinon from 'sinon'
 import Route from '.'
 
@@ -20,7 +20,7 @@ test('get create route receiving a name in the url', async t => {
       docName: 'hello_world'
     }
   }
-  await route.create(request as any, null, _nop)
+  await route.create(request as any, null, _noop)
 
   t.is(route.title, 'Jingo – Creating a document')
 
@@ -42,7 +42,7 @@ test('get create route with not existing into', async t => {
       into: 'hello_world'
     }
   }
-  await route.create(request as any, null, _nop)
+  await route.create(request as any, null, _noop)
 
   const expectedScope = {
     directory: 'hello_world',
@@ -61,7 +61,7 @@ test('get create route not receiving a name in the url', async t => {
     params: {},
     query: {}
   }
-  await route.create(request as any, null, _nop)
+  await route.create(request as any, null, _noop)
 
   t.is(route.title, 'Jingo – Creating a document')
 
@@ -94,7 +94,7 @@ test('post create fail if document already exists', async t => {
   const request = {
   }
 
-  await route.didCreate(request as any, null, _nop)
+  await route.didCreate(request as any, null, _noop)
   const expectedScope = {
     content: 'Winter in Berlin',
     docTitle: route.wikiHelpers.unwikify(docName),
@@ -125,7 +125,7 @@ test('post create success redirect to the wiki page', async t => {
     redirect
   }
 
-  await route.didCreate(request as any, response as any, _nop)
+  await route.didCreate(request as any, response as any, _noop)
 
   t.is(redirect.calledWith('/wiki/hello_world'), true)
 })
@@ -151,7 +151,7 @@ test('post create renders again with a validation error', async t => {
     }
   }
 
-  await route.didCreate(request as any, null, _nop)
+  await route.didCreate(request as any, null, _noop)
 
   const expectedScope = {
     content: 'blah',
@@ -179,7 +179,7 @@ test('get update route with a non-existing file', async t => {
     redirect
   }
 
-  await route.update(request as any, response as any, _nop)
+  await route.update(request as any, response as any, _noop)
 
   t.is(redirect.calledWith(`${route.config.get('mountPath')}?e=1`), true)
 })
@@ -198,7 +198,7 @@ test.serial('get update route with an existing file', async t => {
     }
   }
 
-  await route.update(request as any, null, _nop)
+  await route.update(request as any, null, _noop)
 
   t.is(route.title, 'Jingo – Editing a document')
 
@@ -238,7 +238,7 @@ test('post update route is a failure if the file already exists (rename fails)',
     }
   }
 
-  await route.didUpdate(request as any, null, _nop)
+  await route.didUpdate(request as any, null, _noop)
 
   const expectedScope = {
     content: 'blah',
@@ -279,7 +279,7 @@ test('post update route is a success (renaming)', async t => {
     redirect
   }
 
-  await route.didUpdate(request as any, response as any, _nop)
+  await route.didUpdate(request as any, response as any, _noop)
 
   const content = fakeFs.readFile(route.docHelpers.docNameToFilename(docName2))
   t.is(content, 'blah')
@@ -314,7 +314,7 @@ test('post update route is a success (not renaming)', async t => {
     redirect
   }
 
-  await route.didUpdate(request as any, response as any, _nop)
+  await route.didUpdate(request as any, response as any, _noop)
 
   const content = fakeFs.readFile(route.docHelpers.docNameToFilename(docName2))
   t.is(content, 'blah')
@@ -336,7 +336,7 @@ test('get delete route for a non-existing doc', async t => {
     redirect
   }
 
-  await route.delete(request as any, response as any, _nop)
+  await route.delete(request as any, response as any, _noop)
 
   t.is(route.title, 'Jingo – Deleting a document')
 
@@ -356,7 +356,7 @@ test('get delete route for a existing doc', async t => {
     }
   }
 
-  await route.delete(request as any, null, _nop)
+  await route.delete(request as any, null, _noop)
 
   t.is(route.title, 'Jingo – Deleting a document')
 
@@ -383,7 +383,7 @@ test('post delete route for a non-existing doc', async t => {
     redirect
   }
 
-  await route.didDelete(request as any, response as any, _nop)
+  await route.didDelete(request as any, response as any, _noop)
 
   t.is(redirect.calledWith('/?e=1'), true)
 })
@@ -405,7 +405,7 @@ test('post delete route for a existing doc', async t => {
     redirect
   }
 
-  await route.didDelete(request as any, response as any, _nop)
+  await route.didDelete(request as any, response as any, _noop)
   t.is(fakeFs.readFile(route.docHelpers.docNameToFilename(docName)), null)
 
   t.is(redirect.calledWith('/wiki/?e=0'), true)

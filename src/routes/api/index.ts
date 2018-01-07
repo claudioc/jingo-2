@@ -1,3 +1,4 @@
+import { je } from '@events/index'
 import { Config } from '@lib/config'
 import doc, { Doc } from '@lib/doc'
 import inspectRequest from '@lib/inspect-request'
@@ -56,6 +57,7 @@ export default class ApiRoute {
     try {
       const document = await this.sdk.loadDoc(docName, dirName)
       res.send(this.sdk.renderToHtml(document.content))
+      req.app && req.app.emit(je('jingo.wikiRead'))
     } catch (e) {
       res.boom.notFound('Not found')
     }
@@ -108,6 +110,8 @@ export default class ApiRoute {
     } catch (__) {
       return res.boom.serverUnavailable(`An error occurred while creating ${docName}`)
     }
+
+    req.app && req.app.emit(je('jingo.docCreated'))
 
     return res.status(201).send(path.join(into, docName))
   }

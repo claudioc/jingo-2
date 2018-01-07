@@ -1,7 +1,7 @@
 import { config } from '@lib/config'
 import FakeFs from '@lib/fake-fs'
 import test from 'ava'
-import { nop as _nop } from 'lodash'
+import { noop as _noop } from 'lodash'
 import * as path from 'path'
 import * as sinon from 'sinon'
 import Route from '.'
@@ -19,7 +19,7 @@ test('get create route', async t => {
   const request = {
     query: {}
   }
-  await route.create(request as any, null, _nop)
+  await route.create(request as any, null, _noop)
 
   t.is(route.title, 'Jingo – Creating a folder')
 
@@ -36,7 +36,7 @@ test('get create route fails with not existing into', async t => {
     }
   }
 
-  await route.create(request as any, null, _nop)
+  await route.create(request as any, null, _noop)
 
   const expectedScope = {
     directory: 'foo/bazonga',
@@ -62,7 +62,7 @@ test('get create fails if folder already exists', async t => {
     redirect
   }
 
-  await route.create(request as any, response as any, _nop)
+  await route.create(request as any, response as any, _noop)
 
   t.true(redirect.calledWith(`/wiki/${folderName}/`))
 })
@@ -85,7 +85,7 @@ test('post create fails if folder already exists', async t => {
   const request = {
   }
 
-  await route.didCreate(request as any, null, _nop)
+  await route.didCreate(request as any, null, _noop)
 
   const expectedScope = {
     errors: ['A folder or file with this name already exists'],
@@ -117,7 +117,7 @@ test('post create fail if folder already exists in a subdir', async t => {
   const request = {
   }
 
-  await route.didCreate(request as any, null, _nop)
+  await route.didCreate(request as any, null, _noop)
 
   const expectedScope = {
     errors: ['A folder or file with this name already exists'],
@@ -144,7 +144,7 @@ test('get rename route fails with 400 is no folderName passed', async t => {
       }
     })
   }
-  await route.rename(request as any, response as any, _nop)
+  await route.rename(request as any, response as any, _noop)
 
   t.true(response.status.calledWith(400))
   t.true(response.status().render.calledWith('400'))
@@ -161,7 +161,7 @@ test('get rename route fails with not existing into', async t => {
     }
   }
 
-  await route.rename(request as any, null, _nop)
+  await route.rename(request as any, null, _noop)
 
   const expectedScope = {
     directory: 'foo/bazonga',
@@ -188,7 +188,7 @@ test('get delete route fails with 400 is no folderName passed', async t => {
       }
     })
   }
-  await route.delete(request as any, response as any, _nop)
+  await route.delete(request as any, response as any, _noop)
 
   t.true(response.status.calledWith(400))
   t.true(response.status().render.calledWith('400'))
@@ -205,7 +205,7 @@ test('get delete route fails with not existing into', async t => {
     }
   }
 
-  await route.delete(request as any, null, _nop)
+  await route.delete(request as any, null, _noop)
 
   const expectedScope = {
     directory: 'foo/bazonga',
