@@ -16,7 +16,7 @@ export default class WikiRoute extends BaseRoute {
 
   public static create (router: Router, config: Config) {
     const basePath = config.get('wiki.basePath')
-    const proxyPath = config.get('proxyPath')
+    const mountPath = config.get('mountPath')
 
     /**
      * The catch-all route for all the route request:
@@ -24,12 +24,12 @@ export default class WikiRoute extends BaseRoute {
      * - /wiki/dir/: will render the list in `dir`
      * - /wiki/dir/docname: will render docname in `dir`
      */
-    router.get(`${proxyPath}${basePath}*`, (req: Request, res: Response, next: NextFunction) => {
+    router.get(`/${basePath}*`, (req: Request, res: Response, next: NextFunction) => {
       const reqPath = req.params[0]
       delete req.params[0]
 
       if (reqPath.length === 0) {
-        res.redirect(`${proxyPath}${basePath}/`)
+        res.redirect(`${mountPath}${basePath}/`)
         return
       }
 
@@ -54,7 +54,7 @@ export default class WikiRoute extends BaseRoute {
       this.render(req, res, 'wiki-read', scope)
     } catch (e) {
       if (isIndex) {
-        res.redirect(`${this.config.get('proxyPath')}?welcome`)
+        res.redirect(`${this.config.get('mountPath')}?welcome`)
       } else {
         const createPageUrl = this.docHelpers.pathFor('create', this.docName, this.dirName)
         res.redirect(createPageUrl)

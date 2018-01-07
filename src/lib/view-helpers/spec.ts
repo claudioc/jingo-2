@@ -173,9 +173,9 @@ test('urlFor css asset', async t => {
   t.is(helpers.urlFor(params), '/public/css/bazinga.css')
 })
 
-test('urlFor css asset and a proxypath', async t => {
+test('urlFor css asset and a mountPath', async t => {
   const cfg = await config()
-  cfg.set('proxyPath', '/antani/versilia/')
+  cfg.set('mountPath', '/antani/versilia/')
 
   helpers = viewHelpers(cfg)
   const params = {
@@ -216,7 +216,7 @@ test('customScript', async t => {
   cfg.set('custom', {
     scripts: ['foobar.js']
   })
-  cfg.set('proxyPath', '/pisa/viareggio/')
+  cfg.set('mountPath', '/pisa/viareggio/')
   helpers = viewHelpers(cfg)
   const actual = helpers.customScripts()
   const expected = `<script src="/pisa/viareggio/api/serve-static/foobar.js"></script>`
@@ -239,7 +239,7 @@ test('customStyles', async t => {
   cfg.set('custom', {
     styles: ['foobar.css', 'zoo.css']
   })
-  cfg.set('proxyPath', '/')
+  cfg.set('mountPath', '/')
   helpers = viewHelpers(cfg)
   const actual = helpers.customStyles()
   const expected = `<link rel="stylesheet" href="/api/serve-static/foobar.css">\n<link rel="stylesheet" href="/api/serve-static/zoo.css">`

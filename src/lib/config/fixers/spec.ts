@@ -23,38 +23,38 @@ test('fixDocumentRoot', t => {
   t.is(actual, expected)
 })
 
-test('fixProxyPath with undefined', t => {
+test('fixMountPath with undefined', t => {
   const value = undefined
   const expected = '/'
-  const actual = fixers.fixProxyPath(value)
+  const actual = fixers.fixMountPath(value)
   t.is(actual, expected)
 })
 
-test('fixProxyPath with empty string', t => {
+test('fixMountPath with empty string', t => {
   const value = ''
   const expected = '/'
-  const actual = fixers.fixProxyPath(value)
+  const actual = fixers.fixMountPath(value)
   t.is(actual, expected)
 })
 
-test('fixProxyPath with slash', t => {
+test('fixMountPath with slash', t => {
   const value = '/'
   const expected = '/'
-  const actual = fixers.fixProxyPath(value)
+  const actual = fixers.fixMountPath(value)
   t.is(actual, expected)
 })
 
-test('fixProxyPath with string to trim', t => {
+test('fixMountPath with string to trim', t => {
   const value = 'Buonasera   '
   const expected = '/Buonasera/'
-  const actual = fixers.fixProxyPath(value)
+  const actual = fixers.fixMountPath(value)
   t.is(actual, expected)
 })
 
-test('fixProxyPath with a number', t => {
+test('fixMountPath with a number', t => {
   const value = 123
   const expected = '/123/'
-  const actual = fixers.fixProxyPath(value as any)
+  const actual = fixers.fixMountPath(value as any)
   t.is(actual, expected)
 })
 

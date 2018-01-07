@@ -6,29 +6,27 @@ import { assign as _assign } from 'lodash'
 
 export default class FolderRoute extends BaseRoute {
   public static create (router: Router, config: Config) {
-    const proxyPath = config.get('proxyPath')
-
-    router.get(`${proxyPath}folder/create`, (req: Request, res: Response, next: NextFunction) => {
+    router.get(`/folder/create`, (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).create(req, res, next)
     })
 
-    router.post(`${proxyPath}folder/create`, validateCreate(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`/folder/create`, validateCreate(), (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).didCreate(req, res, next)
     })
 
-    router.get(`${proxyPath}folder/rename`, (req: Request, res: Response, next: NextFunction) => {
+    router.get(`/folder/rename`, (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).rename(req, res, next)
     })
 
-    router.post(`${proxyPath}folder/rename`, validateRename(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`/folder/rename`, validateRename(), (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).didRename(req, res, next)
     })
 
-    router.get(`${proxyPath}folder/delete`, (req: Request, res: Response, next: NextFunction) => {
+    router.get(`/folder/delete`, (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).delete(req, res, next)
     })
 
-    router.post(`${proxyPath}folder/delete`, (req: Request, res: Response, next: NextFunction) => {
+    router.post(`/folder/delete`, (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).didDelete(req, res, next)
     })
   }
@@ -201,7 +199,7 @@ export default class FolderRoute extends BaseRoute {
   private async assertFolderExists (folder, into, req: Request, res: Response) {
     const itExists = await this.sdk.folderExists(folder, into)
     if (!itExists) {
-      res.redirect(`${this.config.get('proxyPath')}?e=1`)
+      res.redirect(`${this.config.get('mountPath')}?e=1`)
     }
 
     return itExists

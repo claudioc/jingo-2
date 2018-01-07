@@ -37,7 +37,7 @@ export type TFeaturesSettings = {
 
 export type TConfig = {
   documentRoot: string
-  proxyPath?: string
+  mountPath?: string
   custom?: TCustomSettings
   ipc?: TIpcSettings
   wiki?: TWikiSettings
@@ -182,7 +182,7 @@ export class Config {
 
   protected fixConfig (): Config {
     this.values.documentRoot = fixers.fixDocumentRoot(this.values.documentRoot)
-    this.values.proxyPath = fixers.fixProxyPath(this.values.proxyPath)
+    this.values.mountPath = fixers.fixMountPath(this.values.mountPath)
     this.values.ipc = fixers.fixIpc(this.values.ipc, this.getDefault('ipc'))
     this.values.custom = fixers.fixCustom(this.values.custom, this.getDefault('custom'))
     this.values.wiki = fixers.fixWiki(this.values.wiki, this.getDefault('wiki'))

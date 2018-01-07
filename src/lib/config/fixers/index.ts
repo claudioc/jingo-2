@@ -53,8 +53,8 @@ const fixWiki = (wikiSettings: TWikiSettings, defaults: TWikiSettings): TWikiSet
   return settings
 }
 
-const fixProxyPath = (proxyPath: string): string => {
-  let setting = _isUndefined(proxyPath) ? '' : _toString(proxyPath).trim()
+const fixMountPath = (mountPath: string): string => {
+  let setting = _isUndefined(mountPath) ? '' : _toString(mountPath).trim()
   if (!setting.endsWith('/')) {
     setting += '/'
   }
@@ -96,6 +96,6 @@ export default {
   fixDocumentRoot,
   fixFeatures,
   fixIpc,
-  fixProxyPath,
+  fixMountPath,
   fixWiki
 }

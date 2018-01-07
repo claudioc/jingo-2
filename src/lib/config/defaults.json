@@ -3,7 +3,7 @@
   "documentRoot": "",
 
   // Declare that the jingo server is running behind a proxy with that path
-  "proxyPath": "/",
+  "mountPath": "/",
 
   // Customization in term of CSS stylesheets and/or JavaScript scripts
   "custom": {

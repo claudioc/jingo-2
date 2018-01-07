@@ -27,8 +27,8 @@ export class Doc {
    * @param action DocAction
    */
   public pathFor (action: DocAction, docName: string, into: string = ''): string {
-    const proxyPath = this.config.get('proxyPath')
-    const docPath = `${proxyPath}doc/${action}`
+    const mountPath = this.config.get('mountPath')
+    const docPath = `${mountPath}doc/${action}`
     const queso = new Queso()
 
     if (docName) {

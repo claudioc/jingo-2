@@ -6,28 +6,27 @@ import { assign as _assign } from 'lodash'
 
 export default class DocRoute extends BaseRoute {
   public static create (router: Router, config: Config) {
-    const proxyPath = config.get('proxyPath')
-    router.get(`${proxyPath}doc/create`, (req: Request, res: Response, next: NextFunction) => {
+    router.get(`/doc/create`, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).create(req, res, next)
     })
 
-    router.post(`${proxyPath}doc/create`, validateCreate(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`/doc/create`, validateCreate(), (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).didCreate(req, res, next)
     })
 
-    router.get(`${proxyPath}doc/update`, (req: Request, res: Response, next: NextFunction) => {
+    router.get(`/doc/update`, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).update(req, res, next)
     })
 
-    router.post(`${proxyPath}doc/update`, validateCreate(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`/doc/update`, validateCreate(), (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).didUpdate(req, res, next)
     })
 
-    router.get(`${proxyPath}doc/delete`, (req: Request, res: Response, next: NextFunction) => {
+    router.get(`/doc/delete`, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).delete(req, res, next)
     })
 
-    router.post(`${proxyPath}doc/delete`, (req: Request, res: Response, next: NextFunction) => {
+    router.post(`/doc/delete`, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).didDelete(req, res, next)
     })
   }
@@ -183,7 +182,7 @@ export default class DocRoute extends BaseRoute {
 
     const itExists = await this.sdk.docExists(docName, into)
     if (!itExists) {
-      res.redirect(`${this.config.get('proxyPath')}?e=1`)
+      res.redirect(`${this.config.get('mountPath')}?e=1`)
       return
     }
 
@@ -226,7 +225,7 @@ export default class DocRoute extends BaseRoute {
   private async assertDocExists (docName, into, req: Request, res: Response) {
     const itExists = await this.sdk.docExists(docName, into)
     if (!itExists) {
-      res.redirect(`${this.config.get('proxyPath')}?e=1`)
+      res.redirect(`${this.config.get('mountPath')}?e=1`)
     }
 
     return itExists

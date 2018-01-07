@@ -181,7 +181,7 @@ test('get update route with a non-existing file', async t => {
 
   await route.update(request as any, response as any, _nop)
 
-  t.is(redirect.calledWith(`${route.config.get('proxyPath')}?e=1`), true)
+  t.is(redirect.calledWith(`${route.config.get('mountPath')}?e=1`), true)
 })
 
 // Needs to be run serially because otherwise we risk that

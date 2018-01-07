@@ -44,8 +44,7 @@ export default class Server {
   }
 
   public routes () {
-    let router: express.Router
-    router = express.Router()
+    const router: express.Router = express.Router()
 
     IndexRoute.create(router, this.config)
     WikiRoute.create(router, this.config)
@@ -53,7 +52,8 @@ export default class Server {
     FolderRoute.create(router, this.config)
     ApiRoute.create(router, this.config)
 
-    this.app.use(router)
+    const mountPath = this.config.get('mountPath')
+    this.app.use(mountPath, router)
   }
 
   /**
@@ -72,8 +72,8 @@ export default class Server {
     // static middleware. Note: to use the static middleware
     // from the wiki pages directly we need to create a
     // whitelist (not a blacklist)
-    const proxyPath = this.config.get('proxyPath')
-    this.app.use([/(.*)\.md/, `${proxyPath}public`], express.static(path.join(__dirname, 'public'), staticOptions))
+    const mountPath = this.config.get('mountPath')
+    this.app.use([/(.*)\.md/, `${mountPath}public`], express.static(path.join(__dirname, 'public'), staticOptions))
 
     this.app.use(boom())
     const expressHbs = expressHandlebars.create({

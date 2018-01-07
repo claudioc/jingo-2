@@ -82,7 +82,7 @@
 - Find aliens in the config
 - 5135 sloc
 29/12/17
-- Added support for the `proxyPath`
+- Added support for the `mountPath`
 - 5235 sloc
 31/12/17
 - Added support for custom script and css
