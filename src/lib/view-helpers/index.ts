@@ -1,7 +1,9 @@
 import { Config } from '@lib/config'
 import doc from '@lib/doc'
 import folder from '@lib/folder'
+import { mcache } from '@lib/mcache'
 import wiki from '@lib/wiki'
+import sdk from '@sdk'
 import {
   isEmpty as _isEmpty,
   omit as _omit,
@@ -15,6 +17,9 @@ export default function viewHelpers (config: Config) {
   const wikiHelpers = wiki(config)
   const docHelpers = doc(config)
   const folderHelpers = folder(config)
+  const theSdk = sdk(config)
+  const cache = mcache()
+
   return {
     hasFeature (params) {
       const feature = params
@@ -92,6 +97,30 @@ export default function viewHelpers (config: Config) {
       }
       const baseUrl = `${config.get('mountPath')}api/serve-static/`
       return styles.map(style => `<link rel="stylesheet" href="${baseUrl}${style}">`).join('\n')
+    },
+
+    customIncludes () {
+      const includes = config.get('custom.includes')
+      if (includes.length === 0) {
+        return ''
+      }
+
+      // We need a synchronous loop to be able to collect all the includes at once
+      const output = []
+      for (const include of includes) {
+        let content = cache.get(include)
+        if (!content) {
+          try {
+            content = theSdk.loadFileSync(include)
+            cache.put(include, content, 1800 * 1000)
+          } catch (_) {
+            // Never mind...
+          }
+        }
+        output.push(content)
+      }
+
+      return output.join('\n')
     }
   }
 }

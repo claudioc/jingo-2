@@ -205,7 +205,7 @@ export class Sdk {
   /**
    * Loads a document from the file system and returns an IDoc
    * @param docName Id of the document to load
-   * @param from A subdirectory here the document can be found
+   * @param from A subdirectory where the document can be found
    */
   public async loadDoc (docName: string, from: string = ''): Promise<IDoc> {
     const fullDocName = this.makeFilename(docName, from)
@@ -216,6 +216,26 @@ export class Sdk {
       content,
       title
     } as IDoc
+  }
+
+  /**
+   * Loads any file from the repository
+   * @param filepath The path of the file, relative to the documentRoot
+   */
+  public async loadFile (filepath: string): Promise<string> {
+    const fullPathname = this.folderHelpers.fullpathFor(filepath)
+    const content = await this.fsApi.readFile(fullPathname)
+    return content
+  }
+
+  /**
+   * Loads any file from the repository (sync version for Handlebars helpers)
+   * @param filepath The path of the file, relative to the documentRoot
+   */
+  public loadFileSync (filepath: string): Promise<string> {
+    const fullPathname = this.folderHelpers.fullpathFor(filepath)
+    const content = this.fsApi.readFileSync(fullPathname)
+    return content
   }
 
   /**

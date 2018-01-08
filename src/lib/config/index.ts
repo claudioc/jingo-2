@@ -27,6 +27,9 @@ export type TWikiSettings = {
 }
 
 export type TCustomSettings = {
+  title?: string
+  logo?: string
+  includes?: string[]
   styles?: string[]
   scripts?: string[]
 }

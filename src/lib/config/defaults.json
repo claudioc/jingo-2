@@ -7,6 +7,9 @@
 
   // Customization in term of CSS stylesheets and/or JavaScript scripts
   "custom": {
+    "title": "Jingo",
+    "logo": "",
+    "includes": [],
     "styles": [],
     "scripts": []
   },
@@ -33,4 +36,3 @@
     }
   }
 }
-

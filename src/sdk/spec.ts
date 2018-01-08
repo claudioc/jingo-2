@@ -88,6 +88,25 @@ test('loadDoc success', async t => {
   t.is(actual.content, expected)
 })
 
+test('loadFile without directory success', async t => {
+  const cfg = await fakeFs.config()
+  const filepath = fakeFs.rndName()
+  fakeFs.writeFile(filepath, 'Hi!')
+  const actual = await sdk(cfg).loadFile(filepath)
+  const expected = 'Hi!'
+  t.is(actual, expected)
+})
+
+test('loadFile with directory success', async t => {
+  const cfg = await fakeFs.config()
+  const filepath = `shawarma/${fakeFs.rndName()}`
+  fakeFs.mkdir('shawarma')
+  fakeFs.writeFile(filepath, 'Hi!')
+  const actual = await sdk(cfg).loadFile(filepath)
+  const expected = 'Hi!'
+  t.is(actual, expected)
+})
+
 test('loadDoc success with a folder', async t => {
   const cfg = await fakeFs.config()
   const docName = fakeFs.rndName()

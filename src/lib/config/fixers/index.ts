@@ -69,6 +69,10 @@ const fixCustom = (customSettings: TCustomSettings, defaults: TCustomSettings): 
   const settings: TCustomSettings = {}
   _merge(settings, defaults, _isObject(customSettings) ? customSettings : {})
 
+  if (!Array.isArray(settings.includes)) {
+    settings.includes = settings.includes ? [String(settings.includes)] : []
+  }
+
   if (!Array.isArray(settings.styles)) {
     settings.styles = settings.styles ? [String(settings.styles)] : []
   }

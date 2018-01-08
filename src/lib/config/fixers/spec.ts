@@ -127,20 +127,20 @@ test('fixWiki basePath empty', t => {
 })
 
 test('fixCustom when empty', t => {
-  const expected = { scripts: [], styles: [] }
+  const expected = { scripts: [], styles: [], includes: [] }
   const actual = fixers.fixCustom(undefined, {})
   t.deepEqual(actual, expected)
 })
 
 test('fixCustom when one is empty', t => {
-  const expected = { scripts: [], styles: [] }
+  const expected = { scripts: [], styles: [], includes: [] }
   const actual = fixers.fixCustom({ scripts: [] }, {})
   t.deepEqual(actual, expected)
 })
 
 test('fixCustom when content is wrong', t => {
-  const expected = { scripts: ['foobar'], styles: ['123'] }
-  const actual = fixers.fixCustom({ scripts: 'foobar', styles: 123 } as any, {})
+  const expected = { scripts: ['foobar'], styles: ['123'], includes: ['gn'] }
+  const actual = fixers.fixCustom({ scripts: 'foobar', styles: 123, includes: ['gn'] } as any, {})
   t.deepEqual(actual, expected)
 })
 

@@ -100,3 +100,11 @@
 - Introduced the "events" concept in Jingo
 - Removed the IPC from the SDK and moved them in the event handlers
 - 5908 sloc
+08/01/18
+- Introduced the custom.includes setting so to be able to customize
+  any aspect of the <head> element
+- Added a simple in-memory cache lib
+- Found out that the hbs helpers don't support asynchronous (we could
+  change the hbs engine with express-hbs)
+- Found out that with sinon you can fake timers
+- 6090 sloc

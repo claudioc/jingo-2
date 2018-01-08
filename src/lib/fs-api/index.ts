@@ -62,6 +62,11 @@ export class FileSystemApi {
     return content.toString()
   }
 
+  public readFileSync (filename: fs.PathLike): Promise<string> {
+    const content = this.fsDriver.readFileSync(filename, 'utf8')
+    return content.toString()
+  }
+
   public async readdir (root: fs.PathLike): Promise<string[]> {
     const fn = promisify(this.fsDriver.readdir)
     return await fn(root)
