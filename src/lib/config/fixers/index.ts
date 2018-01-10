@@ -74,15 +74,22 @@ const fixFeatures = (featuresSettings: TFeaturesSettings, defaults: TFeaturesSet
   const settings: TFeaturesSettings = {}
   _merge(settings, defaults, _isObject(featuresSettings) ? featuresSettings : {})
 
-  if (!_isBoolean(settings.codeHighlighter.enabled)) {
-    settings.codeHighlighter.enabled = defaults.codeHighlighter.enabled
-  }
+  const features = [
+    'codeHighlighter',
+    'ipcSupport',
+    'gitSupport'
+  ]
 
-  if (!_isBoolean(settings.ipcSupport.enabled)) {
-    settings.ipcSupport.enabled = false
-  }
+  features.forEach(feature => {
+    const setting = settings[feature]
+    if (!_isBoolean(setting.enabled)) {
+      setting.enabled = defaults[feature].enabled
+    }
+  })
 
-  settings.ipcSupport.server = _toString(settings.ipcSupport.server)
+  settings.ipcSupport.server = _toString(settings.ipcSupport.server).trim()
+  settings.gitSupport.remote = _toString(settings.gitSupport.remote).trim()
+  settings.gitSupport.branch = _toString(settings.gitSupport.branch).trim() || 'master'
 
   return settings
 }

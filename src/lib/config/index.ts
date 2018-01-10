@@ -21,6 +21,12 @@ export type TIpcSettings = {
   server?: string
 }
 
+export type TGitSettings = {
+  enabled?: boolean
+  remote?: string
+  branch?: string
+}
+
 export type TWikiSettings = {
   index: string
   basePath: string
@@ -37,6 +43,7 @@ export type TCustomSettings = {
 export type TFeaturesSettings = {
   codeHighlighter?: any
   ipcSupport?: TIpcSettings
+  gitSupport?: TGitSettings
 }
 
 export type TConfig = {
@@ -194,6 +201,9 @@ export class Config {
 
   protected async checkConfig (): Promise<Config> {
     await validators.checkDocumentRoot(this, this.values.documentRoot)
+    if (this.hasFeature('gitSupport')) {
+      await validators.checkGit(this)
+    }
     return this
   }
 }

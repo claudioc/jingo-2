@@ -86,6 +86,7 @@
     "method-override": "^2.3.10",
     "module-alias": "^2.0.3",
     "morgan": "^1.9.0",
-    "node-ipc": "^9.1.1"
+    "node-ipc": "^9.1.1",
+    "semver": "^5.4.1"
   }
 }
