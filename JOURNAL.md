@@ -108,3 +108,7 @@
   change the hbs engine with express-hbs)
 - Found out that with sinon you can fake timers
 - 6090 sloc
+10/01/18
+- Initial git support (as a feature)
+- Moved ipc in `features` (so to make it more general)
+- sloc 6144
