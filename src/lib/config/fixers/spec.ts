@@ -1,4 +1,6 @@
+import { config } from '@lib/config'
 import test from 'ava'
+import { cloneDeep as _clone } from 'lodash'
 import fixers from '.'
 
 test('fixDocumentRoot', t => {
@@ -56,34 +58,6 @@ test('fixMountPath with a number', t => {
   const expected = '/123/'
   const actual = fixers.fixMountPath(value as any)
   t.is(actual, expected)
-})
-
-test('fixIpc enabled', t => {
-  let expected = { enabled: false, server: '' }
-  let actual = fixers.fixIpc(undefined, {})
-  t.deepEqual(actual, expected)
-
-  expected = { enabled: false, server: '' }
-  actual = fixers.fixIpc(null, {})
-  t.deepEqual(actual, expected)
-
-  expected = { enabled: false, server: '' } as any
-  actual = fixers.fixIpc({}, {})
-  t.deepEqual(actual, expected)
-
-  expected = { enabled: false, server: '' } as any
-  actual = fixers.fixIpc({ enabled: 32 } as any, {})
-  t.deepEqual(actual, expected)
-
-  expected = { enabled: false, server: '' } as any
-  actual = fixers.fixIpc({ enabled: '' } as any, {})
-  t.deepEqual(actual, expected)
-})
-
-test('fixIpc server', t => {
-  const expected = { enabled: false, server: '' }
-  const actual = fixers.fixIpc({ enabled: false }, {})
-  t.deepEqual(actual, expected)
 })
 
 test('fixWiki unset', t => {
@@ -144,30 +118,48 @@ test('fixCustom when content is wrong', t => {
   t.deepEqual(actual, expected)
 })
 
-test('fixFeatures codeHighlighter use the defaults', t => {
-  const defaults = { codeHighlighter: { enabled: true, theme: 'default' } }
+test('fixFeatures use the defaults', async t => {
+  const cfg = await config()
+  const defaults = cfg.getDefault('features')
   const expected = defaults
   const actual = fixers.fixFeatures(undefined, defaults)
   t.deepEqual(actual, expected)
 })
 
-test('fixFeatures codeHighlighter enabled', t => {
-  const defaults = { codeHighlighter: { enabled: true, theme: 'default' } }
-  const expected = { codeHighlighter: { enabled: true, theme: 'default' } }
-  const actual = fixers.fixFeatures({}, defaults)
+test('fixFeatures codeHighlighter disabled', async t => {
+  const cfg = await config()
+  const defaults = cfg.getDefault('features')
+  const expected = _clone(defaults)
+  expected.codeHighlighter.enabled = false
+  const actual = fixers.fixFeatures(expected, defaults)
   t.deepEqual(actual, expected)
 })
 
-test('fixFeatures codeHighlighter disabled', t => {
-  const defaults = { codeHighlighter: { enabled: true, theme: 'default' } }
-  const expected = { codeHighlighter: { enabled: false, theme: 'default' } }
-  const actual = fixers.fixFeatures({ codeHighlighter: { enabled: false }}, defaults)
+test('fixFeatures codeHighlighter broken', async t => {
+  const cfg = await config()
+  const defaults = cfg.getDefault('features')
+  const expected = _clone(defaults)
+  expected.codeHighlighter.enabled = '0'
+  const actual = fixers.fixFeatures(expected, defaults)
+  t.is(actual.codeHighlighter.enabled, true)
+})
+
+test('fixFeatures ipcSupport disabled', async t => {
+  const cfg = await config()
+  const defaults = cfg.getDefault('features')
+  const expected = _clone(defaults)
+  expected.ipcSupport.enabled = false
+  const actual = fixers.fixFeatures(expected, defaults)
   t.deepEqual(actual, expected)
 })
 
-test('fixFeatures codeHighlighter broken', t => {
-  const defaults = { codeHighlighter: { enabled: true, theme: 'default' } }
-  const expected = { codeHighlighter: { enabled: true, theme: 'default' } }
-  const actual = fixers.fixFeatures({ codeHighlighter: { enabled: '0' }}, defaults)
-  t.deepEqual(actual, expected)
+test('fixFeatures ipcSupport broken', async t => {
+  const cfg = await config()
+  const defaults = cfg.getDefault('features')
+  const expected = _clone(defaults)
+  expected.ipcSupport.enabled = '0'
+  expected.ipcSupport.server = 12
+  const actual = fixers.fixFeatures(expected, defaults)
+  t.is(actual.ipcSupport.enabled, false)
+  t.is(actual.ipcSupport.server, '12')
 })

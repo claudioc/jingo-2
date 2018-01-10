@@ -16,7 +16,7 @@ const nop: IIpc = {
 }
 
 const ipc = (config: Config): Ipc | IIpc => {
-  if (!config.get('ipc.enabled')) {
+  if (!config.hasFeature('ipcSupport')) {
     return nop
   }
 
@@ -28,8 +28,8 @@ export class Ipc implements IIpc {
   private enabled
 
   constructor (public config: Config) {
-    this.server = this.config.get('ipc.server')
-    this.enabled = this.config.get('ipc.enabled')
+    this.server = this.config.get('features.ipcSupport.server')
+    this.enabled = this.config.get('features.ipcSupport.enabled')
   }
 
   public connect () {
@@ -38,7 +38,7 @@ export class Ipc implements IIpc {
     }
 
     ipc_.config.id = 'jingo'
-    ipc_.config.retry = 1000
+    ipc_.config.retry = 10000
     ipc_.config.silent = true
     ipc_.config.encoding = 'utf8'
 

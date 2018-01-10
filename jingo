@@ -87,7 +87,7 @@ function onListening () {
     ? `pipe ${addr}`
     : `port ${addr.port}`
 
-  const hasIpc = config.get('ipc.enabled')
+  const hasIpc = config.hasFeature('ipcSupport')
   console.log(`🏁 Listening on ${bind} ${hasIpc ? '(with IPC)' : ''}`)
 }
 

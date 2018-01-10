@@ -36,13 +36,13 @@ export type TCustomSettings = {
 
 export type TFeaturesSettings = {
   codeHighlighter?: any
+  ipcSupport?: TIpcSettings
 }
 
 export type TConfig = {
   documentRoot: string
   mountPath?: string
   custom?: TCustomSettings
-  ipc?: TIpcSettings
   wiki?: TWikiSettings
   features?: TFeaturesSettings
 }
@@ -51,7 +51,7 @@ type ConfigSys = {
   fileSystemIsCaseSensitive: boolean
 }
 
-export const config = async (fsDriver = fs, defaultsFilename?): Promise<Config> => {
+export let config = async (fsDriver = fs, defaultsFilename?): Promise<Config> => {
   const cfg = new Config(fsDriver)
   if (defaultsFilename) {
     cfg.setDefaultsFilename(defaultsFilename)
@@ -186,7 +186,6 @@ export class Config {
   protected fixConfig (): Config {
     this.values.documentRoot = fixers.fixDocumentRoot(this.values.documentRoot)
     this.values.mountPath = fixers.fixMountPath(this.values.mountPath)
-    this.values.ipc = fixers.fixIpc(this.values.ipc, this.getDefault('ipc'))
     this.values.custom = fixers.fixCustom(this.values.custom, this.getDefault('custom'))
     this.values.wiki = fixers.fixWiki(this.values.wiki, this.getDefault('wiki'))
     this.values.features = fixers.fixFeatures(this.values.features, this.getDefault('features'))

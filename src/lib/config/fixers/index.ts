@@ -1,7 +1,6 @@
 import {
   TCustomSettings,
   TFeaturesSettings,
-  TIpcSettings,
   TWikiSettings
 } from '@lib/config'
 
@@ -21,19 +20,6 @@ import {
 
 const fixDocumentRoot = (documentRoot: string): string => {
   return _toString(documentRoot).trim()
-}
-
-const fixIpc = (ipcSettings: TIpcSettings, defaults: TIpcSettings): TIpcSettings => {
-  const settings: TIpcSettings = {} as any
-  _merge(settings, defaults, _isObject(ipcSettings) ? ipcSettings : {})
-
-  if (!_isBoolean(settings.enabled)) {
-    settings.enabled = false
-  }
-
-  settings.server = _isUndefined(settings.server) ? '' : _toString(settings.server)
-
-  return settings
 }
 
 const fixWiki = (wikiSettings: TWikiSettings, defaults: TWikiSettings): TWikiSettings => {
@@ -92,6 +78,12 @@ const fixFeatures = (featuresSettings: TFeaturesSettings, defaults: TFeaturesSet
     settings.codeHighlighter.enabled = defaults.codeHighlighter.enabled
   }
 
+  if (!_isBoolean(settings.ipcSupport.enabled)) {
+    settings.ipcSupport.enabled = false
+  }
+
+  settings.ipcSupport.server = _toString(settings.ipcSupport.server)
+
   return settings
 }
 
@@ -99,7 +91,6 @@ export default {
   fixCustom,
   fixDocumentRoot,
   fixFeatures,
-  fixIpc,
   fixMountPath,
   fixWiki
 }

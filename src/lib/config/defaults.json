@@ -14,12 +14,6 @@
     "scripts": []
   },
 
-  // Configuration for the IPC support
-  "ipc": {
-    "enabled": false,
-    "server": ""
-  },
-
   // Configuration of the wiki itself
   "wiki": {
     "index": "Home",
@@ -33,6 +27,11 @@
     "codeHighlighter": {
       "enabled": true,
       "theme": "default"
+    },
+    // Configuration for the IPC support
+    "ipcSupport": {
+      "enabled": false,
+      "server": ""
     }
   }
 }
