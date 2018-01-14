@@ -12,7 +12,7 @@ import * as path from 'path'
 
 import {
   JingoEvent,
-  jingoEventHandler,
+  jingoEventHandlerFor,
   jingoEvents
 } from '@events/index'
 import { Config } from '@lib/config'
@@ -64,7 +64,7 @@ export default class Server {
 
   public events () {
     jingoEvents.forEach((event: JingoEvent) => {
-      this.app.on(event, jingoEventHandler(event, this.config))
+      this.app.on(event, jingoEventHandlerFor(event).bind(null, this.config))
     })
   }
 

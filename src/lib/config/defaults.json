@@ -35,6 +35,11 @@
       "server": ""
     },
 
+    "emojiSupport": {
+      "enabled": true,
+      "version": "light" // or "full"
+    },
+
     // Configuration for git support
     "gitSupport": {
       "enabled": false,

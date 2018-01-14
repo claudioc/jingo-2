@@ -20,6 +20,13 @@
     <div>
       <textarea id="editor-content" name="content">{{{content}}}</textarea>
     </div>
+    {{#if (hasFeature "gitSupport")}}
+    <div>
+      <input type="text" value="" name="comment" placeholder="A short, optional comment about this change">
+    </div>
+    {{else}}
+    <input type="hidden" value="" name="comment">
+    {{/if}}
     <div>
       <input type="submit" value="Save">
     </div>

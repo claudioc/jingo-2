@@ -16,11 +16,11 @@ example.com/intranet/docs
 example.com/intranet/public/
 
 Markdown plugins:
-- markdown-it-footnote
-- markdown-it-emoji
-- markdown-it-responsive
-- markdown-it-katex
-- markdown-it-table-of-contents
-- markdown-it-anchor
++ markdown-it-footnote
++ markdown-it-emoji
+- markdown-it-responsive (for responsive images)
+- markdown-it-katex (for MathML)
++ markdown-it-table-of-contents
++ markdown-it-anchor
 - (markdown-it-lazy-headers)
 - (markdown-it-footnote-conventional (slightly different to footnote))

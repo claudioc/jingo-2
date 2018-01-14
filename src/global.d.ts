@@ -1,4 +1,3 @@
-// @TODO find a way to import the Boom types in here
 declare module Express {
   interface Application {
     on: (event, callback) => {}
@@ -37,5 +36,8 @@ declare module Express {
   }
 }
 
-
-
+declare namespace simplegit {
+  export interface SimpleGit {
+    add(files: string | string[]): Promise<void>;
+  }
+}

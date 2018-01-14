@@ -234,6 +234,7 @@ test('post update route is a failure if the file already exists (rename fails)',
 
   const request = {
     body: {
+      comment: '',
       docName: docName1
     }
   }
@@ -241,6 +242,7 @@ test('post update route is a failure if the file already exists (rename fails)',
   await route.didUpdate(request as any, null, _noop)
 
   const expectedScope = {
+    comment: '',
     content: 'blah',
     docName: docName1,
     docTitle: route.wikiHelpers.unwikify(docName2),

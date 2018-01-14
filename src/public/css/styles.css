@@ -39,7 +39,9 @@ form input[type=text] {
 
 h1 > a.header-anchor,
 h2 > a.header-anchor {
-  opacity: 0.2
+  font-size: 60%;
+  opacity: 0.2;
+  vertical-align: top;
 }
 
 h1:hover > a.header-anchor,

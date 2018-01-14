@@ -1,7 +1,6 @@
-import { Config } from '@lib/config'
 import { noop as _noop } from 'lodash'
-import docCreated from './doc-created'
-import wikiRead from './wiki-read'
+import docEvents from './doc'
+import wikiEvents from './wiki'
 
 export type JingoEvent =
   'jingo.docCreated' |
@@ -13,26 +12,26 @@ export type JingoEvent =
   'jingo.wikiRead' |
   'jingo.wikiList'
 
+const appEvents = {
+  'jingo.docCreated': docEvents.created,
+  'jingo.docDeleted': docEvents.deleted,
+  'jingo.docUpdated': docEvents.updated,
+  'jingo.folderCreated': _noop,
+  'jingo.folderDeleted': _noop,
+  'jingo.folderRenamed': _noop,
+  'jingo.wikiList': _noop,
+  'jingo.wikiRead': wikiEvents.read
+} as {
+  [event in JingoEvent]: any
+}
+
 // This method exists for the sole purpose of type-checking
 // the parameter `e`. I didn't find a way to fix this in the global.d.ts
 // where we extended the express.Application definition to include `on` and `emit`
 export let je = (e: JingoEvent) => e
 
-const appEvents = {
-  'jingo.docCreated': docCreated,
-  'jingo.docDeleted': _noop,
-  'jingo.docUpdated': _noop,
-  'jingo.folderCreated': _noop,
-  'jingo.folderDeleted': _noop,
-  'jingo.folderRenamed': _noop,
-  'jingo.wikiList': _noop,
-  'jingo.wikiRead': wikiRead
-} as {
-  [event in JingoEvent]: () => {}
-}
-
-export let jingoEventHandler = (eventName: JingoEvent, config: Config) => {
-  return appEvents[eventName].bind(null, config)
+export let jingoEventHandlerFor = (eventName: JingoEvent) => {
+  return appEvents[eventName] || _noop
 }
 
 export let jingoEvents = Object.keys(appEvents)

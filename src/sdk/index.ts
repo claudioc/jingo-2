@@ -39,6 +39,16 @@ export class Sdk {
     this.wikiHelpers = wiki(config)
     this.docHelpers = doc(config)
     this.folderHelpers = folder(config)
+
+    let markdownItEmoji
+    if (config.hasFeature('emojiSupport')) {
+      if (config.get('features.emojiSupport.version') === 'light') {
+        markdownItEmoji = require('markdown-it-emoji/light')
+      } else {
+        markdownItEmoji = require('markdown-it-emoji')
+      }
+    }
+
     this.transpiler = new MarkdownIt('default', {
       highlight: (str, lang) => {
         if (lang && hljs.getLanguage(lang)) {
@@ -47,7 +57,6 @@ export class Sdk {
             return `<pre class="hljs"><code>${pre}</code></pre>`
           } catch (__) { /**/ }
         }
-
         return ''
       },
       linkify: true,
@@ -59,6 +68,10 @@ export class Sdk {
     })
     .use(markdownItTableOfContents)
     .use(markdownItFootnote)
+
+    if (markdownItEmoji) {
+      this.transpiler.use(markdownItEmoji)
+    }
 
     this.fsApi = fsApi(config.fsDriver)
   }
@@ -115,11 +128,14 @@ export class Sdk {
   }
 
   /**
-   * Update a doc: proxy call to the saveDoc
+   * Update a doc: proxy call to the saveDoc taking care of renaming the document
+   * if the docName has changed
+   * @param oldDocName
    * @param docName
    * @param docContent
+   * @param into
    */
-  public async updateDoc (docName: string, oldDocName: string, docContent: string, into: string = ''): Promise<void> {
+  public async updateDoc (oldDocName: string, docName: string, docContent: string, into: string = ''): Promise<void> {
     // Rename the file (if needed and if possible)
     if (!(await this.renameDoc(oldDocName, docName, into))) {
       throw new Error('Cannot rename a document to an already existant one')

@@ -32,6 +32,11 @@ export type TWikiSettings = {
   basePath: string
 }
 
+export type TEmojiSettings = {
+  enabled?: boolean
+  version?: string
+}
+
 export type TCustomSettings = {
   title?: string
   logo?: string
@@ -44,6 +49,7 @@ export type TFeaturesSettings = {
   codeHighlighter?: any
   ipcSupport?: TIpcSettings
   gitSupport?: TGitSettings
+  emojiSupport?: TEmojiSettings
 }
 
 export type TConfig = {

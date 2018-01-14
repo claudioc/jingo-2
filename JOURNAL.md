@@ -112,3 +112,8 @@
 - Initial git support (as a feature)
 - Moved ipc in `features` (so to make it more general)
 - sloc 6144
+13/01/18
+- Added Emoji support
+14/01/18
+- Found a simple-git git wrapper for node which unfortunately lacks some typings
+- sloc 6279

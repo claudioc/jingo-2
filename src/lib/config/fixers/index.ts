@@ -77,7 +77,8 @@ const fixFeatures = (featuresSettings: TFeaturesSettings, defaults: TFeaturesSet
   const features = [
     'codeHighlighter',
     'ipcSupport',
-    'gitSupport'
+    'gitSupport',
+    'emojiSupport'
   ]
 
   features.forEach(feature => {
@@ -90,6 +91,10 @@ const fixFeatures = (featuresSettings: TFeaturesSettings, defaults: TFeaturesSet
   settings.ipcSupport.server = _toString(settings.ipcSupport.server).trim()
   settings.gitSupport.remote = _toString(settings.gitSupport.remote).trim()
   settings.gitSupport.branch = _toString(settings.gitSupport.branch).trim() || 'master'
+  settings.emojiSupport.version = _toString(settings.emojiSupport.version).trim() || 'light'
+  if (!['light', 'full'].includes(settings.emojiSupport.version)) {
+    settings.emojiSupport.version = 'light'
+  }
 
   return settings
 }

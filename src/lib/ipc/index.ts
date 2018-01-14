@@ -1,7 +1,12 @@
 import { Config } from '@lib/config'
 import * as ipc_ from 'node-ipc'
 
-type IIpcOp = 'READ WIKI' | 'CREATE DOC' | 'CREATE FOLDER' | 'UPDATE' | 'DELETE'
+type IIpcOp =
+  'READ WIKI' |
+  'CREATE DOC' |
+  'UPDATE DOC' |
+  'DELETE DOC' |
+  'CREATE FOLDER'
 
 export interface IIpc {
   connect (): void

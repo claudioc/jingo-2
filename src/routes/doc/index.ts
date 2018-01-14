@@ -84,7 +84,10 @@ export default class DocRoute extends BaseRoute {
 
     // All done, go to the just saved page
     res.redirect(this.wikiHelpers.pathFor(data.docTitle, into))
-    req.app && req.app.emit(je('jingo.docCreated'))
+    req.app && req.app.emit(je('jingo.docCreated'), {
+      docName,
+      into
+    })
   }
 
   public async update (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -123,9 +126,11 @@ export default class DocRoute extends BaseRoute {
   public async didUpdate (req: Request, res: Response, next: NextFunction): Promise<void> {
     const { errors, data } = this.inspectRequest(req)
     const oldDocName = req.body.docName
+    const comment = req.body.comment
     const into = data.into
 
     const scope: object = {
+      comment,
       content: data.content,
       docName: oldDocName,
       docTitle: data.docTitle,
@@ -140,15 +145,19 @@ export default class DocRoute extends BaseRoute {
     const newDocName = this.wikiHelpers.wikify(data.docTitle)
 
     try {
-      await this.sdk.updateDoc(newDocName, oldDocName, data.content, into)
+      await this.sdk.updateDoc(oldDocName, newDocName, data.content, into)
     } catch (err) {
       this.render(req, res, 'doc-update', _assign(scope, { errors: [err.message] }))
       return
     }
 
-    // All done, go to the just saved page
     res.redirect(this.wikiHelpers.pathFor(data.docTitle, into))
-    req.app && req.app.emit(je('jingo.docUpdated'))
+
+    req.app && req.app.emit(je('jingo.docUpdated'), {
+      comment,
+      docName: oldDocName,
+      into
+    })
   }
 
   public async delete (req: Request, res: Response, next: NextFunction): Promise<void> {

@@ -168,7 +168,7 @@ test('updateDoc failure', async t => {
   fakeFs.writeFile(docFilename1, 'Hello')
     .writeFile(docFilename2, 'Hello')
   // This must fail because docName2 already exists
-  const error = await t.throws(sdk(cfg).updateDoc(docName1, docName2, 'Today is nöt yestarday'))
+  const error = await t.throws(sdk(cfg).updateDoc(docName2, docName1, 'Today is nöt yestarday'))
   t.regex(error.message, /Cannot rename/)
 })
 
