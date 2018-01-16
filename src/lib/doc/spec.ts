@@ -39,6 +39,18 @@ test('pathFor create with into', t => {
   t.is(actual, expected)
 })
 
+test('fullPathname without a into', t => {
+  const actual = helpers.fullPathname('foo')
+  const expected = 'foo.md'
+  t.is(actual, expected)
+})
+
+test('fullPathname with a into', t => {
+  const actual = helpers.fullPathname('foo', 'folder-zot')
+  const expected = 'folder-zot/foo.md'
+  t.is(actual, expected)
+})
+
 test('docNameToFilename without parameter', t => {
   const actual = helpers.docNameToFilename(undefined)
   const expected = ''

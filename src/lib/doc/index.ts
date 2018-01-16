@@ -43,6 +43,17 @@ export class Doc {
   }
 
   /**
+   * Returns the full (relative to the documentRoot) pathname of a document,
+   * considering the `into` and file extension
+   *
+   * @param docName The document name
+   * @param into The optional directory where the file should be
+   */
+  public fullPathname (docName: string, into: string = ''): string {
+    return path.join(into, this.docNameToFilename(docName))
+  }
+
+  /**
    * Returns the formatted Md filename of a document
    * @param docName Id of the document
    */

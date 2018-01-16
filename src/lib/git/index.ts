@@ -1,13 +1,18 @@
 import { Config } from '@lib/config'
+import doc, { Doc } from '@lib/doc'
 import { noop as _noop } from 'lodash'
 import * as simplegit from 'simple-git/promise'
 
 export interface IGitOps {
-  cmdAdd (docName: string, into: string): void
+  $add (docName: string, into: string): void
+  $commit (docName: string, into: string, comment: string): void
+  $rm (docName: string, into: string): void
 }
 
 const nop: IGitOps = {
-  cmdAdd: _noop
+  $add: _noop,
+  $commit: _noop,
+  $rm: _noop
 }
 
 const git = (config: Config): GitOps | IGitOps => {
@@ -20,24 +25,38 @@ const git = (config: Config): GitOps | IGitOps => {
 
 // @TODO ought to update this definitions
 // Extends SimpleGit to add the missing methods.
-// Reference: https://github.com/types/simple-git
+// Reference: https://github.com/types/simple-git/blob/master/src/index.d.ts
 interface ISimpleGit extends simplegit.SimpleGit {
   add (files: string | string[]): Promise<void>
+  commit (message: string, files: string[], options?: any): Promise<void>
+  rm (files: string[]): Promise<void>
 }
 
 export class GitOps implements IGitOps {
+  public docHelpers: Doc
   private _git: ISimpleGit
 
   constructor (public config: Config) {
-    this._git = simplegit(config.get('documentRoot')) as ISimpleGit
+    this.docHelpers = doc(this.config)
+    this._git = simplegit(this.config.get('documentRoot')) as ISimpleGit
   }
 
-  public async cmdAdd (docName: string, into: string) {
-    // return await this._git.add()
+  public async $add (docName: string, into: string): Promise<void> {
+    const pathname = this.docHelpers.fullPathname(docName, into)
+    await this._git.add(pathname)
+    return
   }
 
-  public cmdCommit (docName: string, into: string, author: string, comment: string) {
-    //
+  public async $rm (docName: string, into: string): Promise<void> {
+    const pathname = this.docHelpers.fullPathname(docName, into)
+    await this._git.rm([pathname])
+    return
+  }
+
+  public async $commit (docName: string, into: string, comment: string): Promise<void> {
+    const pathname = this.docHelpers.fullPathname(docName, into)
+    await this._git.commit(comment, [pathname])
+    return
   }
 }
 

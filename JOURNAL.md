@@ -117,3 +117,6 @@
 14/01/18
 - Found a simple-git git wrapper for node which unfortunately lacks some typings
 - sloc 6279
+16/01/18
+- First working git add + commit \o/
+- sloc 6314

@@ -201,7 +201,11 @@ export default class DocRoute extends BaseRoute {
     await this.sdk.deleteDoc(docName, into)
 
     res.redirect(this.folderHelpers.pathFor('list', into) + '?e=0')
-    req.app && req.app.emit(je('jingo.docDeleted'))
+
+    req.app && req.app.emit(je('jingo.docDeleted'), {
+      docName,
+      into
+    })
   }
 
   private async assertDirectoryExists (directory, req: Request, res: Response): Promise<boolean> {

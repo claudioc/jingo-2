@@ -3,17 +3,39 @@ import git from '@lib/git'
 import ipc from '@lib/ipc'
 
 const created = async (config: Config, params: {docName: string; into: string;}) => {
+  if (!params) {
+    return
+  }
+
   ipc(config).send('CREATE DOC', params)
-  console.log(await git(config).cmdAdd(params.docName, params.into))
+
+  const gitMech = git(config)
+  await gitMech.$add(params.docName, params.into)
+  await gitMech.$commit(params.docName, params.into, 'Document created')
 }
 
-const updated = async (config: Config, params) => {
+const updated = async (config: Config, params: {docName: string; into: string; comment: string}) => {
+  if (!params) {
+    return
+  }
+
   ipc(config).send('UPDATE DOC', params)
-  console.log(await git(config).cmdAdd(params.docName, params.into))
+
+  const gitMech = git(config)
+  await gitMech.$add(params.docName, params.into)
+  await gitMech.$commit(params.docName, params.into, params.comment || 'Document updated')
 }
 
-const deleted = (config: Config, params) => {
+const deleted = async (config: Config, params) => {
+  if (!params) {
+    return
+  }
+
   ipc(config).send('DELETE DOC', params)
+
+  const gitMech = git(config)
+  await gitMech.$rm(params.docName, params.into)
+  await gitMech.$commit(params.docName, params.into, 'Document deleted')
 }
 
 export default {
