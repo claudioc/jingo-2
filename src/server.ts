@@ -16,6 +16,7 @@ import {
   jingoEvents
 } from '@events/index'
 import { Config } from '@lib/config'
+import { mcache } from '@lib/mcache'
 import viewHelpers from '@lib/view-helpers'
 import ApiRoute from '@routes/api'
 import DocRoute from '@routes/doc'
@@ -154,5 +155,7 @@ export default class Server {
     if (process.env.NODE_ENV === 'development') {
       this.app.use(errorHandler())
     }
+
+    this.app.set('cache', mcache())
   }
 }

@@ -13,7 +13,7 @@ import * as markdownItAnchor from 'markdown-it-anchor'
 import * as markdownItFootnote from 'markdown-it-footnote'
 import * as markdownItTableOfContents from 'markdown-it-table-of-contents'
 
-interface IDoc {
+export interface IDoc {
   title?: string
   content: string
 }

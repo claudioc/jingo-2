@@ -1,6 +1,7 @@
 import { je } from '@events/index'
 import { Config } from '@lib/config'
 import BaseRoute from '@routes/route'
+import { IDoc } from '@sdk'
 import { NextFunction, Request, Response, Router } from 'express'
 
 export default class WikiRoute extends BaseRoute {
@@ -42,10 +43,10 @@ export default class WikiRoute extends BaseRoute {
   public async read (req: Request, res: Response, next: NextFunction) {
     const isIndex = this.config.get('wiki.index') === this.docName
     try {
-      const doc = await this.sdk.loadDoc(this.docName, this.dirName)
+      const doc = await this.acquireDoc(req)
       const scope: object = {
         codeHighlighterTheme: this.config.get('features.codeHighlighter.theme'),
-        content: this.sdk.renderToHtml(doc.content),
+        content: doc.content,
         dirName: this.dirName,
         docName: this.docName,
         docTitle: isIndex ? '' : doc.title
@@ -88,5 +89,27 @@ export default class WikiRoute extends BaseRoute {
 
     this.render(req, res, 'wiki-list', scope)
     req.app && req.app.emit(je('jingo.wikiList'), this.dirName)
+  }
+
+  /**
+   * Acquires the doc from cache or from the actual doc content
+   * @param req The request object
+   */
+  private async acquireDoc (req: Request): Promise<IDoc> {
+    const cache = req.app.get('cache')
+
+    if (!cache) {
+      return await this.sdk.loadDoc(this.docName, this.dirName)
+    }
+
+    let doc = cache.get(this.dirName + this.docName)
+    if (!doc) {
+      doc = await this.sdk.loadDoc(this.docName, this.dirName)
+      // Save in the cache the compiled doc content
+      doc.content = this.sdk.renderToHtml(doc.content)
+      cache.put(this.dirName + this.docName, doc, 3600 * 1000)
+    }
+
+    return doc
   }
 }

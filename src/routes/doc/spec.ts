@@ -11,6 +11,13 @@ test.after(() => {
   fakeFs.unmount()
 })
 
+const fakeApp = {
+  emit: _noop,
+  get () {
+    return  null
+  }
+}
+
 test('get create route receiving a name in the url', async t => {
   const route = new Route(await config())
   const render = sinon.stub(route, 'render')
@@ -271,6 +278,7 @@ test('post update route is a success (renaming)', async t => {
   })
 
   const request = {
+    app: fakeApp,
     body: {
       docName: docName1
     }
@@ -306,6 +314,7 @@ test('post update route is a success (not renaming)', async t => {
   })
 
   const request = {
+    app: fakeApp,
     body: {
       docName: docName1
     }

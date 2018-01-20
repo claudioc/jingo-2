@@ -120,3 +120,5 @@
 16/01/18
 - First working git add + commit \o/
 - sloc 6314
+20/01/18
+- Introduces the content cache (improve wiki speed to 400%, @80 res/s for the home page)

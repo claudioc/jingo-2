@@ -151,6 +151,11 @@ export default class DocRoute extends BaseRoute {
       return
     }
 
+    const cache = req.app.get('cache')
+    if (cache) {
+      cache.del(into + oldDocName)
+    }
+
     res.redirect(this.wikiHelpers.pathFor(data.docTitle, into))
 
     req.app && req.app.emit(je('jingo.docUpdated'), {
