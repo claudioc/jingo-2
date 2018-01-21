@@ -122,3 +122,7 @@
 - sloc 6314
 20/01/18
 - Introduces the content cache (improve wiki speed to 400%, @80 res/s for the home page)
+21/01/18
+- Introduces cheerio for testing
+- Starting moving all the route tests to supertest
+- sloc 6363

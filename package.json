@@ -51,6 +51,7 @@
     "@types/morgan": "^1.7.35",
     "@types/sinon": "^4.0.0",
     "ava": "^0.24.0",
+    "cheerio": "^1.0.0-rc.2",
     "editorconfig": "^0.15.0",
     "memfs": "^2.6.0",
     "mock-fs": "^4.4.2",

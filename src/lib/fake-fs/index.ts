@@ -16,6 +16,8 @@ export default class FakeFs {
   public async config () {
     const cfg = await config(this.fsDriver)
     cfg.set('documentRoot', this.mountPoint)
+    cfg.disableFeature('gitSupport')
+    cfg.disableFeature('ipcSupport')
     return cfg
   }
 
@@ -50,6 +52,15 @@ export default class FakeFs {
 
   public access (pathName): void {
     this.fsDriver.accessSync(path.join(this.mountPoint, pathName))
+  }
+
+  public exists (pathName): boolean {
+    try {
+      this.fsDriver.accessSync(path.join(this.mountPoint, pathName))
+      return true
+    } catch (__) {/**/}
+
+    return false
   }
 
   public rndName () {

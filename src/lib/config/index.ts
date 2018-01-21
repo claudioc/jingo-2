@@ -120,9 +120,21 @@ export class Config {
    * Checks if a feature exists and it's enabled
    * @param feature The name of the feature to check
    */
-  public hasFeature (featureName) {
+  public hasFeature (featureName): boolean {
     const feature = this.get('features')[featureName]
     return !!(feature && feature.enabled)
+  }
+
+  /**
+   * Programmatically disable a feature
+   * @param feature The name of the feature to check
+   */
+  public disableFeature (featureName): void {
+    if (!this.hasFeature(featureName)) {
+      return
+    }
+
+    this.set(`features.${featureName}.enabled`, false)
   }
 
   public reset (): Config {

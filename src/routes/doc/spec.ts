@@ -1,9 +1,13 @@
 import { config } from '@lib/config'
 import FakeFs from '@lib/fake-fs'
 import test from 'ava'
+import * as cheerio from 'cheerio'
 import { noop as _noop } from 'lodash'
 import * as sinon from 'sinon'
+import * as supertest from 'supertest'
 import Route from '.'
+
+import Server from '@server'
 
 const fakeFs = new FakeFs('/home/jingo')
 
@@ -18,157 +22,277 @@ const fakeApp = {
   }
 }
 
-test('get create route receiving a name in the url', async t => {
-  const route = new Route(await config())
-  const render = sinon.stub(route, 'render')
-
-  const request = {
-    query: {
-      docName: 'hello_world'
-    }
-  }
-  await route.create(request as any, null, _noop)
-
-  t.is(route.title, 'Jingo – Creating a document')
-
-  const expectedScope = {
-    docTitle: 'hello world',
-    into: '',
-    wikiIndex: 'Home'
-  }
-
-  t.is(render.calledWith(request, null, 'doc-create', expectedScope), true)
-})
-
-test('get create route with not existing into', async t => {
-  const route = new Route(await config())
-  const render = sinon.stub(route, 'render')
-
-  const request = {
-    query: {
-      into: 'hello_world'
-    }
-  }
-  await route.create(request as any, null, _noop)
-
-  const expectedScope = {
-    directory: 'hello_world',
-    folderName: 'hello_world',
-    parentDirname: ''
-  }
-
-  t.is(render.calledWith(request, null, 'doc-fail', expectedScope), true)
-})
-
-test('get create route not receiving a name in the url', async t => {
-  const route = new Route(await config())
-  const render = sinon.stub(route, 'render')
-
-  const request = {
-    params: {},
-    query: {}
-  }
-  await route.create(request as any, null, _noop)
-
-  t.is(route.title, 'Jingo – Creating a document')
-
-  const expectedScope = {
-    docTitle: '',
-    into: '',
-    wikiIndex: 'Home'
-  }
-
-  t.true(render.calledWith(request, null, 'doc-create', expectedScope))
-})
-
-test('post create fail if document already exists', async t => {
-  const route = new Route(await fakeFs.config())
+test('get create with a docName in the url', async t => {
+  const cfg = await fakeFs.config()
   const docName = fakeFs.rndName()
-  const render = sinon.stub(route, 'render')
-  fakeFs.writeFile(route.docHelpers.docNameToFilename(docName), 'Hello 41!')
+  const server = Server.bootstrap(cfg)
+  const response = await supertest(server.app)
+    .get(`/doc/create?docName=${docName}`)
 
-  sinon.stub(route, 'inspectRequest').callsFake(req => {
-    return {
-      data: {
-        content: 'Winter in Berlin',
-        docTitle: route.wikiHelpers.unwikify(docName),
-        into: ''
-      },
-      errors: null
-    }
-  })
-
-  const request = {
-  }
-
-  await route.didCreate(request as any, null, _noop)
-  const expectedScope = {
-    content: 'Winter in Berlin',
-    docTitle: route.wikiHelpers.unwikify(docName),
-    errors: ['A document with this title already exists'],
-    into: ''
-  }
-
-  t.is(render.calledWith(request, null, 'doc-create', expectedScope), true)
+  t.is(response.status, 200)
+  const $ = cheerio.load(response.text)
+  t.is($('title').text(), 'Jingo – Creating a document')
+  t.is($('h1').first().text(), `Creating ${docName}`)
+  t.is($('input[name="docTitle"]').attr('type'), 'text')
 })
 
-test('post create success redirect to the wiki page', async t => {
-  const route = new Route(await fakeFs.config())
-  sinon.stub(route, 'inspectRequest').callsFake(req => {
-    return {
-      data: {
-        content: 'Winter in Berlin',
-        docTitle: 'hello world'
-      },
-      errors: null
-    }
-  })
+test('get create for the home page', async t => {
+  const cfg = await fakeFs.config()
+  const docName = cfg.get('wiki.index')
+  const server = Server.bootstrap(cfg)
+  const response = await supertest(server.app)
+    .get(`/doc/create?docName=${docName}`)
 
-  const request = {
-  }
-
-  const redirect = sinon.spy()
-  const response = {
-    redirect
-  }
-
-  await route.didCreate(request as any, response as any, _noop)
-
-  t.is(redirect.calledWith('/wiki/hello_world'), true)
+  t.is(response.status, 200)
+  const $ = cheerio.load(response.text)
+  t.is($('title').text(), 'Jingo – Creating a document')
+  t.is($('h1').first().text(), `Creating ${docName}`)
+  t.is($('input[name="docTitle"]').attr('type'), 'hidden')
 })
 
-test('post create renders again with a validation error', async t => {
-  const route = new Route(await fakeFs.config())
-  const render = sinon.stub(route, 'render')
+test('get create with an already existing docName in the url', async t => {
+  const cfg = await fakeFs.config()
+  const route = new Route(cfg)
+  const docName = fakeFs.rndName()
+  fakeFs.writeFile(route.docHelpers.docNameToFilename(docName))
 
-  sinon.stub(route, 'inspectRequest').callsFake(req => {
-    return {
-      data: {
-        content: 'blah',
-        docTitle: 'My Name',
-        into: ''
-      },
-      errors: 123
-    }
-  })
+  const server = Server.bootstrap(cfg)
+  const response = await supertest(server.app)
+    .get(`/doc/create?docName=${docName}`)
 
-  const request = {
-    query: {
-      docName: 'hello world'
-    }
-  }
-
-  await route.didCreate(request as any, null, _noop)
-
-  const expectedScope = {
-    content: 'blah',
-    docTitle: 'My Name',
-    errors: 123,
-    into: ''
-  }
-
-  t.is(render.calledWith(request, null, 'doc-create', expectedScope), true)
+  t.is(response.status, 302)
+  t.is(response.headers.location, `/wiki/${docName}`)
 })
+
+test('get create without a docName in the url', async t => {
+  const cfg = await fakeFs.config()
+  const server = Server.bootstrap(cfg)
+  const response = await supertest(server.app)
+    .get('/doc/create')
+
+  t.is(response.status, 200)
+  const $ = cheerio.load(response.text)
+  t.is($('title').text(), 'Jingo – Creating a document')
+  t.is($('h1').first().text(), 'Creating a new document')
+})
+
+test('get create with a non existing into in the url', async t => {
+  const cfg = await fakeFs.config()
+  const into = fakeFs.rndName()
+  const server = Server.bootstrap(cfg)
+  const response = await supertest(server.app)
+    .get(`/doc/create?into=${into}`)
+
+  t.is(response.status, 200)
+  const $ = cheerio.load(response.text)
+  t.is($('title').text(), 'Jingo – Creating a document')
+  t.is($('h1').first().text(), 'We\'ve got a problem here…')
+})
+
+test('post create fail with missing fields', async t => {
+  const cfg = await fakeFs.config()
+
+  const server = Server.bootstrap(cfg)
+  const response = await supertest(server.app)
+    .post(`/doc/create`)
+
+  t.is(response.status, 200)
+  const $ = cheerio.load(response.text)
+  t.is($('title').text(), 'Jingo – Creating a document')
+  t.is($('ul.errors li').length, 2)
+})
+
+test('post create fail when doc already exists', async t => {
+  const cfg = await fakeFs.config()
+  const route = new Route(cfg)
+  const docName = fakeFs.rndName()
+  fakeFs.writeFile(route.docHelpers.docNameToFilename(docName))
+
+  const server = Server.bootstrap(cfg)
+  const response = await supertest(server.app)
+    .post(`/doc/create`)
+    .send({
+      content: 'whatever',
+      docTitle: docName
+    })
+
+  t.is(response.status, 200)
+  const $ = cheerio.load(response.text)
+  t.is($('ul.errors li').length, 1)
+  t.true($('ul.errors li').first().text().startsWith('A document with'))
+})
+
+test('post create success redirects to the wiki page', async t => {
+  const cfg = await fakeFs.config()
+  const route = new Route(cfg)
+  const docName = fakeFs.rndName()
+
+  const server = Server.bootstrap(cfg)
+  const response = await supertest(server.app)
+    .post(`/doc/create`)
+    .send({
+      content: 'whatever',
+      docTitle: docName
+    })
+
+  t.is(response.status, 302)
+  t.is(response.headers.location, `/wiki/${docName}`)
+  t.true(fakeFs.exists(route.docHelpers.docNameToFilename(docName)))
+})
+
+// test('post create success redirect to the wiki page', async t => {
+//   const route = new Route(await fakeFs.config())
+//   sinon.stub(route, 'inspectRequest').callsFake(req => {
+//     return {
+//       data: {
+//         content: 'Winter in Berlin',
+//         docTitle: 'hello world'
+//       },
+//       errors: null
+//     }
+//   })
+
+//   const request = {
+//   }
+
+//   const redirect = sinon.spy()
+//   const response = {
+//     redirect
+//   }
+
+//   await route.didCreate(request as any, response as any, _noop)
+
+//   t.is(redirect.calledWith('/wiki/hello_world'), true)
+// })
+
+// test('post create fail if document already exists', async t => {
+//   const route = new Route(await fakeFs.config())
+//   const docName = fakeFs.rndName()
+//   const render = sinon.stub(route, 'render')
+//   fakeFs.writeFile(route.docHelpers.docNameToFilename(docName), 'Hello 41!')
+
+//   sinon.stub(route, 'inspectRequest').callsFake(req => {
+//     return {
+//       data: {
+//         content: 'Winter in Berlin',
+//         docTitle: route.wikiHelpers.unwikify(docName),
+//         into: ''
+//       },
+//       errors: null
+//     }
+//   })
+
+//   const request = {
+//   }
+
+//   await route.didCreate(request as any, null, _noop)
+//   const expectedScope = {
+//     content: 'Winter in Berlin',
+//     docTitle: route.wikiHelpers.unwikify(docName),
+//     errors: ['A document with this title already exists'],
+//     into: ''
+//   }
+
+//   t.is(render.calledWith(request, null, 'doc-create', expectedScope), true)
+// })
+
+
+// test('get create route receiving a name in the url', async t => {
+//   const route = new Route(await config())
+//   const render = sinon.stub(route, 'render')
+
+//   const request = {
+//     query: {
+//       docName: 'hello_world'
+//     }
+//   }
+//   await route.create(request as any, null, _noop)
+
+//   t.is(route.title, 'Jingo – Creating a document')
+
+//   const expectedScope = {
+//     docTitle: 'hello world',
+//     into: '',
+//     wikiIndex: 'Home'
+//   }
+
+//   t.is(render.calledWith(request, null, 'doc-create', expectedScope), true)
+// })
+
+// test('get create route with not existing into', async t => {
+//   const cfg = await config()
+//   const route = new Route(cfg)
+//   const render = sinon.stub(route, 'render')
+
+//   const request = {
+//     query: {
+//       into: 'hello_world'
+//     }
+//   }
+//   await route.create(request as any, null, _noop)
+
+//   const expectedScope = {
+//     directory: 'hello_world',
+//     folderName: 'hello_world',
+//     parentDirname: ''
+//   }
+
+//   t.is(render.calledWith(request, null, 'doc-fail', expectedScope), true)
+// })
+
+// test('get create route not receiving a name in the url', async t => {
+//   const route = new Route(await config())
+//   const render = sinon.stub(route, 'render')
+
+//   const request = {
+//     params: {},
+//     query: {}
+//   }
+//   await route.create(request as any, null, _noop)
+
+//   t.is(route.title, 'Jingo – Creating a document')
+
+//   const expectedScope = {
+//     docTitle: '',
+//     into: '',
+//     wikiIndex: 'Home'
+//   }
+
+//   t.true(render.calledWith(request, null, 'doc-create', expectedScope))
+// })
+
+// test('post create renders again with a validation error', async t => {
+//   const route = new Route(await fakeFs.config())
+//   const render = sinon.stub(route, 'render')
+
+//   sinon.stub(route, 'inspectRequest').callsFake(req => {
+//     return {
+//       data: {
+//         content: 'blah',
+//         docTitle: 'My Name',
+//         into: ''
+//       },
+//       errors: 123
+//     }
+//   })
+
+//   const request = {
+//     query: {
+//       docName: 'hello world'
+//     }
+//   }
+
+//   await route.didCreate(request as any, null, _noop)
+
+//   const expectedScope = {
+//     content: 'blah',
+//     docTitle: 'My Name',
+//     errors: 123,
+//     into: ''
+//   }
+
+//   t.is(render.calledWith(request, null, 'doc-create', expectedScope), true)
+// })
 
 test.todo('get update route without a docName')
 

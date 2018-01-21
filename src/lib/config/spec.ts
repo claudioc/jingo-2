@@ -175,7 +175,14 @@ test('hasFeature with non-existant feature', async t => {
   t.false(cfg.hasFeature('antani'))
 })
 
-test('hasFeature with a valida and enable feature', async t => {
+test('hasFeature with a valid and enable feature', async t => {
   const cfg = await config()
   t.true(cfg.hasFeature('codeHighlighter'))
+})
+
+test('disableFeature', async t => {
+  const cfg = await config()
+  t.true(cfg.hasFeature('codeHighlighter'))
+  cfg.disableFeature('codeHighlighter')
+  t.false(cfg.hasFeature('codeHighlighter'))
 })

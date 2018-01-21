@@ -58,6 +58,7 @@ export default class DocRoute extends BaseRoute {
   }
 
   public async didCreate (req: Request, res: Response, next: NextFunction): Promise<void> {
+    this.title = 'Jingo – Creating a document'
     const { errors, data } = this.inspectRequest(req)
     const into = data.into || ''
 
@@ -84,7 +85,7 @@ export default class DocRoute extends BaseRoute {
 
     // All done, go to the just saved page
     res.redirect(this.wikiHelpers.pathFor(data.docTitle, into))
-    req.app && req.app.emit(je('jingo.docCreated'), {
+    req.app.emit(je('jingo.docCreated'), {
       docName,
       into
     })
