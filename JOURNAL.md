@@ -126,3 +126,6 @@
 - Introduces cheerio for testing
 - Starting moving all the route tests to supertest
 - sloc 6363
+25/01/18
+- Moved all the doc tests to Supertest
+- sloc 6359

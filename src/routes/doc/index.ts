@@ -73,6 +73,10 @@ export default class DocRoute extends BaseRoute {
       return
     }
 
+    if (!await this.assertDirectoryExists(into, req, res)) {
+      return
+    }
+
     const docName = this.wikiHelpers.wikify(data.docTitle)
 
     const itExists = await this.sdk.docExists(docName, into)
@@ -125,6 +129,7 @@ export default class DocRoute extends BaseRoute {
   }
 
   public async didUpdate (req: Request, res: Response, next: NextFunction): Promise<void> {
+    this.title = 'Jingo – Editing a document'
     const { errors, data } = this.inspectRequest(req)
     const oldDocName = req.body.docName
     const comment = req.body.comment
@@ -140,6 +145,10 @@ export default class DocRoute extends BaseRoute {
 
     if (errors) {
       this.render(req, res, 'doc-update', _assign(scope, { errors }))
+      return
+    }
+
+    if (!await this.assertDirectoryExists(into, req, res)) {
       return
     }
 
@@ -168,7 +177,7 @@ export default class DocRoute extends BaseRoute {
 
   public async delete (req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Deleting a document'
-    const docName = req.query.docName
+    const docName = req.query.docName || ''
     const into = req.query.into || ''
 
     if (docName === '') {
@@ -195,8 +204,13 @@ export default class DocRoute extends BaseRoute {
   }
 
   public async didDelete (req: Request, res: Response, next: NextFunction): Promise<void> {
+    this.title = 'Jingo – Deleting a document'
     const docName = req.body.docName
     const into = req.body.into
+
+    if (!await this.assertDirectoryExists(into, req, res)) {
+      return
+    }
 
     const itExists = await this.sdk.docExists(docName, into)
     if (!itExists) {
