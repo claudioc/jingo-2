@@ -38,7 +38,11 @@ export default function viewHelpers (config: Config) {
         const text = bite[bite.length - 1]
         breadcrumb.push(`<li><a href="/${basePath}/${path}/">${text}</a></li>`)
       }
-      breadcrumb.push(`<li>${parts[parts.length - 1]}</li></ul>`)
+
+      const last = parts[parts.length - 1]
+      if (last !== '') {
+        breadcrumb.push(`<li>${last}</li></ul>`)
+      }
       return breadcrumb.join('')
     },
 
