@@ -21,10 +21,10 @@ export default class WikiRoute extends BaseRoute {
     const mountPath = config.get('mountPath')
 
     /**
-     * The catch-all route for all the route request:
-     * - /wiki/docname: will render `docname`
-     * - /wiki/dir/: will render the list in `dir`
-     * - /wiki/dir/docname: will render docname in `dir`
+     * The catch-all route for all the route requests:
+     * - /wiki/:docname: will render `docname`
+     * - /wiki/:dir/: will render the list in `dir`
+     * - /wiki/:dir/:docname – will render docname in `dir`
      */
     router.get(`/${basePath}*`, (req: Request, res: Response, next: NextFunction) => {
       const reqPath = req.params[0]
@@ -59,7 +59,10 @@ export default class WikiRoute extends BaseRoute {
         res.redirect(`${this.config.get('mountPath')}?welcome`)
       } else {
         const createPageUrl = this.docHelpers.pathFor('create', this.docName, this.dirName)
-        res.redirect(createPageUrl)
+        res.status(404)
+        this.render(req, res, 'wiki-fail', {
+          createPageUrl
+        })
       }
     }
   }
@@ -75,7 +78,13 @@ export default class WikiRoute extends BaseRoute {
       docList = await this.sdk.listDocs(this.dirName)
       folderList = await this.sdk.listFolders(this.dirName)
     } catch (err) {
-      res.status(404).render('404')
+      res.status(404)
+      this.render(req, res, 'wiki-list-fail', {
+        directory: this.dirName,
+        folderName,
+        parentDirname
+      })
+
       return
     }
 

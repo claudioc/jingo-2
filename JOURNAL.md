@@ -129,3 +129,8 @@
 25/01/18
 - Moved all the doc tests to Supertest
 - sloc 6359
+26/01/18
+- Wrote the tests for the wiki page
+- Created wiki-fail and wiki-list-fail
+- The 404 on a wiki page doesn't redirect to the create anymore (just 404)
+- sloc 6432
