@@ -77,7 +77,7 @@ export default class FolderRoute extends BaseRoute {
     try {
       await this.sdk.createFolder(folderName, into)
       // All done, go to the just created folder
-      res.redirect(this.folderHelpers.pathFor('list', into))
+      res.redirect(this.folderHelpers.pathFor('list', folderName, into))
       req.app && req.app.emit(je('jingo.folderCreated'))
     } catch (err) {
       res.status(500).render('500')
@@ -85,7 +85,7 @@ export default class FolderRoute extends BaseRoute {
   }
 
   public async rename (req: Request, res: Response, next: NextFunction): Promise<void> {
-    this.title = 'Jingo – Creating a folder'
+    this.title = 'Jingo – Renaming a folder'
     const folderName = req.query.folderName || ''
     const into = req.query.into || ''
 
@@ -97,7 +97,7 @@ export default class FolderRoute extends BaseRoute {
       return
     }
 
-    if (!this.assertFolderExists(folderName, into, req, res)) {
+    if (!await this.assertFolderExists(folderName, into, req, res)) {
       return
     }
 
@@ -124,10 +124,13 @@ export default class FolderRoute extends BaseRoute {
       return this.render(req, res, 'folder-rename', _assign(scope, { errors }))
     }
 
-    await this.sdk.renameFolder(currentFolderName, folderName, into)
-
-    res.redirect(this.folderHelpers.pathFor('list', into))
-    req.app && req.app.emit(je('jingo.folderRenamed'))
+    try {
+      await this.sdk.renameFolder(currentFolderName, folderName, into)
+      res.redirect(this.folderHelpers.pathFor('list', folderName, into))
+      req.app && req.app.emit(je('jingo.folderRenamed'))
+      } catch (err) {
+      res.status(500).render('500')
+    }
   }
 
   public async delete (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -143,7 +146,7 @@ export default class FolderRoute extends BaseRoute {
       return
     }
 
-    if (!this.assertFolderExists(folderName, into, req, res)) {
+    if (!await this.assertFolderExists(folderName, into, req, res)) {
       return
     }
 
@@ -159,13 +162,13 @@ export default class FolderRoute extends BaseRoute {
     const folderName = req.body.folderName
     const into = req.body.into
 
-    if (!this.assertFolderExists(folderName, into, req, res)) {
+    if (!await this.assertFolderExists(folderName, into, req, res)) {
       return
     }
 
     await this.sdk.deleteFolder(folderName, into)
 
-    res.redirect(this.folderHelpers.pathFor('list', into) + '?e=0')
+    res.redirect(this.folderHelpers.pathFor('list', into))
     req.app && req.app.emit(je('jingo.folderDeleted'))
   }
 

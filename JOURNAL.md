@@ -134,3 +134,6 @@
 - Created wiki-fail and wiki-list-fail
 - The 404 on a wiki page doesn't redirect to the create anymore (just 404)
 - sloc 6432
+27/01/18
+- Wrote the integration tests for the folder routes
+- sloc 6499

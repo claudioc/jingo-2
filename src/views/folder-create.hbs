@@ -1,5 +1,5 @@
 {{>errors}}
-<h1>Creating a new folder</h1>
+<h1>Creating {{#if (eq folderName '')}}a folder{{else}}{{folderName}}{{/if}}</h1>
 <form method="post" action="{{urlFor resource="folder" action="create"}}">
   <div>
     <input type="hidden" name="into" value="{{into}}">
