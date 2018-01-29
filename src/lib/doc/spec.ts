@@ -33,7 +33,18 @@ test('pathFor create', t => {
   t.is(actual, expected)
 })
 
-test('pathFor create with into', t => {
+test('pathFor create with into', async t => {
+  const cfg = await config()
+  cfg.set('documentRoot', '/home/jingo')
+  cfg.set('mountPath', '/ciao/')
+  helpers = doc(cfg)
+
+  const actual = helpers.pathFor('create', undefined, 'stupinigi bingo')
+  const expected = '/ciao/doc/create?into=stupinigi%20bingo'
+  t.is(actual, expected)
+})
+
+test('pathFor create with into and mountpoint', t => {
   const actual = helpers.pathFor('create', undefined, 'stupinigi bingo')
   const expected = '/doc/create?into=stupinigi%20bingo'
   t.is(actual, expected)

@@ -78,6 +78,17 @@ test('load will detect not detect an array as alien', async t => {
   await t.notThrows(cfg.load('/home/jingo/good-config2.json'))
 })
 
+test('mount helper default', async t => {
+  const cfg = await config()
+  cfg.set('mountPath', '/pippo/')
+  t.is(cfg.mount('lovely'), '/pippo/lovely')
+})
+
+test('mount helper custom', async t => {
+  const cfg = await config()
+  t.is(cfg.mount('lovely'), '/lovely')
+})
+
 test('config WithDefaults', async t => {
   const cfg = await config()
   t.not(cfg.defaults, null)

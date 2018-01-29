@@ -196,6 +196,15 @@ export class Config {
   }
 
   /**
+   * Helper to decorate a path with the mountPath
+   * @param pathToMount The path to decorate
+   */
+  public mount (pathToMount) {
+    const mountPath = this.get('mountPath')
+    return path.join(mountPath, pathToMount)
+  }
+
+  /**
    * Walks the config and detect unknown keys
    */
   protected findAliens () {

@@ -24,8 +24,7 @@ export class Folder {
    * @param into The name of the parent folder
    */
   public pathFor (action: FolderAction, folderName: string = '', into: string = ''): string {
-    const mountPath = this.config.get('mountPath')
-    let actionPath = `${mountPath}folder/${action}`
+    let actionPath = this.config.mount(`folder/${action}`)
     const queso = new Queso()
 
     if (action === 'list') {
@@ -34,7 +33,7 @@ export class Folder {
       folderPath += folderPath.length > 0 ? '/' : ''
       // When into and folderPath are empty, path.join returns a '.'
       folderPath = path.join(into, folderPath).replace(/^\.$/, '')
-      actionPath = `${mountPath}${this.config.get('wiki.basePath')}/${folderPath}`
+      actionPath = this.config.mount(`${this.config.get('wiki.basePath')}/${folderPath}`)
     }
 
     if ((action === 'rename' || action === 'delete' || action === 'create') && folderName.length > 0) {

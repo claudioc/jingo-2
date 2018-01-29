@@ -18,7 +18,6 @@ export default class WikiRoute extends BaseRoute {
 
   public static create (router: Router, config: Config) {
     const basePath = config.get('wiki.basePath')
-    const mountPath = config.get('mountPath')
 
     /**
      * The catch-all route for all the route requests:
@@ -31,7 +30,7 @@ export default class WikiRoute extends BaseRoute {
       delete req.params[0]
 
       if (reqPath.length === 0) {
-        res.redirect(`${mountPath}${basePath}/`)
+        res.redirect(config.mount(`${basePath}/`))
         return
       }
 
@@ -56,7 +55,7 @@ export default class WikiRoute extends BaseRoute {
       req.app && req.app.emit(je('jingo.wikiRead'), this.docName)
     } catch (e) {
       if (isIndex) {
-        res.redirect(`${this.config.get('mountPath')}?welcome`)
+        res.redirect(this.config.mount(`/?welcome`))
       } else {
         const createPageUrl = this.docHelpers.pathFor('create', this.docName, this.dirName)
         res.status(404)

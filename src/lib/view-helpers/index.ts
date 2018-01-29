@@ -74,8 +74,7 @@ export default function viewHelpers (config: Config) {
         case 'vendor':
         case 'css':
         case 'js':
-          const mountPath = config.get('mountPath')
-          path = `${mountPath}public/${resource}/${id}`
+          path = config.mount(`public/${resource}/${id}`)
           break
       }
 
@@ -90,7 +89,7 @@ export default function viewHelpers (config: Config) {
       if (scripts.length === 0) {
         return ''
       }
-      const baseUrl = `${config.get('mountPath')}api/serve-static/`
+      const baseUrl = config.mount(`api/serve-static/`)
       return scripts.map(script => `<script src="${baseUrl}${script}"></script>`).join('\n')
     },
 
@@ -99,7 +98,7 @@ export default function viewHelpers (config: Config) {
       if (styles.length === 0) {
         return ''
       }
-      const baseUrl = `${config.get('mountPath')}api/serve-static/`
+      const baseUrl = config.mount(`api/serve-static/`)
       return styles.map(style => `<link rel="stylesheet" href="${baseUrl}${style}">`).join('\n')
     },
 

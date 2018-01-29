@@ -214,7 +214,7 @@ export default class DocRoute extends BaseRoute {
 
     const itExists = await this.sdk.docExists(docName, into)
     if (!itExists) {
-      res.redirect(`${this.config.get('mountPath')}?e=1`)
+      res.redirect(this.config.mount(`/?e=1`))
       return
     }
 
@@ -262,7 +262,7 @@ export default class DocRoute extends BaseRoute {
   private async assertDocExists (docName, into, req: Request, res: Response) {
     const itExists = await this.sdk.docExists(docName, into)
     if (!itExists) {
-      res.redirect(`${this.config.get('mountPath')}?e=1`)
+      res.redirect(this.config.mount(`/?e=1`))
     }
 
     return itExists

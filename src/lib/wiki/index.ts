@@ -46,8 +46,7 @@ export class Wiki {
     const wikied = this.wikify(docName)
     const actionPart = action !== 'show' ? `/${action}` : ''
     const basePath = path.join(this.config.get('wiki.basePath'), into)
-    const mountPath = this.config.get('mountPath')
-    return `${mountPath}${basePath}/${wikied}${actionPart}`.replace(/\/$/, '')
+    return this.config.mount(`${basePath}/${wikied}${actionPart}`.replace(/\/$/, ''))
   }
 }
 

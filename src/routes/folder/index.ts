@@ -206,7 +206,7 @@ export default class FolderRoute extends BaseRoute {
   private async assertFolderExists (folder, into, req: Request, res: Response) {
     const itExists = await this.sdk.folderExists(folder, into)
     if (!itExists) {
-      res.redirect(`${this.config.get('mountPath')}?e=1`)
+      res.redirect(this.config.mount(`/?e=1`))
     }
 
     return itExists

@@ -137,3 +137,8 @@
 27/01/18
 - Wrote the integration tests for the folder routes
 - sloc 6499
+29/01/18
+- Added helmet
+- Wrote tests for the index route
+- Added the .mount() method to the config
+- sloc 6546

@@ -59,8 +59,7 @@ export default class Server {
     FolderRoute.create(router, this.config)
     ApiRoute.create(router, this.config)
 
-    const mountPath = this.config.get('mountPath')
-    this.app.use(mountPath, router)
+    this.app.use(this.config.get('mountPath'), router)
   }
 
   public events () {
