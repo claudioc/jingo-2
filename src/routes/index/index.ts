@@ -12,6 +12,7 @@ export default class IndexRoute extends BaseRoute {
 
   public index (req: Request, res: Response, next: NextFunction) {
     const wikiIndex = this.config.get('wiki.index')
+
     if (!_isUndefined(req.query.welcome)) {
       this.render(req, res, 'welcome', {
         documentRoot: this.config.get('documentRoot'),

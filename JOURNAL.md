@@ -145,3 +145,6 @@
 31/01/18
 - Added nyc
 - More tests
+- Added the file session store
+- Removed all the cookie middlewares
+- sloc 6595

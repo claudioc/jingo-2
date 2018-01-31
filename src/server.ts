@@ -1,5 +1,4 @@
 import * as bodyParser from 'body-parser'
-import * as cookieParser from 'cookie-parser'
 import * as errorHandler from 'errorhandler'
 import * as express from 'express'
 import * as boom from 'express-boom'
@@ -8,7 +7,11 @@ import * as expressHandlebars from 'express-handlebars'
 import * as session from 'express-session'
 import * as methodOverride from 'method-override'
 import * as logger from 'morgan'
+import * as os from 'os'
 import * as path from 'path'
+import * as sessionFileStore from 'session-file-store'
+
+const FileStore = sessionFileStore(session)
 
 import {
   JingoEvent,
@@ -27,8 +30,6 @@ import WikiRoute from '@routes/wiki'
 import * as moreHelpers from 'just-handlebars-helpers'
 
 import ipc from '@lib/ipc'
-
-const cookieSession = require('cookie-session')
 
 /**
  * The server.
@@ -128,20 +129,15 @@ export default class Server {
 
     this.app.use(express.json())
 
-    this.app.use(cookieParser('SECRET_GOES_HERE'))
-
-    this.app.use(cookieSession({
-      cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },
-      keys: ['jingo'],
-      name: 'JingoSession'
-    }))
-
     this.app.use(session({
       cookie: { httpOnly: true },
       name: 'jingosid',
-      resave: true,
-      saveUninitialized: true,
-      secret: 'SECRET_GOES_HERE'
+      resave: false,
+      saveUninitialized: false,
+      secret: 'SECRET_GOES_HERE',
+      store: new FileStore({
+        path: os.tmpdir()
+      })
     }))
     this.app.use(expressFlash())
 
