@@ -79,6 +79,15 @@ test('findDocTitle, case insensitive', async t => {
   t.is(actual, expected)
 })
 
+test('findDocTitle, case insensitive with no matches', async t => {
+  const cfg = await fakeFs.config()
+  cfg.sys.fileSystemIsCaseSensitive = false
+  const docName = fakeFs.rndName()
+
+  const error = await t.throws(sdk(cfg).findDocTitle(docName))
+  t.regex(error.message, /Unable to find anything/)
+})
+
 test('loadDoc success', async t => {
   const cfg = await fakeFs.config()
   const docName = fakeFs.rndName()
@@ -97,12 +106,31 @@ test('loadFile without directory success', async t => {
   t.is(actual, expected)
 })
 
+test('loadFileSync without directory success', async t => {
+  const cfg = await fakeFs.config()
+  const filepath = fakeFs.rndName()
+  fakeFs.writeFile(filepath, 'Hi!')
+  const actual = sdk(cfg).loadFileSync(filepath)
+  const expected = 'Hi!'
+  t.is(actual, expected)
+})
+
 test('loadFile with directory success', async t => {
   const cfg = await fakeFs.config()
-  const filepath = `shawarma/${fakeFs.rndName()}`
-  fakeFs.mkdir('shawarma')
+  const baseDir = fakeFs.mkdirRnd()
+  const filepath = `${baseDir}/${fakeFs.rndName()}`
   fakeFs.writeFile(filepath, 'Hi!')
   const actual = await sdk(cfg).loadFile(filepath)
+  const expected = 'Hi!'
+  t.is(actual, expected)
+})
+
+test('loadFileSync with directory success', async t => {
+  const cfg = await fakeFs.config()
+  const baseDir = fakeFs.mkdirRnd()
+  const filepath = `${baseDir}/${fakeFs.rndName()}`
+  fakeFs.writeFile(filepath, 'Hi!')
+  const actual = sdk(cfg).loadFileSync(filepath)
   const expected = 'Hi!'
   t.is(actual, expected)
 })
@@ -255,13 +283,20 @@ test('renameFolder with a different name', async t => {
   const cfg = await fakeFs.config()
   const folderName1 = fakeFs.mkdirRnd()
   const folderName2 = fakeFs.rndName()
-  fakeFs.access(folderName1)
-  const actual: any = await sdk(cfg).renameFolder(folderName1, folderName2)
+  const actual = await sdk(cfg).renameFolder(folderName1, folderName2)
   const error = t.throws(() => fakeFs.access(folderName1) as any)
   t.regex(error.message, /ENOENT: no such/)
-  fakeFs.access(folderName2)
 
-  const expected: any = true
+  const expected = true
+  t.is(actual, expected)
+})
+
+test('renameFolder into an already existing folder', async t => {
+  const cfg = await fakeFs.config()
+  const folderName1 = fakeFs.mkdirRnd()
+  const folderName2 = fakeFs.mkdirRnd()
+  const actual = await sdk(cfg).renameFolder(folderName1, folderName2)
+  const expected = false
   t.is(actual, expected)
 })
 
@@ -303,4 +338,21 @@ test('isDirectoryAccessible true', async t => {
   fakeFs.mkdir(dirName2)
   const actual = await sdk(cfg).isDirectoryAccessible(dirName2)
   t.true(actual)
+})
+
+test('isOverwritableBy using different filenames', async t => {
+  const cfg = await config()
+  const docName1 = fakeFs.rndName()
+  const docName2 = fakeFs.rndName()
+  const actual = await sdk(cfg).isOverwritableBy(docName1, docName2)
+  const expected = false
+  t.is(actual, expected)
+})
+
+test('isOverwritableBy using the same filename', async t => {
+  const cfg = await config()
+  const docName1 = fakeFs.rndName()
+  const actual = await sdk(cfg).isOverwritableBy(docName1, docName1)
+  const expected = true
+  t.is(actual, expected)
 })

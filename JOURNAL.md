@@ -142,3 +142,6 @@
 - Wrote tests for the index route
 - Added the .mount() method to the config
 - sloc 6546
+31/01/18
+- Added nyc
+- More tests

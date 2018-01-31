@@ -198,7 +198,7 @@ export class Sdk {
    * @param docName2 Name of the second doc
    * @param into directory where the document resides
    */
-  public async isOverwritableBy (docName1: string, docName2: string, into: string) {
+  public async isOverwritableBy (docName1: string, docName2: string, into: string = '') {
     if (this.config.sys.fileSystemIsCaseSensitive && docName1 !== docName2) {
       return false
     }
@@ -248,7 +248,7 @@ export class Sdk {
    * Loads any file from the repository (sync version for Handlebars helpers)
    * @param filepath The path of the file, relative to the documentRoot
    */
-  public loadFileSync (filepath: string): Promise<string> {
+  public loadFileSync (filepath: string): string {
     const fullPathname = this.folderHelpers.fullpathFor(filepath)
     const content = this.fsApi.readFileSync(fullPathname)
     return content

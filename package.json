@@ -13,7 +13,7 @@
   "scripts": {
     "build": "npm run clean; echo TBD",
     "prepublish": "echo TBD",
-    "test": "npx tsc; npx ava -v",
+    "test": "npx tsc; npx nyc ava -v",
     "clean": "rm -rf dist/*; mkdir -p dist; ln -s ../src/views dist/; ln -s ../src/public dist/; ln -s ../src/lib/config/defaults.json dist/config-defaults.json",
     "start-dev": "npm run clean; npm test; NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -w jingo -w config.json jingo -c config.json'"
   },
@@ -23,6 +23,11 @@
     "@sdk": "dist/sdk/index",
     "@lib": "dist/lib",
     "@routes": "dist/routes"
+  },
+  "nyc": {
+    "exclude": [
+      "**/spec.js"
+    ]
   },
   "ava": {
     "require": [
@@ -57,6 +62,7 @@
     "mock-fs": "^4.4.2",
     "mountfs": "^0.5.0",
     "nodemon": "^1.12.1",
+    "nyc": "^11.4.1",
     "sinon": "^4.1.2",
     "supertest": "^3.0.0",
     "tmp": "0.0.33",

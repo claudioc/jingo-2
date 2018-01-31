@@ -62,7 +62,7 @@ export class FileSystemApi {
     return content.toString()
   }
 
-  public readFileSync (filename: fs.PathLike): Promise<string> {
+  public readFileSync (filename: fs.PathLike): string {
     const content = this.fsDriver.readFileSync(filename, 'utf8')
     return content.toString()
   }

@@ -3,6 +3,8 @@ dist
 npm-debug.log
 config.json
 .DS_Store
+coverage
+.nyc_output
 
 # Created by https://www.gitignore.io/api/visualstudiocode
 
