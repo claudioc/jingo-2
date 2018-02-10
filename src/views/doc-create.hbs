@@ -8,6 +8,7 @@
 <section class="editor">
   <h1>Creating {{#if (eq docTitle '')}}a new document{{else}}{{docTitle}}{{/if}}</h1>
   <form id="editor-form" method="post" action="{{urlFor resource="doc" action="create"}}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <input type="hidden" name="into" value="{{into}}">
     {{#if (eq docTitle wikiIndex)}}
     <input type="hidden" name="docTitle" value={{wikiIndex}}>
@@ -17,7 +18,7 @@
     </div>
     {{/if}}
     <div>
-      <textarea id="editor-content" name="content"></textarea>
+      <textarea id="editor-content" name="content">{{content}}</textarea>
     </div>
     <div>
       <input type="submit" value="Save">

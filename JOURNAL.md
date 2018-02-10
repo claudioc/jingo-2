@@ -148,3 +148,5 @@
 - Added the file session store
 - Removed all the cookie middlewares
 - sloc 6595
+10/02/18
+- Added CSRF protection to docs and folders CRUD

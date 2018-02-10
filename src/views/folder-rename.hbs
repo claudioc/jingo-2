@@ -2,6 +2,7 @@
 <h1>Renaming a folder: {{folderName}} into {{into}}</h1>
 <form method="post" action="{{urlFor resource="folder" action="rename"}}">
   <div>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <input type="hidden" name="into" value="{{into}}">
     <input type="hidden" name="currentFolderName" value="{{folderName}}">
     <input autofocus type="text" name="folderName" required>

@@ -1,5 +1,6 @@
 <h1>Deleting "{{docTitle}}"</h1>
 <form method="post" action="{{urlFor resource="doc" action="delete"}}">
+  <input type="hidden" name="_csrf" value="{{csrfToken}}">
   <input type="hidden" value="{{into}}" name="into">
   <input type="hidden" value="{{docName}}" name="docName">
   <p>Are you sure? This operation cannot be undone!</p>

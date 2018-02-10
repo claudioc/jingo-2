@@ -2,32 +2,35 @@ import { je } from '@events/index'
 import { Config } from '@lib/config'
 import { validateCreate, validateRename } from '@lib/validators/folder'
 import BaseRoute from '@routes/route'
+import * as csrf from 'csurf'
 import { NextFunction, Request, Response, Router } from 'express'
 import { assign as _assign } from 'lodash'
 
+const csrfProtection = csrf()
+
 export default class FolderRoute extends BaseRoute {
   public static create (router: Router, config: Config) {
-    router.get(`/folder/create`, (req: Request, res: Response, next: NextFunction) => {
+    router.get(`/folder/create`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).create(req, res, next)
     })
 
-    router.post(`/folder/create`, validateCreate(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`/folder/create`, [csrfProtection, validateCreate()], (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).didCreate(req, res, next)
     })
 
-    router.get(`/folder/rename`, (req: Request, res: Response, next: NextFunction) => {
+    router.get(`/folder/rename`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).rename(req, res, next)
     })
 
-    router.post(`/folder/rename`, validateRename(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`/folder/rename`, [csrfProtection, validateRename()], (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).didRename(req, res, next)
     })
 
-    router.get(`/folder/delete`, (req: Request, res: Response, next: NextFunction) => {
+    router.get(`/folder/delete`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).delete(req, res, next)
     })
 
-    router.post(`/folder/delete`, (req: Request, res: Response, next: NextFunction) => {
+    router.post(`/folder/delete`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).didDelete(req, res, next)
     })
   }
@@ -36,6 +39,7 @@ export default class FolderRoute extends BaseRoute {
     this.title = 'Jingo – Creating a folder'
     const into = req.query.into || ''
     const folderName = req.query.folderName || ''
+    const csrfToken = (req as any).csrfToken()
 
     if (!await this.assertDirectoryExists(into, req, res)) {
       return
@@ -46,6 +50,7 @@ export default class FolderRoute extends BaseRoute {
     }
 
     const scope = {
+      csrfToken,
       folderName,
       into
     }
@@ -57,8 +62,10 @@ export default class FolderRoute extends BaseRoute {
     const { errors, data } = this.inspectRequest(req)
     const folderName = data.folderName
     const into = data.into
+    const csrfToken = (req as any).csrfToken()
 
     const scope: object = {
+      csrfToken,
       folderName,
       into
     }
@@ -88,6 +95,7 @@ export default class FolderRoute extends BaseRoute {
     this.title = 'Jingo – Renaming a folder'
     const folderName = req.query.folderName || ''
     const into = req.query.into || ''
+    const csrfToken = (req as any).csrfToken()
 
     if (folderName === '') {
       return res.status(400).render('400')
@@ -102,6 +110,7 @@ export default class FolderRoute extends BaseRoute {
     }
 
     const scope = {
+      csrfToken,
       folderName,
       into
     }
@@ -114,8 +123,10 @@ export default class FolderRoute extends BaseRoute {
     const folderName = data.folderName
     const currentFolderName = data.currentFolderName
     const into = data.into
+    const csrfToken = (req as any).csrfToken()
 
     const scope: object = {
+      csrfToken,
       folderName,
       into
     }
@@ -137,6 +148,7 @@ export default class FolderRoute extends BaseRoute {
     this.title = 'Jingo – Deleting a folder'
     const folderName = req.query.folderName || ''
     const into = req.query.into || ''
+    const csrfToken = (req as any).csrfToken()
 
     if (folderName === '') {
       return res.status(400).render('400')
@@ -151,6 +163,7 @@ export default class FolderRoute extends BaseRoute {
     }
 
     const scope: object = {
+      csrfToken,
       folderName,
       into
     }

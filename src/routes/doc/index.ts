@@ -2,32 +2,35 @@ import { je } from '@events/index'
 import { Config } from '@lib/config'
 import { validateCreate } from '@lib/validators/doc'
 import BaseRoute from '@routes/route'
+import * as csrf from 'csurf'
 import { NextFunction, Request, Response, Router } from 'express'
 import { assign as _assign } from 'lodash'
 
+const csrfProtection = csrf()
+
 export default class DocRoute extends BaseRoute {
   public static create (router: Router, config: Config) {
-    router.get(`/doc/create`, (req: Request, res: Response, next: NextFunction) => {
+    router.get(`/doc/create`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).create(req, res, next)
     })
 
-    router.post(`/doc/create`, validateCreate(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`/doc/create`, [csrfProtection, validateCreate()], (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).didCreate(req, res, next)
     })
 
-    router.get(`/doc/update`, (req: Request, res: Response, next: NextFunction) => {
+    router.get(`/doc/update`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).update(req, res, next)
     })
 
-    router.post(`/doc/update`, validateCreate(), (req: Request, res: Response, next: NextFunction) => {
+    router.post(`/doc/update`, [csrfProtection, validateCreate()], (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).didUpdate(req, res, next)
     })
 
-    router.get(`/doc/delete`, (req: Request, res: Response, next: NextFunction) => {
+    router.get(`/doc/delete`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).delete(req, res, next)
     })
 
-    router.post(`/doc/delete`, (req: Request, res: Response, next: NextFunction) => {
+    router.post(`/doc/delete`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).didDelete(req, res, next)
     })
   }
@@ -37,6 +40,7 @@ export default class DocRoute extends BaseRoute {
 
     const docName = req.query.docName || ''
     const into = req.query.into || ''
+    const csrfToken = (req as any).csrfToken()
 
     if (!await this.assertDirectoryExists(into, req, res)) {
       return
@@ -49,6 +53,7 @@ export default class DocRoute extends BaseRoute {
     const wikiIndex = this.config.get('wiki.index')
     const docTitle = this.wikiHelpers.unwikify(docName) || ''
     const scope: object = {
+      csrfToken,
       docTitle,
       into,
       wikiIndex
@@ -61,9 +66,11 @@ export default class DocRoute extends BaseRoute {
     this.title = 'Jingo – Creating a document'
     const { errors, data } = this.inspectRequest(req)
     const into = data.into || ''
+    const csrfToken = (req as any).csrfToken()
 
     const scope: object = {
       content: data.content,
+      csrfToken,
       docTitle: data.docTitle,
       into
     }
@@ -99,6 +106,7 @@ export default class DocRoute extends BaseRoute {
     this.title = 'Jingo – Editing a document'
     const docName = req.query.docName || ''
     const into = req.query.into || ''
+    const csrfToken = (req as any).csrfToken()
 
     if (docName === '') {
       return res.status(400).render('400')
@@ -119,6 +127,7 @@ export default class DocRoute extends BaseRoute {
 
     const scope: object = {
       content: doc.content,
+      csrfToken,
       docName,
       docTitle,
       into,
@@ -134,10 +143,12 @@ export default class DocRoute extends BaseRoute {
     const oldDocName = req.body.docName
     const comment = req.body.comment
     const into = data.into
+    const csrfToken = (req as any).csrfToken()
 
     const scope: object = {
       comment,
       content: data.content,
+      csrfToken,
       docName: oldDocName,
       docTitle: data.docTitle,
       into
@@ -179,6 +190,7 @@ export default class DocRoute extends BaseRoute {
     this.title = 'Jingo – Deleting a document'
     const docName = req.query.docName || ''
     const into = req.query.into || ''
+    const csrfToken = (req as any).csrfToken()
 
     if (docName === '') {
       return res.status(400).render('400')
@@ -195,6 +207,7 @@ export default class DocRoute extends BaseRoute {
     const docTitle = this.wikiHelpers.unwikify(docName)
 
     const scope: object = {
+      csrfToken,
       docName,
       docTitle,
       into

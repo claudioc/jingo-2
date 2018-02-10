@@ -1,17 +1,12 @@
 import * as bodyParser from 'body-parser'
+import * as session from 'cookie-session'
 import * as errorHandler from 'errorhandler'
 import * as express from 'express'
 import * as boom from 'express-boom'
-import * as expressFlash from 'express-flash'
 import * as expressHandlebars from 'express-handlebars'
-import * as session from 'express-session'
 import * as methodOverride from 'method-override'
 import * as logger from 'morgan'
-import * as os from 'os'
 import * as path from 'path'
-import * as sessionFileStore from 'session-file-store'
-
-const FileStore = sessionFileStore(session)
 
 import {
   JingoEvent,
@@ -130,16 +125,10 @@ export default class Server {
     this.app.use(express.json())
 
     this.app.use(session({
-      cookie: { httpOnly: true },
-      name: 'jingosid',
-      resave: false,
-      saveUninitialized: false,
-      secret: 'SECRET_GOES_HERE',
-      store: new FileStore({
-        path: os.tmpdir()
-      })
+      keys: ['jingok1', 'jingok2'],
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      name: 'session'
     }))
-    this.app.use(expressFlash())
 
     // catch 404 and forward to error handler
     this.app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
