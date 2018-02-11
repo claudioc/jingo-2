@@ -1,17 +1,20 @@
 import { Config } from '@lib/config'
 import doc, { Doc } from '@lib/doc'
 import { noop as _noop } from 'lodash'
+import { ListLogSummary } from 'simple-git'
 import * as simplegit from 'simple-git/promise'
 
 export interface IGitOps {
   $add (docName: string, into: string): void
   $commit (docName: string, into: string, comment: string): void
   $rm (docName: string, into: string): void
+  $history (docName: string, into: string): void
 }
 
 const nop: IGitOps = {
   $add: _noop,
   $commit: _noop,
+  $history: _noop,
   $rm: _noop
 }
 
@@ -30,6 +33,7 @@ interface ISimpleGit extends simplegit.SimpleGit {
   add (files: string | string[]): Promise<void>
   commit (message: string, files: string[], options?: any): Promise<void>
   rm (files: string[]): Promise<void>
+  log (options?: any): Promise<ListLogSummary>
 }
 
 export class GitOps implements IGitOps {
@@ -57,6 +61,15 @@ export class GitOps implements IGitOps {
     const pathname = this.docHelpers.fullPathname(docName, into)
     await this._git.commit(comment, [pathname])
     return
+  }
+
+  public async $history (docName: string, into: string): ListLogSummary {
+    const pathname = this.docHelpers.fullPathname(docName, into)
+    const log = await this._git.log({
+      file: pathname
+    })
+
+    return log
   }
 }
 

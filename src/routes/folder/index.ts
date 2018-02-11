@@ -1,15 +1,15 @@
 import { je } from '@events/index'
 import { Config } from '@lib/config'
 import { validateCreate, validateRename } from '@lib/validators/folder'
+import csrfMiddleware from '@middlewares/csrf'
 import BaseRoute from '@routes/route'
-import * as csrf from 'csurf'
 import { NextFunction, Request, Response, Router } from 'express'
 import { assign as _assign } from 'lodash'
 
-const csrfProtection = csrf()
-
 export default class FolderRoute extends BaseRoute {
   public static create (router: Router, config: Config) {
+    const csrfProtection = csrfMiddleware(config)
+
     router.get(`/folder/create`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
       new FolderRoute(config).create(req, res, next)
     })

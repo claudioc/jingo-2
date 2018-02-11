@@ -18,6 +18,7 @@ export default class FakeFs {
     cfg.set('documentRoot', this.mountPoint)
     cfg.disableFeature('gitSupport')
     cfg.disableFeature('ipcSupport')
+    cfg.disableFeature('csrfProtection')
     return cfg
   }
 

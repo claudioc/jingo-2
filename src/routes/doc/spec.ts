@@ -404,3 +404,15 @@ test('get history route with a non-existing into', async t => {
   t.is(response.status, 302)
   t.is(response.headers.location, cfg.get('mountPath') + '?e=1')
 })
+
+test('get history route gives 404 without git support', async t => {
+  const cfg = await fakeFs.config()
+  const docName = fakeFs.rndName()
+  const into = fakeFs.rndName()
+
+  const server = Server.bootstrap(cfg)
+  const response = await supertest(server.app)
+    .get(`/doc/history?docName=${docName}&into=${into}`)
+
+  t.is(response.status, 404)
+})

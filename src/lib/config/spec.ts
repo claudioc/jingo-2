@@ -181,11 +181,6 @@ test('sample', async t => {
   t.true(sample.startsWith('{'))
 })
 
-test('hasFeature with non-existant feature', async t => {
-  const cfg = await config()
-  t.false(cfg.hasFeature('antani'))
-})
-
 test('hasFeature with a valid and enable feature', async t => {
   const cfg = await config()
   t.true(cfg.hasFeature('codeHighlighter'))

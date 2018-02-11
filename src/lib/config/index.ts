@@ -46,6 +46,13 @@ export interface ICustomSettings {
   scripts?: string[]
 }
 
+type TFeature =
+  'codeHighlighter' |
+  'ipcSupport' |
+  'gitSupport' |
+  'emojiSupport' |
+  'csrfProtection'
+
 export type TFeaturesSettings = {
   codeHighlighter?: any
   ipcSupport?: IIpcSettings
@@ -122,7 +129,7 @@ export class Config {
    * Checks if a feature exists and it's enabled
    * @param feature The name of the feature to check
    */
-  public hasFeature (featureName): boolean {
+  public hasFeature (featureName: TFeature): boolean {
     const feature = this.get('features')[featureName]
     return !!(feature && feature.enabled)
   }
@@ -131,7 +138,7 @@ export class Config {
    * Programmatically disables a feature
    * @param feature The name of the feature to check
    */
-  public disableFeature (featureName): void {
+  public disableFeature (featureName: TFeature): void {
     if (!this.hasFeature(featureName)) {
       return
     }
@@ -143,7 +150,7 @@ export class Config {
    * Programmatically enables a feature
    * @param feature The name of the feature to check
    */
-  public enableFeature (featureName): void {
+  public enableFeature (featureName: TFeature): void {
     if (this.hasFeature(featureName)) {
       return
     }
@@ -237,11 +244,7 @@ export class Config {
     this.values.custom = fixers.fixCustom(this.values.custom, this.getDefault('custom'))
     this.values.wiki = fixers.fixWiki(this.values.wiki, this.getDefault('wiki'))
     this.values.features = fixers.fixFeatures(this.values.features, this.getDefault('features'))
-
     this.values.features.csrfProtection = { enabled: true }
-    this.enableFeature('csrfProtection')
-    console.log(this.values)
-
     return this
   }
 

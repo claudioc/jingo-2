@@ -1,5 +1,6 @@
 import { je } from '@events/index'
 import { Config } from '@lib/config'
+import git from '@lib/git'
 import { validateCreate } from '@lib/validators/doc'
 import csrfMiddleware from '@middlewares/csrf'
 import BaseRoute from '@routes/route'
@@ -264,9 +265,13 @@ export default class DocRoute extends BaseRoute {
 
     const docTitle = this.wikiHelpers.unwikify(docName)
 
+    const gitMech = git(this.config)
+    const history = await gitMech.$history(docName, into)
+
     const scope: object = {
       docName,
       docTitle,
+      history: history.all,
       into
     }
 
