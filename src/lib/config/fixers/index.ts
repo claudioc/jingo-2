@@ -1,16 +1,16 @@
 import {
-  TCustomSettings,
-  TFeaturesSettings,
-  TWikiSettings
-} from '@lib/config'
-
-import {
   isBoolean as _isBoolean,
   isObject as _isObject,
   isUndefined as _isUndefined,
   merge as _merge,
   toString as _toString
 } from 'lodash'
+
+import {
+  ICustomSettings,
+  IWikiSettings,
+  TFeaturesSettings
+} from '@lib/config'
 
 /*
  * Fixers are here to prevent that someone messes with the config
@@ -22,8 +22,8 @@ const fixDocumentRoot = (documentRoot: string): string => {
   return _toString(documentRoot).trim()
 }
 
-const fixWiki = (wikiSettings: TWikiSettings, defaults: TWikiSettings): TWikiSettings => {
-  const settings: TWikiSettings = {} as any
+const fixWiki = (wikiSettings: IWikiSettings, defaults: IWikiSettings): IWikiSettings => {
+  const settings: IWikiSettings = {} as any
   _merge(settings, defaults, _isObject(wikiSettings) ? wikiSettings : {})
 
   // Fix the index
@@ -51,8 +51,8 @@ const fixMountPath = (mountPath: string): string => {
   return setting
 }
 
-const fixCustom = (customSettings: TCustomSettings, defaults: TCustomSettings): TCustomSettings => {
-  const settings: TCustomSettings = {}
+const fixCustom = (customSettings: ICustomSettings, defaults: ICustomSettings): ICustomSettings => {
+  const settings: ICustomSettings = {}
   _merge(settings, defaults, _isObject(customSettings) ? customSettings : {})
 
   if (!Array.isArray(settings.includes)) {

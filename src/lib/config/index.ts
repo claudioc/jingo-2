@@ -16,28 +16,29 @@ import * as path from 'path'
 
 type TConfigValue = any
 
-export type TIpcSettings = {
+export interface IFeatureSettings {
   enabled?: boolean
+}
+
+export interface IIpcSettings extends IFeatureSettings {
   server?: string
 }
 
-export type TGitSettings = {
-  enabled?: boolean
+export interface IGitSettings extends IFeatureSettings {
   remote?: string
   branch?: string
 }
 
-export type TWikiSettings = {
+export interface IEmojiSettings extends IFeatureSettings {
+  version?: string
+}
+
+export interface IWikiSettings {
   index: string
   basePath: string
 }
 
-export type TEmojiSettings = {
-  enabled?: boolean
-  version?: string
-}
-
-export type TCustomSettings = {
+export interface ICustomSettings {
   title?: string
   logo?: string
   includes?: string[]
@@ -47,16 +48,17 @@ export type TCustomSettings = {
 
 export type TFeaturesSettings = {
   codeHighlighter?: any
-  ipcSupport?: TIpcSettings
-  gitSupport?: TGitSettings
-  emojiSupport?: TEmojiSettings
+  ipcSupport?: IIpcSettings
+  gitSupport?: IGitSettings
+  emojiSupport?: IEmojiSettings
+  csrfProtection?: IFeatureSettings
 }
 
 export type TConfig = {
   documentRoot: string
   mountPath?: string
-  custom?: TCustomSettings
-  wiki?: TWikiSettings
+  custom?: ICustomSettings
+  wiki?: IWikiSettings
   features?: TFeaturesSettings
 }
 
@@ -126,7 +128,7 @@ export class Config {
   }
 
   /**
-   * Programmatically disable a feature
+   * Programmatically disables a feature
    * @param feature The name of the feature to check
    */
   public disableFeature (featureName): void {
@@ -135,6 +137,18 @@ export class Config {
     }
 
     this.set(`features.${featureName}.enabled`, false)
+  }
+
+  /**
+   * Programmatically enables a feature
+   * @param feature The name of the feature to check
+   */
+  public enableFeature (featureName): void {
+    if (this.hasFeature(featureName)) {
+      return
+    }
+
+    this.set(`features.${featureName}.enabled`, true)
   }
 
   public reset (): Config {
@@ -223,6 +237,11 @@ export class Config {
     this.values.custom = fixers.fixCustom(this.values.custom, this.getDefault('custom'))
     this.values.wiki = fixers.fixWiki(this.values.wiki, this.getDefault('wiki'))
     this.values.features = fixers.fixFeatures(this.values.features, this.getDefault('features'))
+
+    this.values.features.csrfProtection = { enabled: true }
+    this.enableFeature('csrfProtection')
+    console.log(this.values)
+
     return this
   }
 

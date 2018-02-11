@@ -29,10 +29,12 @@
     <input type="hidden" value="" name="comment">
     {{/if}}
     <div>
-      <input type="submit" value="Save">
+      <input type="submit" value="Save"> or <a href="{{urlFor resource="wiki" id=docName into=into}}">Cancel</a>
     </div>
   </form>
-  <p><a href="{{urlFor resource="doc" id=docName action="delete" into=into}}" class="sans">Delete this document…</a></p>
+  <p>
+    <a href="{{urlFor resource="doc" id=docName action="delete" into=into}}" class="sans">Delete this document…</a>
+  </p>
 </section>
 <section class="preview hidden">
   <h1>Previewing {{docTitle}}</h1>

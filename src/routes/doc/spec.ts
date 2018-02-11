@@ -366,3 +366,41 @@ test('post delete is a success (renaming)', async t => {
   t.is(response.status, 302)
   t.is(response.headers.location, '/wiki/?e=0')
 })
+
+test('get history route with a non-existing doc', async t => {
+  const cfg = await fakeFs.config()
+  cfg.enableFeature('gitSupport')
+  const docName = fakeFs.rndName()
+
+  const server = Server.bootstrap(cfg)
+  const response = await supertest(server.app)
+    .get(`/doc/history?docName=${docName}`)
+
+  t.is(response.status, 302)
+  t.is(response.headers.location, cfg.get('mountPath') + '?e=1')
+})
+
+test('get history route without a docName', async t => {
+  const cfg = await fakeFs.config()
+  cfg.enableFeature('gitSupport')
+
+  const server = Server.bootstrap(cfg)
+  const response = await supertest(server.app)
+    .get(`/doc/history`)
+
+  t.is(response.status, 400)
+})
+
+test('get history route with a non-existing into', async t => {
+  const cfg = await fakeFs.config()
+  cfg.enableFeature('gitSupport')
+  const docName = fakeFs.rndName()
+  const into = fakeFs.rndName()
+
+  const server = Server.bootstrap(cfg)
+  const response = await supertest(server.app)
+    .get(`/doc/history?docName=${docName}&into=${into}`)
+
+  t.is(response.status, 302)
+  t.is(response.headers.location, cfg.get('mountPath') + '?e=1')
+})

@@ -120,6 +120,7 @@ async function loadConfig () {
   try {
     await config.load(program.config)
   } catch (err) {
+    console.log(err)
     console.error(`There was an error reading your config file and Jingo cannot continue:\n${program.config}: ${err}`)
     process.exit(-1)
   }

@@ -18,6 +18,7 @@
     "start-dev": "npm run clean; npm test; NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -w jingo -w config.json jingo -c config.json'"
   },
   "_moduleAliases": {
+    "@middlewares": "dist/middlewares",
     "@events": "dist/events",
     "@server": "dist/server",
     "@sdk": "dist/sdk/index",
@@ -66,7 +67,7 @@
     "tmp": "0.0.33",
     "tsc-watch": "^1.0.8",
     "tslint": "^5.8.0",
-    "typescript": "^2.6.1"
+    "typescript": "^2.7.1"
   },
   "dependencies": {
     "body-parser": "^1.18.2",

@@ -11,4 +11,9 @@
 {{{content}}}
 </article>
 <hr>
-<p><a href="{{urlFor resource="doc" id=docName action="update" into=dirName}}" class="sans">Edit this document</a></p>
+<p>
+  <a href="{{urlFor resource="doc" id=docName action="update" into=dirName}}" class="sans">Edit this document</a>
+  {{#if (hasFeature "gitSupport")}}
+    <a href="{{urlFor resource="doc" id=docName action="history" into=dirName}}" class="sans">Document history</a>
+  {{/if}}
+</p>

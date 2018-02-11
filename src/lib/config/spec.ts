@@ -197,3 +197,12 @@ test('disableFeature', async t => {
   cfg.disableFeature('codeHighlighter')
   t.false(cfg.hasFeature('codeHighlighter'))
 })
+
+test('enableFeature', async t => {
+  const cfg = await config()
+  t.true(cfg.hasFeature('codeHighlighter'))
+  cfg.disableFeature('codeHighlighter')
+  t.false(cfg.hasFeature('codeHighlighter'))
+  cfg.enableFeature('codeHighlighter')
+  t.true(cfg.hasFeature('codeHighlighter'))
+})

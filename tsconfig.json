@@ -8,7 +8,9 @@
     "inlineSourceMap": true,
     "noUnusedParameters": false,
     "noUnusedLocals": true,
+    "pretty": true,
     "removeComments": true,
+    "esModuleInterop": true,
     "allowJs": true,
     "lib": [
       "es2016"
@@ -17,6 +19,7 @@
     "paths": {
       "@server": ["server"],
       "@sdk": ["sdk/index"],
+      "@middlewares/*": ["middlewares/*"],
       "@events/*": ["events/*"],
       "@lib/*": ["lib/*"],
       "@routes/*": ["routes/*"]

@@ -1,15 +1,15 @@
 import { je } from '@events/index'
 import { Config } from '@lib/config'
 import { validateCreate } from '@lib/validators/doc'
+import csrfMiddleware from '@middlewares/csrf'
 import BaseRoute from '@routes/route'
-import * as csrf from 'csurf'
 import { NextFunction, Request, Response, Router } from 'express'
 import { assign as _assign } from 'lodash'
 
-const csrfProtection = csrf()
-
 export default class DocRoute extends BaseRoute {
   public static create (router: Router, config: Config) {
+    const csrfProtection = csrfMiddleware(config)
+
     router.get(`/doc/create`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).create(req, res, next)
     })
@@ -32,6 +32,10 @@ export default class DocRoute extends BaseRoute {
 
     router.post(`/doc/delete`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).didDelete(req, res, next)
+    })
+
+    router.get(`/doc/history`, (req: Request, res: Response, next: NextFunction) => {
+      new DocRoute(config).history(req, res, next)
     })
   }
 
@@ -239,6 +243,34 @@ export default class DocRoute extends BaseRoute {
       docName,
       into
     })
+  }
+
+  public async history (req: Request, res: Response, next: NextFunction): Promise<void> {
+    this.title = 'Jingo – History of the document'
+    const docName = req.query.docName || ''
+    const into = req.query.into || ''
+
+    if (!this.config.hasFeature('gitSupport')) {
+      return res.status(404).render('404')
+    }
+
+    if (docName === '') {
+      return res.status(400).render('400')
+    }
+
+    if (!await this.assertDocExists(docName, into, req, res)) {
+      return
+    }
+
+    const docTitle = this.wikiHelpers.unwikify(docName)
+
+    const scope: object = {
+      docName,
+      docTitle,
+      into
+    }
+
+    this.render(req, res, 'doc-history', scope)
   }
 
   private async assertDirectoryExists (directory, req: Request, res: Response): Promise<boolean> {
