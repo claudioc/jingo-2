@@ -4,6 +4,7 @@ import folder from '@lib/folder'
 import { mcache } from '@lib/mcache'
 import wiki from '@lib/wiki'
 import sdk from '@sdk'
+import { distanceInWordsToNow } from 'date-fns'
 import {
   isEmpty as _isEmpty,
   omit as _omit,
@@ -21,6 +22,11 @@ export default function viewHelpers (config: Config) {
   const cache = mcache()
 
   return {
+    timeAgo (params) {
+      const { date } = params.hash
+      return distanceInWordsToNow(date) + ' ago'
+    },
+
     hasFeature (params) {
       const feature = params
       return config.hasFeature(feature)

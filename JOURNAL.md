@@ -150,3 +150,6 @@
 - sloc 6595
 10/02/18
 - Added CSRF protection to docs and folders CRUD
+12/02/18
+- Added date-fns
+- Added the history page

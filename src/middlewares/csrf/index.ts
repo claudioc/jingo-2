@@ -15,7 +15,7 @@ const csrfMiddleware = (config: Config) => {
   // Testing routes with csrfProtection can get really too hacky
   // so we rather disable the csrfProtection during tests
   if (config.hasFeature('csrfProtection')) {
-    method = csurf
+    method = csurf()
   } else {
     method = dummyCsrf
   }
