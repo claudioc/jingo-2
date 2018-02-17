@@ -267,7 +267,6 @@ export default class DocRoute extends BaseRoute {
 
     const gitMech = git(this.config)
     const history = await gitMech.$history(docName, into)
-
     const scope: object = {
       docName,
       docTitle,
@@ -312,7 +311,7 @@ export default class DocRoute extends BaseRoute {
   private async assertDocExists (docName, into, req: Request, res: Response) {
     const itExists = await this.sdk.docExists(docName, into)
     if (!itExists) {
-      res.redirect(this.config.mount(`/?e=1`))
+      res.redirect(this.config.mount('/?e=1'))
     }
 
     return itExists

@@ -5,12 +5,11 @@ import { IDoc } from '@sdk'
 import { NextFunction, Request, Response, Router } from 'express'
 
 export default class WikiRoute extends BaseRoute {
-  dirName: string
-  docName: string
+  private dirName: string
+  private docName: string
 
   constructor (config, reqPath) {
     super(config)
-
     const { dirName, docName } = this.docHelpers.splitPath(reqPath)
     this.dirName = dirName
     this.docName = docName
@@ -24,6 +23,8 @@ export default class WikiRoute extends BaseRoute {
      * - /wiki/:docname: will render `docname`
      * - /wiki/:dir/: will render the list in `dir`
      * - /wiki/:dir/:docname – will render docname in `dir`
+     * Optionally also receives the version of the document as
+     * a query parameter `v` with a value of a git commit
      */
     router.get(`/${basePath}*`, (req: Request, res: Response, next: NextFunction) => {
       const reqPath = req.params[0]
@@ -48,7 +49,8 @@ export default class WikiRoute extends BaseRoute {
         content: doc.content,
         dirName: this.dirName,
         docName: this.docName,
-        docTitle: isIndex ? '' : doc.title
+        docTitle: isIndex ? '' : doc.title,
+        docVersion: doc.version
       }
       this.title = `Jingo – ${doc.title}`
       this.render(req, res, 'wiki-read', scope)
@@ -105,19 +107,33 @@ export default class WikiRoute extends BaseRoute {
    */
   private async acquireDoc (req: Request): Promise<IDoc> {
     const cache = req.app.get('cache')
+    const version = this.readVersion(req)
 
-    if (!cache) {
-      return await this.sdk.loadDoc(this.docName, this.dirName)
+    let doc
+    if (!cache || version !== 'HEAD') {
+      doc = await this.sdk.loadDoc(this.docName, this.dirName, version)
+      doc.content = this.sdk.renderToHtml(doc.content)
+      doc.version = version
+      return doc
     }
 
-    let doc = cache.get(this.dirName + this.docName)
+    doc = cache.get(this.dirName + this.docName)
     if (!doc) {
       doc = await this.sdk.loadDoc(this.docName, this.dirName)
       // Save in the cache the compiled doc content
       doc.content = this.sdk.renderToHtml(doc.content)
+      doc.version = version
       cache.put(this.dirName + this.docName, doc, 3600 * 1000)
     }
 
     return doc
+  }
+
+  private readVersion (req: Request): string {
+    if (!this.config.hasFeature('gitSupport')) {
+      return 'HEAD'
+    }
+
+    return (req.query.v || 'HEAD').trim()
   }
 }

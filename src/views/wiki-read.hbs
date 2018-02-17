@@ -4,13 +4,22 @@
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/{{codeHighlighterTheme}}.min.css">
 {{/if}}
 
+{{#if (not (eq docVersion 'HEAD'))}}
+<p>
+Warning: you may not being reading the <a href="{{urlFor resource="wiki" id=docName into=dirName}}">latest revision</a> of this page
+</p>
+{{/if}}
+
+
 {{#if docTitle}}
 <h1>{{docTitle}}</h1>
 {{/if}}
+
 <article>
 {{{content}}}
 </article>
 <hr>
+
 <p>
   <a href="{{urlFor resource="doc" id=docName action="update" into=dirName}}" class="sans">Edit this document</a>
   {{#if (hasFeature "gitSupport")}}

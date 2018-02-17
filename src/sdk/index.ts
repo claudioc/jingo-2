@@ -2,6 +2,7 @@ import { Config } from '@lib/config'
 import doc, { Doc } from '@lib/doc'
 import folder, { Folder } from '@lib/folder'
 import fsApi, { FileSystemApi } from '@lib/fs-api'
+import git from '@lib/git'
 import wiki, { Wiki } from '@lib/wiki'
 import * as fs from 'fs'
 import * as hljs from 'highlight.js'
@@ -16,6 +17,7 @@ import * as markdownItTableOfContents from 'markdown-it-table-of-contents'
 export interface IDoc {
   title?: string
   content: string
+  version: string
 }
 
 interface IDocItem {
@@ -219,14 +221,20 @@ export class Sdk {
   }
 
   /**
-   * Loads a document from the file system and returns an IDoc
+   * Loads a document from the file system or git and returns an IDoc
    * @param docName Id of the document to load
    * @param from A subdirectory where the document can be found
+   * @param the version we want, defaults to HEAD
    */
-  public async loadDoc (docName: string, from: string = ''): Promise<IDoc> {
+  public async loadDoc (docName: string, from: string = '', version = 'HEAD'): Promise<IDoc> {
     const fullDocName = this.makeFilename(docName, from)
     const title = await this.findDocTitle(docName, from)
-    const content = await this.fsApi.readFile(fullDocName)
+    let content
+    if (version === 'HEAD' || !this.config.hasFeature('gitSupport')) {
+      content = await this.fsApi.readFile(fullDocName)
+    } else {
+      content = await git(this.config).$show(docName, from, version)
+    }
 
     return {
       content,

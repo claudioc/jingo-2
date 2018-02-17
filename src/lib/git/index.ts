@@ -9,13 +9,15 @@ export interface IGitOps {
   $commit (docName: string, into: string, comment: string): void
   $rm (docName: string, into: string): void
   $history (docName: string, into: string): void
+  $show (docName: string, into: string, version: string): Promise<string>
 }
 
 const nop: IGitOps = {
   $add: _noop,
   $commit: _noop,
   $history: _noop,
-  $rm: _noop
+  $rm: _noop,
+  $show: _noop
 }
 
 const git = (config: Config): GitOps | IGitOps => {
@@ -34,6 +36,7 @@ interface ISimpleGit extends simplegit.SimpleGit {
   commit (message: string, files: string[], options?: any): Promise<void>
   rm (files: string[]): Promise<void>
   log (options?: any): Promise<ListLogSummary>
+  show (options: string | string[]): Promise<string>
 }
 
 export class GitOps implements IGitOps {
@@ -70,6 +73,11 @@ export class GitOps implements IGitOps {
     })
 
     return log
+  }
+
+  public async $show (docName: string, into: string, version: string): Promise<string> {
+    const pathname = this.docHelpers.fullPathname(docName, into)
+    return await this._git.show([`${version}:${pathname}`])
   }
 }
 

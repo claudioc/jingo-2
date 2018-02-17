@@ -12,7 +12,7 @@
   <tbody>
     {{#each history}}
     <tr>
-      <td>{{this.hash}}</td>
+      <td><a href="{{urlFor resource="wiki" id=../docName into=../into v=this.hash}}">{{this.hash}}</a></td>
       <td>{{this.author_name}}</td>
       <td>{{this.message}}</td>
       <td>{{timeAgo date=this.date}}</td>
