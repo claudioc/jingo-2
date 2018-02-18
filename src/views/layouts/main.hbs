@@ -13,12 +13,12 @@
     {{{customIncludes}}}
   </head>
   <body>
-    <header>
-      <nav class="sans">
+    <header class="row align-right">
+      <nav class="col col-6">
         <a href="{{urlFor resource="home"}}">Home</a>
         <a href="{{urlFor resource="folder" action="list" id=dirName}}">Documents list</a>
-        <a href="{{urlFor resource="doc" into=dirName}}">New doc here</a>
-        <a href="{{urlFor resource="folder" into=dirName}}">New folder here</a>
+        <a class="button small outline" href="{{urlFor resource="doc" into=dirName}}">New doc</a>
+        <a class="button small outline j-last" href="{{urlFor resource="folder" into=dirName}}">New folder</a>
       </nav>
     </header>
     <main class="row align-center">

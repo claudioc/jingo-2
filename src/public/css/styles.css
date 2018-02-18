@@ -2,23 +2,17 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-article * {
+article *:not(code) {
   font-family: 'Libre Baskerville', serif;
 }
 
-.breadcrumb {
-  display: inline-block;
-  list-style-type: none;
-  padding: 0;
+article code * {
+  font-family: inherit;
 }
 
-.breadcrumb li {
-  display: inline
-}
-
-.breadcrumb li:not(:last-child):after {
-  content: '/';
-  padding: 0 1rem;
+body > header {
+  margin-bottom: 1rem;
+  padding: 1rem 0;
 }
 
 h1 > a.header-anchor,

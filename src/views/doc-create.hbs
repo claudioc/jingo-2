@@ -1,10 +1,10 @@
 <link rel="stylesheet" href="{{urlFor resource="vendor" id="codemirror/lib/codemirror.css"}}">
 <link rel="stylesheet" href="{{urlFor resource="css" id="codemirror-ext.css"}}">
 {{>errors}}
-<p class="group">
-  <span class="button small outline float-right do-preview">Preview</span>
-  <span class="button small outline float-right do-edit hide">Back to edit</span>
-</p>
+<div class="group form-buttons">
+  <span class="button small outline float-right do-preview j-last">Preview</span>
+  <span class="button small outline float-right do-edit hide j-last">Back to edit</span>
+</div>
 <section class="editor">
   <h2>Creating {{#if (eq docTitle '')}}a new document{{else}}<span class="muted">{{docTitle}}</span>{{/if}}</h2>
   <form id="editor-form" method="post" action="{{urlFor resource="doc" action="create"}}">
@@ -23,9 +23,9 @@
       <label>Document body (Markdown) <span class="req">*</span></label>
       <textarea id="editor-content" name="content">{{content}}</textarea>
     </div>
-    <div class="form-item">
+    <div class="form-item form-buttons">
       <input type="submit" class="button primary" value="Save">
-      <a class="button outline" href="{{urlFor resource="wiki" id=docName into=into}}">Cancel</a>
+      <a class="button outline j-last" href="{{urlFor resource="wiki" id=docName into=into}}">Cancel</a>
     </div>
   </form>
 </section>

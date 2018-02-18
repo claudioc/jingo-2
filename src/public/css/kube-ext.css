@@ -6,3 +6,13 @@
 .message {
   font-family: 'Roboto', sans-serif;
 }
+
+/* Fix compatibility with highlightjs */
+pre, pre code {
+  background: inherit;
+  color: inherit;
+}
+
+.form-buttons .button.j-last {
+  margin-right: 0;
+}

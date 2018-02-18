@@ -1,4 +1,4 @@
-<div>{{{breadcrumb dirName=dirName}}}</div>
+<nav class="breadcrumbs">{{{breadcrumb dirName=dirName}}}</nav>
 
 {{#if (hasFeature "codeHighlighter")}}
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/{{codeHighlighterTheme}}.min.css">
@@ -10,7 +10,6 @@
 </div>
 {{/if}}
 
-
 {{#if docTitle}}
 <h1>{{docTitle}}</h1>
 {{/if}}
@@ -20,9 +19,9 @@
 </article>
 <hr>
 
-<p>
-  <a class="button outline small" href="{{urlFor resource="doc" id=docName action="update" into=dirName}}" class="sans">Edit this document</a>
+<div class="form-buttons">
+  <a class="button outline small" href="{{urlFor resource="doc" id=docName action="update" into=dirName}}">Edit this document</a>
   {{#if (hasFeature "gitSupport")}}
-    <a class="button outline small" href="{{urlFor resource="doc" id=docName action="history" into=dirName}}" class="sans">Document history</a>
+    <a class="button outline small j-last" href="{{urlFor resource="doc" id=docName action="history" into=dirName}}">Document history</a>
   {{/if}}
-</p>
+</div>

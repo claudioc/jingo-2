@@ -1,11 +1,11 @@
 <link rel="stylesheet" href="{{urlFor resource="vendor" id="codemirror/lib/codemirror.css"}}">
 <link rel="stylesheet" href="{{urlFor resource="css" id="codemirror-ext.css"}}">
 {{>errors}}
-<p class="group">
-  <a class="button small outline float-right j-caution" href="{{urlFor resource="doc" id=docName action="delete" into=into}}" class="sans">Delete…</a>
+<div class="group form-buttons">
+  <a class="button small outline float-right j-caution j-last" href="{{urlFor resource="doc" id=docName action="delete" into=into}}">Delete…</a>
   <span class="button small outline float-right do-preview">Preview</span>
   <span class="button small outline float-right do-edit hide">Back to edit</span>
-</p>
+</div>
 <section class="editor">
   <h2>Editing <span class="muted">{{docTitle}}</span></h2>
   <form id="editor-form" method="post" action="{{urlFor resource="doc" action="update"}}">
@@ -34,14 +34,14 @@
     {{else}}
     <input type="hidden" value="" name="comment">
     {{/if}}
-    <div class="form-item">
+    <div class="form-item form-buttons">
       <input type="submit" class="button primary" value="Save">
-      <a class="button outline" href="{{urlFor resource="wiki" id=docName into=into}}">Cancel</a>
+      <a class="button outline j-last" href="{{urlFor resource="wiki" id=docName into=into}}">Cancel</a>
     </div>
   </form>
 </section>
 <section class="preview hide">
-  <h1>Previewing {{docTitle}}</h1>
+  <h2><span class="muted">{{docTitle}}</span></h2>
   <div class="content"></div>
 </section>
 <script src="{{urlFor resource="vendor" id="codemirror/lib/codemirror.min.js"}}"></script>

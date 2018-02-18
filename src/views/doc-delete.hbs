@@ -4,8 +4,8 @@
   <input type="hidden" value="{{into}}" name="into">
   <input type="hidden" value="{{docName}}" name="docName">
   <p>Are you sure? This operation cannot be undone!</p>
-  <div class="form-item">
+  <div class="form-item form-buttons">
     <input type="submit" class="button primary" value="Yes, delete">
-    <a class="button outline" href="{{urlFor resource="wiki" id=docName into=into}}">No, cancel</a>
+    <a class="button outline j-last" href="{{urlFor resource="wiki" id=docName into=into}}">No, cancel</a>
   </div>
 </form>

@@ -1,4 +1,4 @@
-<div>{{{breadcrumb dirName=dirName}}}</div>
+<nav class="breadcrumbs">{{{breadcrumb dirName=dirName}}}</nav>
 
 <h3>~ Child folders ~</h3>
 
@@ -25,10 +25,10 @@
 {{/if}}
 <hr>
 {{#if (neq folderName '')}}
-<p>
-  <a class="button small outline" href="{{urlFor resource="folder" id=folderName into=parentDirname action="rename"}}" class="sans">Rename this folder</a>
+<div class="form-buttons">
+  <a class="button small outline" href="{{urlFor resource="folder" id=folderName into=parentDirname action="rename"}}">Rename this folder</a>
   {{#if (and (eq docList.length 0) (eq folderList.length 0))}}
-  <a class="button small outline j-caution" href="{{urlFor resource="folder" id=folderName into=parentDirname action="delete"}}" class="sans">Delete this folder</a>
+  <a class="button small outline j-caution j-last" href="{{urlFor resource="folder" id=folderName into=parentDirname action="delete"}}">Delete this folder</a>
   {{/if}}
-</p>
+</div>
 {{/if}}
