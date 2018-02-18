@@ -5,9 +5,9 @@
 {{/if}}
 
 {{#if (not (eq docVersion 'HEAD'))}}
-<p>
-Warning: you may not being reading the <a href="{{urlFor resource="wiki" id=docName into=dirName}}">latest revision</a> of this page
-</p>
+<div class="message warning">
+<h5>Warning</h5> you may not being reading the <a href="{{urlFor resource="wiki" id=docName into=dirName}}">latest revision</a> of this page
+</div>
 {{/if}}
 
 
@@ -21,8 +21,8 @@ Warning: you may not being reading the <a href="{{urlFor resource="wiki" id=docN
 <hr>
 
 <p>
-  <a href="{{urlFor resource="doc" id=docName action="update" into=dirName}}" class="sans">Edit this document</a>
+  <a class="button outline small" href="{{urlFor resource="doc" id=docName action="update" into=dirName}}" class="sans">Edit this document</a>
   {{#if (hasFeature "gitSupport")}}
-    <a href="{{urlFor resource="doc" id=docName action="history" into=dirName}}" class="sans">Document history</a>
+    <a class="button outline small" href="{{urlFor resource="doc" id=docName action="history" into=dirName}}" class="sans">Document history</a>
   {{/if}}
 </p>

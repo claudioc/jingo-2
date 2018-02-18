@@ -1,13 +1,15 @@
 {{>errors}}
-<h1>Renaming a folder: {{folderName}} into {{into}}</h1>
+<h2>Renaming {{into}} / <span class="muted">{{folderName}}</span></h2>
 <form method="post" action="{{urlFor resource="folder" action="rename"}}">
-  <div>
-    <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    <input type="hidden" name="into" value="{{into}}">
-    <input type="hidden" name="currentFolderName" value="{{folderName}}">
+  <input type="hidden" name="_csrf" value="{{csrfToken}}">
+  <input type="hidden" name="into" value="{{into}}">
+  <input type="hidden" name="currentFolderName" value="{{folderName}}">
+  <div class="form-item">
+    <label>New name for the folder <span class="req">*</span></label>
     <input autofocus type="text" name="folderName" required>
   </div>
-  <div>
-    <input type="submit" value="Save">
+  <div class="form-item">
+    <input type="submit" class="button primary" value="Rename">
+    <a class="button outline" href="{{urlFor resource="folder" id=folderName into=into}}">Cancel</a>
   </div>
 </form>

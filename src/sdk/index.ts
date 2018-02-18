@@ -243,7 +243,7 @@ export class Sdk {
   }
 
   /**
-   * Loads any file from the repository
+   * Loads any file from the repository (but doesn't use versioning, hence not git here)
    * @param filepath The path of the file, relative to the documentRoot
    */
   public async loadFile (filepath: string): Promise<string> {

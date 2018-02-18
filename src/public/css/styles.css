@@ -1,21 +1,9 @@
-html {
-  box-sizing: border-box;
+body {
+  font-family: 'Roboto', sans-serif;
 }
 
-*, *:before, *:after {
-  box-sizing: inherit;
-}
-
-form {
-  max-width: 60%;
-}
-
-form > div {
-  margin-bottom: 1rem;
-}
-
-form input[type=text] {
-  width: 100%;
+article * {
+  font-family: 'Libre Baskerville', serif;
 }
 
 .breadcrumb {
@@ -31,10 +19,6 @@ form input[type=text] {
 .breadcrumb li:not(:last-child):after {
   content: '/';
   padding: 0 1rem;
-}
-
-.hidden {
-  display: none;
 }
 
 h1 > a.header-anchor,

@@ -8,10 +8,10 @@
 
   doPreview.addEventListener('click', async () => {
     window.editorInstance.save()
-    editorSection.classList.add('hidden')
-    previewSection.classList.remove('hidden')
-    doEdit.classList.remove('hidden')
-    doPreview.classList.add('hidden')
+    editorSection.classList.add('hide')
+    previewSection.classList.remove('hide')
+    doEdit.classList.remove('hide')
+    doPreview.classList.add('hide')
 
     const headers = new Headers()
     headers.append('Content-Type', 'application/json')
@@ -29,9 +29,9 @@
   })
 
   doEdit.addEventListener('click', () => {
-    editorSection.classList.remove('hidden')
-    previewSection.classList.add('hidden')
-    doEdit.classList.add('hidden')
-    doPreview.classList.remove('hidden')
+    editorSection.classList.remove('hide')
+    previewSection.classList.add('hide')
+    doEdit.classList.add('hide')
+    doPreview.classList.remove('hide')
   })
 })()

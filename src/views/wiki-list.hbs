@@ -1,6 +1,6 @@
 <div>{{{breadcrumb dirName=dirName}}}</div>
 
-<h3>~ Folders ~</h3>
+<h3>~ Child folders ~</h3>
 
 {{#if folderList.length}}
 <ul>
@@ -9,7 +9,7 @@
   {{/each}}
 </ul>
 {{else}}
-  <p>No other folders in this folder.</p>
+  <p class="muted">No other folders in here.</p>
 {{/if}}
 
 <h3>~ Documents ~</h3>
@@ -21,14 +21,14 @@
   {{/each}}
 </ul>
 {{else}}
-  <p>No documents in this folder.</p>
+  <p class="muted">No documents in here.</p>
 {{/if}}
 <hr>
 {{#if (neq folderName '')}}
 <p>
-  <a href="{{urlFor resource="folder" id=folderName into=parentDirname action="rename"}}" class="sans">Rename this folder</a>
+  <a class="button small outline" href="{{urlFor resource="folder" id=folderName into=parentDirname action="rename"}}" class="sans">Rename this folder</a>
   {{#if (and (eq docList.length 0) (eq folderList.length 0))}}
-  <a href="{{urlFor resource="folder" id=folderName into=parentDirname action="delete"}}" class="sans">Delete this folder</a>
+  <a class="button small outline j-caution" href="{{urlFor resource="folder" id=folderName into=parentDirname action="delete"}}" class="sans">Delete this folder</a>
   {{/if}}
 </p>
 {{/if}}

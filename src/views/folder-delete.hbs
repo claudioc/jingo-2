@@ -1,10 +1,11 @@
-<h1>Deleting "{{folderName}}"</h1>
+<h2>Deleting {{into}} / <span class="muted">{{folderName}}</span></h2>
 <form method="post" action="{{urlFor resource="folder" action="delete"}}">
   <input type="hidden" name="_csrf" value="{{csrfToken}}">
   <input type="hidden" value="{{into}}" name="into">
   <input type="hidden" value="{{folderName}}" name="folderName">
   <p>Are you sure? This operation cannot be undone!</p>
-  <div>
-    <input type="submit" value="Yes, delete"> or <a href="{{urlFor resource="folder" id=folderName action="list" into=into}}">Cancel</a>
+  <div class="form-item">
+    <input type="submit" class="button primary" value="Yes, delete">
+    <a class="button outline" href="{{urlFor resource="folder" id=folderName into=into}}">No, cancel</a>
   </div>
 </form>

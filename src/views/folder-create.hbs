@@ -1,12 +1,14 @@
 {{>errors}}
-<h1>Creating {{#if (eq folderName '')}}a folder{{else}}{{folderName}}{{/if}}</h1>
+<h2>Creating {{#if (eq folderName '')}}a folder{{else}}<span class="muted">{{folderName}}</span>{{/if}}</h2>
 <form method="post" action="{{urlFor resource="folder" action="create"}}">
-  <div>
-    <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    <input type="hidden" name="into" value="{{into}}">
+  <input type="hidden" name="_csrf" value="{{csrfToken}}">
+  <input type="hidden" name="into" value="{{into}}">
+  <div class="form-item">
+    <label>Folder name <span class="req">*</span></label>
     <input autofocus type="text" name="folderName" value="{{folderName}}" required>
   </div>
-  <div>
-    <input type="submit" value="Save">
+  <div class="form-item">
+    <input type="submit" class="button primary" value="Save">
+    <a class="button outline" href="{{urlFor resource="folder" id=into action="list"}}">Cancel</a>
   </div>
 </form>
