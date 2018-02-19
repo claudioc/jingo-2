@@ -1,4 +1,4 @@
-<nav class="breadcrumbs">{{{breadcrumb dirName=dirName}}}</nav>
+<nav class="breadcrumbs">{{{breadcrumbs dirName=dirName docTitle=docTitle}}}</nav>
 
 {{#if (hasFeature "codeHighlighter")}}
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/{{codeHighlighterTheme}}.min.css">
@@ -6,11 +6,11 @@
 
 {{#if (not (eq docVersion 'HEAD'))}}
 <div class="message warning">
-<h5>Warning</h5> you may not being reading the <a href="{{urlFor resource="wiki" id=docName into=dirName}}">latest revision</a> of this page
+  <h5>Warning</h5> you may not being reading the <a href="{{urlFor resource="wiki" id=docName into=dirName}}">latest revision</a> of this page
 </div>
 {{/if}}
 
-{{#if docTitle}}
+{{#if (not isIndex)}}
 <h1>{{docTitle}}</h1>
 {{/if}}
 

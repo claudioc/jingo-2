@@ -1,5 +1,5 @@
 {{>errors}}
-<h2>Creating {{#if (eq folderName '')}}a folder{{else}}<span class="muted">{{folderName}}</span>{{/if}}</h2>
+<h3>Creating {{#if (eq folderName '')}}a folder{{else}}<span class="muted">{{folderName}}</span>{{/if}}{{#if into}} in <span class="muted">{{into}}</span>{{/if}}</h3>
 <form method="post" action="{{urlFor resource="folder" action="create"}}">
   <input type="hidden" name="_csrf" value="{{csrfToken}}">
   <input type="hidden" name="into" value="{{into}}">

@@ -153,3 +153,8 @@
 12/02/18
 - Added date-fns
 - Added the history page
+19/12/18
+- Removed Tufte
+- Adopted Kube css
+- Better breadcrumbs
+- sloc 4954 (new parameters `-e vendor` for sloc)

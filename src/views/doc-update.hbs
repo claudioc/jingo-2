@@ -7,7 +7,7 @@
   <span class="button small outline float-right do-edit hide">Back to edit</span>
 </div>
 <section class="editor">
-  <h2>Editing <span class="muted">{{docTitle}}</span></h2>
+  <h3>Editing <span class="muted">{{docTitle}}</span></h3>
   <form id="editor-form" method="post" action="{{urlFor resource="doc" action="update"}}">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <input type="hidden" value="{{into}}" name="into">

@@ -15,6 +15,10 @@ body > header {
   padding: 1rem 0;
 }
 
+body > main {
+  margin-bottom: 2rem;
+}
+
 h1 > a.header-anchor,
 h2 > a.header-anchor {
   font-size: 60%;

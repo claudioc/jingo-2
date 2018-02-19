@@ -6,7 +6,7 @@
   <span class="button small outline float-right do-edit hide j-last">Back to edit</span>
 </div>
 <section class="editor">
-  <h2>Creating {{#if (eq docTitle '')}}a new document{{else}}<span class="muted">{{docTitle}}</span>{{/if}}</h2>
+  <h3>Creating {{#if (eq docTitle '')}}a new document{{else}}<span class="muted">{{docTitle}}</span>{{/if}}</h3>
   <form id="editor-form" method="post" action="{{urlFor resource="doc" action="create"}}">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <input type="hidden" name="into" value="{{into}}">
@@ -25,7 +25,7 @@
     </div>
     <div class="form-item form-buttons">
       <input type="submit" class="button primary" value="Save">
-      <a class="button outline j-last" href="{{urlFor resource="wiki" id=docName into=into}}">Cancel</a>
+      <a class="button outline j-last" href="{{urlFor resource="folder" id=into action="list"}}">Cancel</a>
     </div>
   </form>
 </section>

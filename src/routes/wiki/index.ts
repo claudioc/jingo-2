@@ -49,8 +49,9 @@ export default class WikiRoute extends BaseRoute {
         content: doc.content,
         dirName: this.dirName,
         docName: this.docName,
-        docTitle: isIndex ? '' : doc.title,
-        docVersion: doc.version
+        docTitle: doc.title,
+        docVersion: doc.version,
+        isIndex
       }
       this.title = `Jingo – ${doc.title}`
       this.render(req, res, 'wiki-read', scope)

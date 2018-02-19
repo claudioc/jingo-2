@@ -32,12 +32,12 @@ export default function viewHelpers (config: Config) {
       return config.hasFeature(feature)
     },
 
-    breadcrumb (params) {
-      const { dirName } = params.hash
+    breadcrumbs (params) {
+      const { dirName, docTitle } = params.hash
       const basePath = config.get('wiki.basePath')
       const parts = dirName.split('/')
       const breadcrumb = ['<ul>']
-      breadcrumb.push(`<li><a href="/${basePath}/">Index</a></li>`)
+      breadcrumb.push(`<li><a href="/${basePath}/">Wiki</a></li>`)
       for (let i = 0; i < parts.length - 1; i++) {
         const bite = _take(parts, i + 1)
         const path = bite.join('/')
@@ -47,8 +47,14 @@ export default function viewHelpers (config: Config) {
 
       const last = parts[parts.length - 1]
       if (last !== '') {
-        breadcrumb.push(`<li><span>${last}</span></li></ul>`)
+        breadcrumb.push(`<li><a href="/${basePath}/${last}/">${last}</a></li>`)
+//        breadcrumb.push(`<li><span>${last}</span></li></ul>`)
       }
+console.log(`[${docTitle}]`)
+      if (docTitle) {
+        breadcrumb.push(`<li><span>${docTitle}</span></li></ul>`)
+      }
+
       return breadcrumb.join('')
     },
 
