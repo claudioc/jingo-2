@@ -1,100 +1,27 @@
 import { Config } from '@lib/config'
-import doc from '@lib/doc'
-import folder from '@lib/folder'
 import { mcache } from '@lib/mcache'
-import wiki from '@lib/wiki'
 import sdk from '@sdk'
-import { distanceInWordsToNow } from 'date-fns'
-import {
-  isEmpty as _isEmpty,
-  omit as _omit,
-  omitBy as _omitBy,
-  take as _take
-} from 'lodash'
 
-import * as qs from 'querystring'
+import breadcrumbs from './breadcrumbs'
+import ellipsize from './ellipsize'
+import hasFeature from './has-feature'
+import timeAgo from './time-ago'
+import urlFor from './url-for'
 
 export default function viewHelpers (config: Config) {
-  const wikiHelpers = wiki(config)
-  const docHelpers = doc(config)
-  const folderHelpers = folder(config)
   const theSdk = sdk(config)
   const cache = mcache()
 
   return {
-    timeAgo (params) {
-      const { date } = params.hash
-      return distanceInWordsToNow(date) + ' ago'
-    },
+    ellipsize,
 
-    hasFeature (params) {
-      const feature = params
-      return config.hasFeature(feature)
-    },
+    timeAgo,
 
-    breadcrumbs (params) {
-      const { dirName, docTitle } = params.hash
-      const basePath = config.get('wiki.basePath')
-      const parts = dirName.split('/')
-      const breadcrumb = ['<ul>']
-      breadcrumb.push(`<li><a href="/${basePath}/">Wiki</a></li>`)
-      for (let i = 0; i < parts.length - 1; i++) {
-        const bite = _take(parts, i + 1)
-        const path = bite.join('/')
-        const text = bite[bite.length - 1]
-        breadcrumb.push(`<li><a href="/${basePath}/${path}/">${text}</a></li>`)
-      }
+    hasFeature: hasFeature(config),
 
-      const last = parts[parts.length - 1]
-      if (last !== '') {
-        breadcrumb.push(`<li><a href="/${basePath}/${last}/">${last}</a></li>`)
-//        breadcrumb.push(`<li><span>${last}</span></li></ul>`)
-      }
-console.log(`[${docTitle}]`)
-      if (docTitle) {
-        breadcrumb.push(`<li><span>${docTitle}</span></li></ul>`)
-      }
+    breadcrumbs: breadcrumbs(config),
 
-      return breadcrumb.join('')
-    },
-
-    urlFor (params) {
-      const KNOWN_PARAMS = ['action', 'id', 'into', 'resource']
-      const { resource, id, action, into } = params.hash
-      let path
-      switch (resource) {
-        // Access to any document
-        case 'doc':
-          path = docHelpers.pathFor(action || 'create', id, into)
-          break
-
-        // Access to any wiki page
-        case 'wiki':
-          path =  wikiHelpers.pathFor(id, into)
-          break
-
-        // Access to any folder
-        case 'folder':
-          path = folderHelpers.pathFor(action || 'create', id, into)
-          break
-
-        // Access to the home page of the system
-        case 'home':
-          path = wikiHelpers.pathFor(config.get('wiki.index'))
-          break
-
-        case 'vendor':
-        case 'css':
-        case 'js':
-          path = config.mount(`public/${resource}/${id}`)
-          break
-      }
-
-      // Gather all the unknown params, and mutate them in a query string
-      const aliens = _omitBy(_omit(params.hash, KNOWN_PARAMS), _isEmpty)
-      const queryString = (Object.keys(aliens).length > 0 ? `?${qs.stringify(aliens)}` : '')
-      return `${path}${queryString}`
-    },
+    urlFor: urlFor(config),
 
     customScripts () {
       const scripts = config.get('custom.scripts')

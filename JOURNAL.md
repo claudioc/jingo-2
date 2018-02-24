@@ -153,8 +153,12 @@
 12/02/18
 - Added date-fns
 - Added the history page
-19/12/18
+19/02/18
 - Removed Tufte
 - Adopted Kube css
 - Better breadcrumbs
 - sloc 4954 (new parameters `-e vendor` for sloc)
+24/02/18
+- Split the view helpers
+- Wrote more test for the view helpers
+- sloc 5130

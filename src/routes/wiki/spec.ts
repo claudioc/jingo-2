@@ -101,5 +101,5 @@ test('get list renders the list of docs with success', async t => {
 
   t.is(response.status, 200)
   const $ = cheerio.load(response.text)
-  t.is($('.breadcrumb li').eq(1).text(), folderName)
+  t.is($('.breadcrumbs li').eq(1).text(), folderName)
 })

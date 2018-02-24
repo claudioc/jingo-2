@@ -16,3 +16,7 @@ pre, pre code {
 .form-buttons .button.j-last {
   margin-right: 0;
 }
+
+.message.warning {
+  background-color: rgba(247, 187, 69, 0.3)
+}

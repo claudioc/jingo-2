@@ -13,9 +13,11 @@
   "scripts": {
     "build": "npm run clean; echo TBD",
     "prepublish": "echo TBD",
-    "test": "npx tsc; npx nyc ava -v",
+    "test": "tsc; nyc ava -v",
     "clean": "rm -rf dist/*; mkdir -p dist; ln -s ../src/views dist/; ln -s ../src/public dist/; ln -s ../src/lib/config/defaults.json dist/config-defaults.json",
-    "start-dev": "npm run clean; npm test; NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -w jingo -w config.json jingo -c config.json'"
+    "start": "NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -w jingo -w config.json jingo -c config.json'",
+    "start-dev": "npm run clean; npm test; npm start",
+    "sloc": "sloc dist/ -e vendor"
   },
   "_moduleAliases": {
     "@middlewares": "dist/middlewares",

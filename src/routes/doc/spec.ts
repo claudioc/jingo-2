@@ -22,7 +22,7 @@ test('get create with a docName in the url', async t => {
   t.is(response.status, 200)
   const $ = cheerio.load(response.text)
   t.is($('title').text(), 'Jingo – Creating a document')
-  t.is($('h1').first().text(), `Creating ${docName}`)
+  t.is($('h3').first().text(), `Creating ${docName}`)
   t.is($('input[name="docTitle"]').attr('type'), 'text')
 })
 
@@ -36,7 +36,7 @@ test('get create for the home page', async t => {
   t.is(response.status, 200)
   const $ = cheerio.load(response.text)
   t.is($('title').text(), 'Jingo – Creating a document')
-  t.is($('h1').first().text(), `Creating ${docName}`)
+  t.is($('h3').first().text(), `Creating ${docName}`)
   t.is($('input[name="docTitle"]').attr('type'), 'hidden')
 })
 
@@ -63,7 +63,7 @@ test('get create without a docName in the url', async t => {
   t.is(response.status, 200)
   const $ = cheerio.load(response.text)
   t.is($('title').text(), 'Jingo – Creating a document')
-  t.is($('h1').first().text(), 'Creating a new document')
+  t.is($('h3').first().text(), 'Creating a new document')
 })
 
 test('get create with a non existing into in the url', async t => {
@@ -178,7 +178,7 @@ test('get update route with existing doc', async t => {
 
   t.is(response.status, 200)
   const $ = cheerio.load(response.text)
-  t.is($('h1').first().text(), `Editing "${docName}"`)
+  t.is($('h3').first().text(), `Editing ${docName}`)
 })
 
 test('post update route is a failure if the file already exists (rename fails)', async t => {
@@ -316,7 +316,7 @@ test('get delete route for a existing doc', async t => {
 
   t.is(response.status, 200)
   const $ = cheerio.load(response.text)
-  t.is($('h1').first().text(), `Deleting "${docName}"`)
+  t.is($('h3').first().text(), `Deleting ${docName}`)
 })
 
 test('post delete with a non existing into', async t => {

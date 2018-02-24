@@ -22,7 +22,7 @@ test('get create route with the folder in argument', async t => {
   t.is(response.status, 200)
   const $ = cheerio.load(response.text)
   t.is($('title').text(), `Jingo – Creating a folder`)
-  t.is($('h1').first().text(), `Creating ${folderName}`)
+  t.is($('h3').first().text(), `Creating ${folderName}`)
   t.is($('input[name="folderName"]').attr('type'), 'text')
   t.is($('input[name="folderName"]').attr('value'), folderName)
 })
@@ -36,7 +36,7 @@ test('get create route without the folder in argument', async t => {
   t.is(response.status, 200)
   const $ = cheerio.load(response.text)
   t.is($('title').text(), `Jingo – Creating a folder`)
-  t.is($('h1').first().text(), `Creating a folder`)
+  t.is($('h3').first().text(), `Creating a folder`)
   t.is($('input[name="folderName"]').attr('type'), 'text')
 })
 

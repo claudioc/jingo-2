@@ -20,7 +20,11 @@
 <hr>
 
 <div class="form-buttons">
-  <a class="button outline small" href="{{urlFor resource="doc" id=docName action="update" into=dirName}}">Edit this document</a>
+  {{#if (not (eq docVersion 'HEAD'))}}
+    <a class="button outline small" href="{{urlFor resource="doc" id=docName action="restore" into=dirName v=docVersion}}">Restore this version</a>
+  {{else}}
+    <a class="button outline small" href="{{urlFor resource="doc" id=docName action="update" into=dirName}}">Edit this document</a>
+  {{/if}}
   {{#if (hasFeature "gitSupport")}}
     <a class="button outline small j-last" href="{{urlFor resource="doc" id=docName action="history" into=dirName}}">Document history</a>
   {{/if}}

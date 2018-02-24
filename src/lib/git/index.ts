@@ -79,6 +79,19 @@ export class GitOps implements IGitOps {
     const pathname = this.docHelpers.fullPathname(docName, into)
     return await this._git.show([`${version}:${pathname}`])
   }
+
+  // revert: function (path, revision, author, callback) {
+  //   gitExec(['checkout', revision, docSubdir + path], function (err, data) {
+  //     if (err) {
+  //       callback(err, ('' + data).toString().trim())
+  //       return
+  //     }
+  //     gitMech.commit(path, 'Reverted to ' + revision, author, function (err, data) {
+  //       callback(err, ('' + data).toString().trim())
+  //     })
+  //   })
+  // }
+
 }
 
 export default git
