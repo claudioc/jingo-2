@@ -6,10 +6,11 @@ test('breadcrumbs with empty param', async t => {
   const helper = breadcrumbs(await config())
   const params = {
     hash: {
+      dirName: ''
     }
   }
 
-  t.is(helper(params), '')
+  t.is(helper(params), '<ul><li><a href="/wiki/">Wiki</a></li>')
 })
 
 test('breadcrumbs with simple param', async t => {

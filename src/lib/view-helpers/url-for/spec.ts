@@ -37,7 +37,7 @@ test('urlFor doc update with extra param', t => {
       v: '1234'
     }
   }
-  t.is(helper(params), '/doc/update?docName=pan%20european&v=1234')
+  t.is(helper(params), '/doc/update?v=1234&docName=pan%20european')
 })
 
 test('urlFor read wiki', t => {

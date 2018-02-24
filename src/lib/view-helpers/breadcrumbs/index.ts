@@ -8,10 +8,6 @@ export default makeHelper = (config) => {
   return (params) => {
     const { dirName, docTitle } = params.hash
 
-    if (!dirName || !docTitle) {
-      return ''
-    }
-
     const basePath = config.get('wiki.basePath')
     const parts = dirName.split('/')
     const breadcrumbs = ['<ul>']
