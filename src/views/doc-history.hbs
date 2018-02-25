@@ -12,7 +12,13 @@
   <tbody>
     {{#each history}}
     <tr>
-      <td><a title="{{this.hash}}" href="{{urlFor resource="wiki" id=../docName into=../into v=this.hash}}">{{ellipsize this.hash}}</a></td>
+      <td>
+        {{#if (eq @index 0)}}
+        <a href="{{urlFor resource="wiki" id=../docName into=../into}}">Most recent</a>
+        {{else}}
+        <a title="{{this.hash}}" href="{{urlFor resource="wiki" id=../docName into=../into v=this.hash}}">{{ellipsize this.hash}}</a>
+        {{/if}}
+      </td>
       <td>{{this.author_name}}</td>
       <td>{{this.message}}</td>
       <td>{{timeAgo this.date}}</td>

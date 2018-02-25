@@ -3,6 +3,7 @@ import { Config } from '@lib/config'
 import git from '@lib/git'
 import { validateCreate } from '@lib/validators/doc'
 import csrfMiddleware from '@middlewares/csrf'
+import gitRequiredMiddleware from '@middlewares/git-required'
 import BaseRoute from '@routes/route'
 import { NextFunction, Request, Response, Router } from 'express'
 import { assign as _assign } from 'lodash'
@@ -10,6 +11,7 @@ import { assign as _assign } from 'lodash'
 export default class DocRoute extends BaseRoute {
   public static create (router: Router, config: Config) {
     const csrfProtection = csrfMiddleware(config)
+    const gitRequired = gitRequiredMiddleware(config)
 
     router.get(`/doc/create`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).create(req, res, next)
@@ -35,8 +37,16 @@ export default class DocRoute extends BaseRoute {
       new DocRoute(config).didDelete(req, res, next)
     })
 
-    router.get(`/doc/history`, (req: Request, res: Response, next: NextFunction) => {
+    router.get(`/doc/history`, gitRequired, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).history(req, res, next)
+    })
+
+    router.get(`/doc/restore`, [gitRequired, csrfProtection], (req: Request, res: Response, next: NextFunction) => {
+      new DocRoute(config).restore(req, res, next)
+    })
+
+    router.post(`/doc/restore`, [gitRequired, csrfProtection], (req: Request, res: Response, next: NextFunction) => {
+      new DocRoute(config).didRestore(req, res, next)
     })
   }
 
@@ -251,10 +261,6 @@ export default class DocRoute extends BaseRoute {
     const docName = req.query.docName || ''
     const into = req.query.into || ''
 
-    if (!this.config.hasFeature('gitSupport')) {
-      return res.status(404).render('404')
-    }
-
     if (docName === '') {
       return res.status(400).render('400')
     }
@@ -275,6 +281,56 @@ export default class DocRoute extends BaseRoute {
     }
 
     this.render(req, res, 'doc-history', scope)
+  }
+
+  public async restore (req: Request, res: Response, next: NextFunction): Promise<void> {
+    this.title = 'Jingo – Restore a previous version'
+    const docName = req.query.docName || ''
+    const into = req.query.into || ''
+    const version = req.query.v || ''
+    const csrfToken = (req as any).csrfToken()
+
+    if (docName === '' || version === '') {
+      return res.status(400).render('400')
+    }
+
+    if (!await this.assertDirectoryExists(into, req, res)) {
+      return
+    }
+
+    if (!await this.assertDocExists(docName, into, req, res)) {
+      return
+    }
+
+    const docTitle = this.wikiHelpers.unwikify(docName)
+
+    const scope: object = {
+      csrfToken,
+      docName,
+      docTitle,
+      into,
+      version
+    }
+
+    this.render(req, res, 'doc-restore', scope)
+  }
+
+  public async didRestore (req: Request, res: Response, next: NextFunction): Promise<void> {
+    this.title = 'Jingo – Restoring a document'
+    const docName = req.body.docName
+    const into = req.body.into
+    const version = req.query.v || ''
+
+//    await this.sdk.restoreDoc(docName, into)
+
+    const docTitle = this.wikiHelpers.unwikify(docName)
+    res.redirect(this.wikiHelpers.pathFor(docTitle, into))
+
+    req.app && req.app.emit(je('jingo.docRestored'), {
+      docName,
+      into,
+      version
+    })
   }
 
   private async assertDirectoryExists (directory, req: Request, res: Response): Promise<boolean> {

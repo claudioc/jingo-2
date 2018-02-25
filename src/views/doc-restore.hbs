@@ -1,0 +1,14 @@
+<h3>Restoring an old version of <span class="muted">{{docTitle}}</span></h3>
+<form method="post" action="{{urlFor resource="doc" action="restore"}}">
+  <input type="hidden" name="_csrf" value="{{csrfToken}}">
+  <input type="hidden" value="{{into}}" name="into">
+  <input type="hidden" value="{{version}}" name="v">
+  <input type="hidden" value="{{docName}}" name="docName">
+  <p>You are about to restore <a title="{{this.hash}}" href="{{urlFor resource="wiki" id=docName into=into v=version}}">an old version</a> of the document.
+    That version will override the <a href="{{urlFor resource="wiki" id=docName into=into}}">current one</a> and this operation cannot be undone.</p>
+  <p>Do you want to proceed?</p>
+  <div class="form-item form-buttons">
+    <input type="submit" class="button primary" value="Yes, restore">
+    <a class="button outline j-last" href="{{urlFor resource="wiki" id=docName into=into v=version}}">No, cancel</a>
+  </div>
+</form>

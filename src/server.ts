@@ -1,6 +1,5 @@
 import * as bodyParser from 'body-parser'
 import * as session from 'cookie-session'
-import * as errorHandler from 'errorhandler'
 import * as express from 'express'
 import * as boom from 'express-boom'
 import * as expressHandlebars from 'express-handlebars'
@@ -56,6 +55,10 @@ export default class Server {
     ApiRoute.create(router, this.config)
 
     this.app.use(this.config.get('mountPath'), router)
+
+    this.app.use((req, res) => {
+      return res.status(404).render('404')
+    })
   }
 
   public events () {
@@ -129,16 +132,6 @@ export default class Server {
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       name: 'session'
     }))
-
-    // catch 404 and forward to error handler
-    this.app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-      err.status = 404
-      next(err)
-    })
-
-    if (process.env.NODE_ENV === 'development') {
-      this.app.use(errorHandler())
-    }
 
     this.app.set('cache', mcache())
   }

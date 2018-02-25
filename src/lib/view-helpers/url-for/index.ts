@@ -9,8 +9,6 @@ import {
   omitBy as _omitBy
 } from 'lodash'
 
-import * as qs from 'querystring'
-
 let makeHelper
 
 export default makeHelper = (config) => {

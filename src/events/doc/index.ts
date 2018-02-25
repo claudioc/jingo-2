@@ -38,8 +38,13 @@ const deleted = async (config: Config, params) => {
   await gitMech.$commit(params.docName, params.into, 'Document deleted')
 }
 
+const restored = async (config: Config, params) => {
+  //
+}
+
 export default {
   created,
   deleted,
+  restored,
   updated
 }

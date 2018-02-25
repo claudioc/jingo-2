@@ -6,6 +6,7 @@ export type JingoEvent =
   'jingo.docCreated' |
   'jingo.docDeleted' |
   'jingo.docUpdated' |
+  'jingo.docRestored' |
   'jingo.folderCreated' |
   'jingo.folderDeleted' |
   'jingo.folderRenamed' |
@@ -15,6 +16,7 @@ export type JingoEvent =
 const appEvents = {
   'jingo.docCreated': docEvents.created,
   'jingo.docDeleted': docEvents.deleted,
+  'jingo.docRestored': docEvents.restored,
   'jingo.docUpdated': docEvents.updated,
   'jingo.folderCreated': _noop,
   'jingo.folderDeleted': _noop,
