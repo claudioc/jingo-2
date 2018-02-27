@@ -5,11 +5,11 @@ import { ListLogSummary } from 'simple-git'
 import * as simplegit from 'simple-git/promise'
 
 export interface IGitOps {
-  $add (docName: string, into: string): void
-  $commit (docName: string, into: string, comment: string): void
-  $rm (docName: string, into: string): void
-  $history (docName: string, into: string): void
-  $show (docName: string, into: string, version: string): Promise<string>
+  $add(docName: string, into: string): void
+  $commit(docName: string, into: string, comment: string): void
+  $rm(docName: string, into: string): void
+  $history(docName: string, into: string): void
+  $show(docName: string, into: string, version: string): Promise<string>
 }
 
 const nop: IGitOps = {
@@ -32,41 +32,41 @@ const git = (config: Config): GitOps | IGitOps => {
 // Extends SimpleGit to add the missing methods.
 // Reference: https://github.com/types/simple-git/blob/master/src/index.d.ts
 interface ISimpleGit extends simplegit.SimpleGit {
-  add (files: string | string[]): Promise<void>
-  commit (message: string, files: string[], options?: any): Promise<void>
-  rm (files: string[]): Promise<void>
-  log (options?: any): Promise<ListLogSummary>
-  show (options: string | string[]): Promise<string>
+  add(files: string | string[]): Promise<void>
+  commit(message: string, files: string[], options?: any): Promise<void>
+  rm(files: string[]): Promise<void>
+  log(options?: any): Promise<ListLogSummary>
+  show(options: string | string[]): Promise<string>
 }
 
 export class GitOps implements IGitOps {
   public docHelpers: Doc
   private _git: ISimpleGit
 
-  constructor (public config: Config) {
+  constructor(public config: Config) {
     this.docHelpers = doc(this.config)
     this._git = simplegit(this.config.get('documentRoot')) as ISimpleGit
   }
 
-  public async $add (docName: string, into: string): Promise<void> {
+  public async $add(docName: string, into: string): Promise<void> {
     const pathname = this.docHelpers.fullPathname(docName, into)
     await this._git.add(pathname)
     return
   }
 
-  public async $rm (docName: string, into: string): Promise<void> {
+  public async $rm(docName: string, into: string): Promise<void> {
     const pathname = this.docHelpers.fullPathname(docName, into)
     await this._git.rm([pathname])
     return
   }
 
-  public async $commit (docName: string, into: string, comment: string): Promise<void> {
+  public async $commit(docName: string, into: string, comment: string): Promise<void> {
     const pathname = this.docHelpers.fullPathname(docName, into)
     await this._git.commit(comment, [pathname])
     return
   }
 
-  public async $history (docName: string, into: string): ListLogSummary {
+  public async $history(docName: string, into: string): ListLogSummary {
     const pathname = this.docHelpers.fullPathname(docName, into)
     const log = await this._git.log({
       file: pathname
@@ -75,7 +75,7 @@ export class GitOps implements IGitOps {
     return log
   }
 
-  public async $show (docName: string, into: string, version: string): Promise<string> {
+  public async $show(docName: string, into: string, version: string): Promise<string> {
     const pathname = this.docHelpers.fullPathname(docName, into)
     return await this._git.show([`${version}:${pathname}`])
   }
@@ -91,7 +91,6 @@ export class GitOps implements IGitOps {
   //     })
   //   })
   // }
-
 }
 
 export default git

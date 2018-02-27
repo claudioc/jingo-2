@@ -1,6 +1,6 @@
 let helper
 
-export default helper = (params) => {
+export default (helper = params => {
   const str = params
 
   if (!str) {
@@ -13,4 +13,4 @@ export default helper = (params) => {
   }
 
   return `${str.substr(0, 5)}…${str.substr(len - 5)}`
-}
+})

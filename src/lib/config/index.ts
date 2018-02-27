@@ -11,7 +11,8 @@ import {
   has as _has,
   isUndefined as _isUndefined,
   merge as _merge,
-  set as _set } from 'lodash'
+  set as _set
+} from 'lodash'
 import * as path from 'path'
 
 type TConfigValue = any
@@ -46,12 +47,7 @@ export interface ICustomSettings {
   scripts?: string[]
 }
 
-type TFeature =
-  'codeHighlighter' |
-  'ipcSupport' |
-  'gitSupport' |
-  'emojiSupport' |
-  'csrfProtection'
+type TFeature = 'codeHighlighter' | 'ipcSupport' | 'gitSupport' | 'emojiSupport' | 'csrfProtection'
 
 export type TFeaturesSettings = {
   codeHighlighter?: any
@@ -90,7 +86,7 @@ export class Config {
   protected defaultValues: TConfig
   protected fsApi: FileSystemApi
 
-  constructor (public fsDriver = fs) {
+  constructor(public fsDriver = fs) {
     this.values = null
     this.defaults = null
     this.fsApi = fsApi(this.fsDriver)
@@ -103,7 +99,7 @@ export class Config {
   }
 
   // Load both the defaults and the configuration from a config file
-  public async load (filename: string): Promise<Config> {
+  public async load(filename: string): Promise<Config> {
     await this.loadDefaults()
     const fileContent = await this.fsApi.readFile(filename)
     _merge(this.values, cjson.parse(fileContent, null, true))
@@ -120,7 +116,7 @@ export class Config {
     return this
   }
 
-  public async sample (): Promise<string> {
+  public async sample(): Promise<string> {
     await this.loadDefaults()
     return cjson.stringify(this.defaults, null, 2)
   }
@@ -129,7 +125,7 @@ export class Config {
    * Checks if a feature exists and it's enabled
    * @param feature The name of the feature to check
    */
-  public hasFeature (featureName: TFeature): boolean {
+  public hasFeature(featureName: TFeature): boolean {
     const feature = this.get('features')[featureName]
     return !!(feature && feature.enabled)
   }
@@ -138,7 +134,7 @@ export class Config {
    * Programmatically disables a feature
    * @param feature The name of the feature to check
    */
-  public disableFeature (featureName: TFeature): void {
+  public disableFeature(featureName: TFeature): void {
     if (!this.hasFeature(featureName)) {
       return
     }
@@ -150,7 +146,7 @@ export class Config {
    * Programmatically enables a feature
    * @param feature The name of the feature to check
    */
-  public enableFeature (featureName: TFeature): void {
+  public enableFeature(featureName: TFeature): void {
     if (this.hasFeature(featureName)) {
       return
     }
@@ -158,13 +154,13 @@ export class Config {
     this.set(`features.${featureName}.enabled`, true)
   }
 
-  public reset (): Config {
+  public reset(): Config {
     this.defaults = null
     this.values = null
     return this
   }
 
-  public get (configPath: string): TConfigValue {
+  public get(configPath: string): TConfigValue {
     // @TODO Check if we can safely load the defaults here
     // If we load the defaults here, the method becomes async, which is less
     // than ideal
@@ -180,11 +176,11 @@ export class Config {
     return value
   }
 
-  public getDefault (configPath: string): TConfigValue {
+  public getDefault(configPath: string): TConfigValue {
     return _get(this.defaults, configPath)
   }
 
-  public set (configPath: string, value: any): Config | null {
+  public set(configPath: string, value: any): Config | null {
     if (!this.has(configPath)) {
       return null
     }
@@ -192,11 +188,11 @@ export class Config {
     return this
   }
 
-  public has (configPath: string): boolean {
+  public has(configPath: string): boolean {
     return _has(this.values, configPath)
   }
 
-  public async loadDefaults (): Promise<Config> {
+  public async loadDefaults(): Promise<Config> {
     const defaultContents = await this.fsApi.readFile(this.getDefaultsFilename())
     // Keeps comments in the defaults (so we can dump them to the console)
     this.defaults = cjson.parse(defaultContents)
@@ -207,11 +203,11 @@ export class Config {
     return this
   }
 
-  public getDefaultsFilename (): string {
+  public getDefaultsFilename(): string {
     return this.defaultsFilename
   }
 
-  public setDefaultsFilename (filename): Config {
+  public setDefaultsFilename(filename): Config {
     this.defaultsFilename = filename
     return this
   }
@@ -220,7 +216,7 @@ export class Config {
    * Helper to decorate a path with the mountPath
    * @param pathToMount The path to decorate
    */
-  public mount (pathToMount) {
+  public mount(pathToMount) {
     const mountPath = this.get('mountPath')
     return path.join(mountPath, pathToMount)
   }
@@ -228,7 +224,7 @@ export class Config {
   /**
    * Walks the config and detect unknown keys
    */
-  protected findAliens () {
+  protected findAliens() {
     const keys1 = Object.keys(flatten(this.values))
     const keys2 = Object.keys(flatten(this.defaultValues))
     const skipArrays = key => !/\d+$/.test(key)
@@ -238,7 +234,7 @@ export class Config {
     return aliens
   }
 
-  protected fixConfig (): Config {
+  protected fixConfig(): Config {
     this.values.documentRoot = fixers.fixDocumentRoot(this.values.documentRoot)
     this.values.mountPath = fixers.fixMountPath(this.values.mountPath)
     this.values.custom = fixers.fixCustom(this.values.custom, this.getDefault('custom'))
@@ -248,7 +244,7 @@ export class Config {
     return this
   }
 
-  protected async checkConfig (): Promise<Config> {
+  protected async checkConfig(): Promise<Config> {
     await validators.checkDocumentRoot(this, this.values.documentRoot)
     if (this.hasFeature('gitSupport')) {
       await validators.checkGit(this)

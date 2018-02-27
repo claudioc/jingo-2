@@ -4,19 +4,19 @@ import wiki, { Wiki } from '@lib/wiki'
 import * as path from 'path'
 
 type DocAction = 'delete' | 'update' | 'create'
-type PathParts = {
+interface IPathParts {
   dirName: string
   docName: string
 }
 
-function doc (config: Config): Doc {
+function doc(config: Config): Doc {
   return new Doc(config)
 }
 
 export class Doc {
   public wikiHelpers: Wiki
 
-  constructor (public config: Config) {
+  constructor(public config: Config) {
     this.wikiHelpers = wiki(config)
   }
 
@@ -26,7 +26,7 @@ export class Doc {
    * @param into The directory the document is in
    * @param action DocAction
    */
-  public pathFor (action: DocAction, docName: string, into: string = ''): string {
+  public pathFor(action: DocAction, docName: string, into: string = ''): string {
     const docPath = this.config.mount(`doc/${action}`)
     const queso = new Queso()
 
@@ -48,7 +48,7 @@ export class Doc {
    * @param docName The document name
    * @param into The optional directory where the file should be
    */
-  public fullPathname (docName: string, into: string = ''): string {
+  public fullPathname(docName: string, into: string = ''): string {
     return path.join(into, this.docNameToFilename(docName))
   }
 
@@ -56,7 +56,7 @@ export class Doc {
    * Returns the formatted Md filename of a document
    * @param docName Id of the document
    */
-  public docNameToFilename (docName: string): string {
+  public docNameToFilename(docName: string): string {
     return docName ? (docName.endsWith('.md') ? docName : `${docName}.md`) : ''
   }
 
@@ -64,7 +64,7 @@ export class Doc {
    * Returns the docName from the filename
    * @param docName Id of the document
    */
-  public filenameToDocName (filename: string): string {
+  public filenameToDocName(filename: string): string {
     return filename.replace(/\.md$/, '')
   }
 
@@ -73,9 +73,9 @@ export class Doc {
    * For consistency we always returns the dirname as a relative
    * path, which means that `` represents the `documentRoot`
    * @param unparsed The full path to parse
-   * @returns PathParts
+   * @returns IPathParts
    */
-  public splitPath (unparsed: string): PathParts {
+  public splitPath(unparsed: string): IPathParts {
     const normalizedPath = (unparsed || '').trim()
 
     // The `path.parse` method ignores leading slashes and

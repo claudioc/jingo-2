@@ -7,11 +7,7 @@ import * as methodOverride from 'method-override'
 import * as logger from 'morgan'
 import * as path from 'path'
 
-import {
-  JingoEvent,
-  jingoEventHandlerFor,
-  jingoEvents
-} from '@events/index'
+import { JingoEvent, jingoEventHandlerFor, jingoEvents } from '@events/index'
 import { Config } from '@lib/config'
 import { mcache } from '@lib/mcache'
 import viewHelpers from '@lib/view-helpers'
@@ -31,9 +27,13 @@ import ipc from '@lib/ipc'
  * @class Server
  */
 export default class Server {
+  public static bootstrap(config: Config): Server {
+    return new Server(config)
+  }
+
   public app: express.Application
 
-  constructor (public config: Config) {
+  constructor(public config: Config) {
     this.app = express()
     this.setup()
     this.routes()
@@ -41,11 +41,7 @@ export default class Server {
     this.ipc()
   }
 
-  public static bootstrap (config: Config): Server {
-    return new Server(config)
-  }
-
-  public routes () {
+  public routes() {
     const router: express.Router = express.Router()
 
     IndexRoute.create(router, this.config)
@@ -61,7 +57,7 @@ export default class Server {
     })
   }
 
-  public events () {
+  public events() {
     jingoEvents.forEach((event: JingoEvent) => {
       this.app.on(event, jingoEventHandlerFor(event).bind(null, this.config))
     })
@@ -70,11 +66,11 @@ export default class Server {
   /**
    * Setup the IPC server
    */
-  public ipc () {
+  public ipc() {
     ipc(this.config).connect()
   }
 
-  public setup () {
+  public setup() {
     const staticOptions = {
       redirect: false
     }
@@ -84,7 +80,10 @@ export default class Server {
     // from the wiki pages directly we need to create a
     // whitelist (not a blacklist)
     const mountPath = this.config.get('mountPath')
-    this.app.use([/(.*)\.md/, `${mountPath}public`], express.static(path.join(__dirname, 'public'), staticOptions))
+    this.app.use(
+      [/(.*)\.md/, `${mountPath}public`],
+      express.static(path.join(__dirname, 'public'), staticOptions)
+    )
 
     this.app.use(boom())
     const expressHbs = expressHandlebars.create({
@@ -92,9 +91,7 @@ export default class Server {
       extname: '.hbs',
       helpers: viewHelpers(this.config),
       layoutsDir: path.join(__dirname, '../src/views/layouts'),
-      partialsDir: [
-        path.join(__dirname, '../src/views/partials')
-      ]
+      partialsDir: [path.join(__dirname, '../src/views/partials')]
     })
 
     moreHelpers.registerHelpers(expressHbs.handlebars)
@@ -111,27 +108,33 @@ export default class Server {
       this.app.use(logger('combined' as any))
     }
 
-    this.app.use(methodOverride((req, res) => {
-      if (req.body && typeof req.body === 'object' && '_method' in req.body) {
-        // look in urlencoded POST bodies and delete it
-        const method = req.body._method
-        delete req.body._method
-        return method
-      }
-    }))
+    this.app.use(
+      methodOverride((req, res) => {
+        if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+          // look in urlencoded POST bodies and delete it
+          const method = req.body._method
+          delete req.body._method
+          return method
+        }
+      })
+    )
 
-    this.app.use(bodyParser.urlencoded({
-      extended: true,
-      limit: '500kb'
-    }))
+    this.app.use(
+      bodyParser.urlencoded({
+        extended: true,
+        limit: '500kb'
+      })
+    )
 
     this.app.use(express.json())
 
-    this.app.use(session({
-      keys: ['jingok1', 'jingok2'],
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      name: 'session'
-    }))
+    this.app.use(
+      session({
+        keys: ['jingok1', 'jingok2'],
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        name: 'session'
+      })
+    )
 
     this.app.set('cache', mcache())
   }

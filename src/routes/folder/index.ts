@@ -7,35 +7,59 @@ import { NextFunction, Request, Response, Router } from 'express'
 import { assign as _assign } from 'lodash'
 
 export default class FolderRoute extends BaseRoute {
-  public static create (router: Router, config: Config) {
+  public static create(router: Router, config: Config) {
     const csrfProtection = csrfMiddleware(config)
 
-    router.get(`/folder/create`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
-      new FolderRoute(config).create(req, res, next)
-    })
+    router.get(
+      `/folder/create`,
+      csrfProtection,
+      (req: Request, res: Response, next: NextFunction) => {
+        new FolderRoute(config).create(req, res, next)
+      }
+    )
 
-    router.post(`/folder/create`, [csrfProtection, validateCreate()], (req: Request, res: Response, next: NextFunction) => {
-      new FolderRoute(config).didCreate(req, res, next)
-    })
+    router.post(
+      `/folder/create`,
+      [csrfProtection, validateCreate()],
+      (req: Request, res: Response, next: NextFunction) => {
+        new FolderRoute(config).didCreate(req, res, next)
+      }
+    )
 
-    router.get(`/folder/rename`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
-      new FolderRoute(config).rename(req, res, next)
-    })
+    router.get(
+      `/folder/rename`,
+      csrfProtection,
+      (req: Request, res: Response, next: NextFunction) => {
+        new FolderRoute(config).rename(req, res, next)
+      }
+    )
 
-    router.post(`/folder/rename`, [csrfProtection, validateRename()], (req: Request, res: Response, next: NextFunction) => {
-      new FolderRoute(config).didRename(req, res, next)
-    })
+    router.post(
+      `/folder/rename`,
+      [csrfProtection, validateRename()],
+      (req: Request, res: Response, next: NextFunction) => {
+        new FolderRoute(config).didRename(req, res, next)
+      }
+    )
 
-    router.get(`/folder/delete`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
-      new FolderRoute(config).delete(req, res, next)
-    })
+    router.get(
+      `/folder/delete`,
+      csrfProtection,
+      (req: Request, res: Response, next: NextFunction) => {
+        new FolderRoute(config).delete(req, res, next)
+      }
+    )
 
-    router.post(`/folder/delete`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
-      new FolderRoute(config).didDelete(req, res, next)
-    })
+    router.post(
+      `/folder/delete`,
+      csrfProtection,
+      (req: Request, res: Response, next: NextFunction) => {
+        new FolderRoute(config).didDelete(req, res, next)
+      }
+    )
   }
 
-  public async create (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Creating a folder'
     const into = req.query.into || ''
     const folderName = req.query.folderName || ''
@@ -58,7 +82,7 @@ export default class FolderRoute extends BaseRoute {
     this.render(req, res, 'folder-create', scope)
   }
 
-  public async didCreate (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async didCreate(req: Request, res: Response, next: NextFunction): Promise<void> {
     const { errors, data } = this.inspectRequest(req)
     const folderName = data.folderName
     const into = data.into
@@ -77,7 +101,12 @@ export default class FolderRoute extends BaseRoute {
 
     const itExists = await this.sdk.folderExists(folderName, into)
     if (itExists) {
-      this.render(req, res, 'folder-create', _assign(scope, { errors: ['A folder or file with this name already exists'] }))
+      this.render(
+        req,
+        res,
+        'folder-create',
+        _assign(scope, { errors: ['A folder or file with this name already exists'] })
+      )
       return
     }
 
@@ -91,7 +120,7 @@ export default class FolderRoute extends BaseRoute {
     }
   }
 
-  public async rename (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async rename(req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Renaming a folder'
     const folderName = req.query.folderName || ''
     const into = req.query.into || ''
@@ -118,7 +147,7 @@ export default class FolderRoute extends BaseRoute {
     this.render(req, res, 'folder-rename', scope)
   }
 
-  public async didRename (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async didRename(req: Request, res: Response, next: NextFunction): Promise<void> {
     const { errors, data } = this.inspectRequest(req)
     const folderName = data.folderName
     const currentFolderName = data.currentFolderName
@@ -139,12 +168,12 @@ export default class FolderRoute extends BaseRoute {
       await this.sdk.renameFolder(currentFolderName, folderName, into)
       res.redirect(this.folderHelpers.pathFor('list', folderName, into))
       req.app && req.app.emit(je('jingo.folderRenamed'))
-      } catch (err) {
+    } catch (err) {
       res.status(500).render('500')
     }
   }
 
-  public async delete (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Deleting a folder'
     const folderName = req.query.folderName || ''
     const into = req.query.into || ''
@@ -171,7 +200,7 @@ export default class FolderRoute extends BaseRoute {
     this.render(req, res, 'folder-delete', scope)
   }
 
-  public async didDelete (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async didDelete(req: Request, res: Response, next: NextFunction): Promise<void> {
     const folderName = req.body.folderName
     const into = req.body.into
 
@@ -185,7 +214,7 @@ export default class FolderRoute extends BaseRoute {
     req.app && req.app.emit(je('jingo.folderDeleted'))
   }
 
-  private async assertDirectoryExists (directory, req: Request, res: Response): Promise<boolean> {
+  private async assertDirectoryExists(directory, req: Request, res: Response): Promise<boolean> {
     if (!directory) {
       return true
     }
@@ -203,7 +232,12 @@ export default class FolderRoute extends BaseRoute {
     return itExists
   }
 
-  private async assertFolderDoesNotExist (folder, into, req: Request, res: Response): Promise<boolean> {
+  private async assertFolderDoesNotExist(
+    folder,
+    into,
+    req: Request,
+    res: Response
+  ): Promise<boolean> {
     if (!folder) {
       return true
     }
@@ -216,7 +250,7 @@ export default class FolderRoute extends BaseRoute {
     return !itExists
   }
 
-  private async assertFolderExists (folder, into, req: Request, res: Response) {
+  private async assertFolderExists(folder, into, req: Request, res: Response) {
     const itExists = await this.sdk.folderExists(folder, into)
     if (!itExists) {
       res.redirect(this.config.mount(`/?e=1`))

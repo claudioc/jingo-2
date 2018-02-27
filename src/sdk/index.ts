@@ -26,7 +26,7 @@ interface IDocItem {
   updatedAt: string
 }
 
-function sdk (config: Config): Sdk {
+function sdk(config: Config): Sdk {
   return new Sdk(config)
 }
 
@@ -37,7 +37,7 @@ export class Sdk {
   public fsApi: FileSystemApi
   public wikiHelpers: Wiki
 
-  constructor (public config: Config) {
+  constructor(public config: Config) {
     this.wikiHelpers = wiki(config)
     this.docHelpers = doc(config)
     this.folderHelpers = folder(config)
@@ -57,19 +57,21 @@ export class Sdk {
           try {
             const pre = hljs.highlight(lang, str, true).value
             return `<pre class="hljs"><code>${pre}</code></pre>`
-          } catch (__) { /**/ }
+          } catch (__) {
+            /**/
+          }
         }
         return ''
       },
       linkify: true,
       typographer: true
     })
-    .use(markdownItAnchor, {
-      level: [1, 2],
-      permalink: true
-    })
-    .use(markdownItTableOfContents)
-    .use(markdownItFootnote)
+      .use(markdownItAnchor, {
+        level: [1, 2],
+        permalink: true
+      })
+      .use(markdownItTableOfContents)
+      .use(markdownItFootnote)
 
     if (markdownItEmoji) {
       this.transpiler.use(markdownItEmoji)
@@ -82,7 +84,7 @@ export class Sdk {
    * Render a markdown string to HTML
    * @param content A markdown string
    */
-  public renderToHtml (content: string) {
+  public renderToHtml(content: string) {
     return this.transpiler.render(content)
   }
 
@@ -90,7 +92,7 @@ export class Sdk {
    * Returns the list of documents in the repository
    * @param into A sub directory below the root
    */
-  public async listDocs (into: string = ''): Promise<IDocItem[] | any> {
+  public async listDocs(into: string = ''): Promise<IDocItem[] | any> {
     const docRoot = this.config.get('documentRoot')
 
     let files = await this.fsApi.scanDir(path.join(docRoot, into), {
@@ -108,7 +110,7 @@ export class Sdk {
    * Returns the list of folders in the path
    * @param into A sub directory below the root
    */
-  public async listFolders (into: string = ''): Promise<IDocItem[] | any> {
+  public async listFolders(into: string = ''): Promise<IDocItem[] | any> {
     const docRoot = this.config.get('documentRoot')
 
     const folders = await this.fsApi.scanDir(path.join(docRoot, into), {
@@ -125,7 +127,7 @@ export class Sdk {
    * @param docName
    * @param docContent
    */
-  public async createDoc (docName: string, docContent: string, into: string = ''): Promise<void> {
+  public async createDoc(docName: string, docContent: string, into: string = ''): Promise<void> {
     return this.saveDoc(docName, docContent, into)
   }
 
@@ -137,9 +139,14 @@ export class Sdk {
    * @param docContent
    * @param into
    */
-  public async updateDoc (oldDocName: string, docName: string, docContent: string, into: string = ''): Promise<void> {
+  public async updateDoc(
+    oldDocName: string,
+    docName: string,
+    docContent: string,
+    into: string = ''
+  ): Promise<void> {
     // Rename the file (if needed and if possible)
-    if (!(await this.renameDoc(oldDocName, docName, into))) {
+    if (!await this.renameDoc(oldDocName, docName, into)) {
       throw new Error('Cannot rename a document to an already existant one')
     }
 
@@ -150,7 +157,7 @@ export class Sdk {
    * Deletes a document from the file system
    * @param docName Id of the document to delete
    */
-  public async deleteDoc (docName: string, into: string = ''): Promise<void> {
+  public async deleteDoc(docName: string, into: string = ''): Promise<void> {
     const fullDocName = this.makeFilename(docName, into)
     return this.fsApi.unlink(fullDocName)
   }
@@ -160,7 +167,7 @@ export class Sdk {
    * @param docName Id of the document to check
    * @param into The directory where the document supposedly exists
    */
-  public async docExists (docName: string, into: string = ''): Promise<boolean> {
+  public async docExists(docName: string, into: string = ''): Promise<boolean> {
     const fullDocName = this.makeFilename(docName, into)
     return await this.fsApi.access(fullDocName, fs.constants.F_OK)
   }
@@ -172,7 +179,11 @@ export class Sdk {
    * @param newDocName
    * @param into directory where the document resides
    */
-  public async renameDoc (oldDocName: string, newDocName: string, into: string = ''): Promise<boolean> {
+  public async renameDoc(
+    oldDocName: string,
+    newDocName: string,
+    into: string = ''
+  ): Promise<boolean> {
     if (oldDocName === newDocName) {
       return true
     }
@@ -200,7 +211,7 @@ export class Sdk {
    * @param docName2 Name of the second doc
    * @param into directory where the document resides
    */
-  public async isOverwritableBy (docName1: string, docName2: string, into: string = '') {
+  public async isOverwritableBy(docName1: string, docName2: string, into: string = '') {
     if (this.config.sys.fileSystemIsCaseSensitive && docName1 !== docName2) {
       return false
     }
@@ -226,7 +237,7 @@ export class Sdk {
    * @param from A subdirectory where the document can be found
    * @param the version we want, defaults to HEAD
    */
-  public async loadDoc (docName: string, from: string = '', version = 'HEAD'): Promise<IDoc> {
+  public async loadDoc(docName: string, from: string = '', version = 'HEAD'): Promise<IDoc> {
     const fullDocName = this.makeFilename(docName, from)
     const title = await this.findDocTitle(docName, from)
     let content
@@ -246,7 +257,7 @@ export class Sdk {
    * Loads any file from the repository (but doesn't use versioning, hence not git here)
    * @param filepath The path of the file, relative to the documentRoot
    */
-  public async loadFile (filepath: string): Promise<string> {
+  public async loadFile(filepath: string): Promise<string> {
     const fullPathname = this.folderHelpers.fullpathFor(filepath)
     const content = await this.fsApi.readFile(fullPathname)
     return content
@@ -256,7 +267,7 @@ export class Sdk {
    * Loads any file from the repository (sync version for Handlebars helpers)
    * @param filepath The path of the file, relative to the documentRoot
    */
-  public loadFileSync (filepath: string): string {
+  public loadFileSync(filepath: string): string {
     const fullPathname = this.folderHelpers.fullpathFor(filepath)
     const content = this.fsApi.readFileSync(fullPathname)
     return content
@@ -269,7 +280,7 @@ export class Sdk {
    * @param docName The docName
    * @param from The folder the docName is in
    */
-  public async findDocTitle (docName: string, from: string = ''): Promise<string> {
+  public async findDocTitle(docName: string, from: string = ''): Promise<string> {
     if (this.config.sys.fileSystemIsCaseSensitive) {
       return this.wikiHelpers.unwikify(docName)
     }
@@ -293,7 +304,7 @@ export class Sdk {
    * @param docName Id of the document to check
    * @param into The directory where the folder should be
    */
-  public async folderExists (folderName: string, into: string = ''): Promise<boolean> {
+  public async folderExists(folderName: string, into: string = ''): Promise<boolean> {
     const fullFolderName = this.makeDirname(folderName, into)
     return await this.fsApi.access(fullFolderName, fs.constants.F_OK)
   }
@@ -302,7 +313,7 @@ export class Sdk {
    * Returns whether a directory is accessible or not (using documentRoot as base)
    * @param docName Id of the document to check
    */
-  public async isDirectoryAccessible (directoryName: string): Promise<boolean> {
+  public async isDirectoryAccessible(directoryName: string): Promise<boolean> {
     const fullDirectoryName = this.folderHelpers.fullpathFor(directoryName)
     return await this.fsApi.access(fullDirectoryName, fs.constants.F_OK)
   }
@@ -312,7 +323,7 @@ export class Sdk {
    * @param folderName
    * @param into The directory where to create the folder
    */
-  public async createFolder (folderName: string, into: string = ''): Promise<void> {
+  public async createFolder(folderName: string, into: string = ''): Promise<void> {
     const fullFolderName = this.makeDirname(folderName, into)
     await this.fsApi.mkdir(fullFolderName)
   }
@@ -324,7 +335,11 @@ export class Sdk {
    * @param newFolderName
    * @param into The directory where old and new reside
    */
-  public async renameFolder (oldFolderName: string, newFolderName: string, into: string = ''): Promise<boolean> {
+  public async renameFolder(
+    oldFolderName: string,
+    newFolderName: string,
+    into: string = ''
+  ): Promise<boolean> {
     if (oldFolderName === newFolderName) {
       return true
     }
@@ -344,7 +359,7 @@ export class Sdk {
    * @param folderName Id of the folder to delete
    * @into into Locatio of the folder
    */
-  public async deleteFolder (folderName: string, into: string = ''): Promise<void> {
+  public async deleteFolder(folderName: string, into: string = ''): Promise<void> {
     const fullFolderName = this.makeDirname(folderName, into)
     return this.fsApi.rmdir(fullFolderName)
   }
@@ -354,16 +369,16 @@ export class Sdk {
    * @param docName Id of the document to save
    * @param docContent Content of the document
    */
-  protected async saveDoc (docName: string, docContent: string, into: string = ''): Promise<void> {
+  protected async saveDoc(docName: string, docContent: string, into: string = ''): Promise<void> {
     const fullDocName = this.makeFilename(docName, into)
     await this.fsApi.writeFile(fullDocName, docContent)
   }
 
-  protected makeDirname (folderName: string, parentFolder: string) {
+  protected makeDirname(folderName: string, parentFolder: string) {
     return path.join(this.folderHelpers.fullpathFor(parentFolder) as any, folderName)
   }
 
-  protected makeFilename (docName: string, parentFolder: string) {
+  protected makeFilename(docName: string, parentFolder: string) {
     const docFilename = this.docHelpers.docNameToFilename(docName)
     return path.join(this.folderHelpers.fullpathFor(parentFolder) as any, docFilename as any)
   }

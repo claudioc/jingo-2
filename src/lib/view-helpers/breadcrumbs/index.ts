@@ -1,11 +1,9 @@
-import {
-  take as _take
-} from 'lodash'
+import { take as _take } from 'lodash'
 
 let makeHelper
 
-export default makeHelper = (config) => {
-  return (params) => {
+export default (makeHelper = config => {
+  return params => {
     const { dirName, docTitle } = params.hash
 
     const basePath = config.get('wiki.basePath')
@@ -30,4 +28,4 @@ export default makeHelper = (config) => {
 
     return breadcrumbs.join('')
   }
-}
+})

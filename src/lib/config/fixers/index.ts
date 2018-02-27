@@ -6,11 +6,7 @@ import {
   toString as _toString
 } from 'lodash'
 
-import {
-  ICustomSettings,
-  IWikiSettings,
-  TFeaturesSettings
-} from '@lib/config'
+import { ICustomSettings, IWikiSettings, TFeaturesSettings } from '@lib/config'
 
 /*
  * Fixers are here to prevent that someone messes with the config
@@ -30,7 +26,9 @@ const fixWiki = (wikiSettings: IWikiSettings, defaults: IWikiSettings): IWikiSet
   settings.index = _isUndefined(settings.index) ? defaults.index : _toString(settings.index).trim()
 
   // Fix the basePath
-  settings.basePath = _isUndefined(settings.basePath) ? defaults.basePath : _toString(settings.basePath).trim()
+  settings.basePath = _isUndefined(settings.basePath)
+    ? defaults.basePath
+    : _toString(settings.basePath).trim()
   settings.basePath = settings.basePath.replace(/^\/+|\/+$/g, '').trim()
   if (settings.basePath === '') {
     settings.basePath = defaults.basePath
@@ -70,16 +68,14 @@ const fixCustom = (customSettings: ICustomSettings, defaults: ICustomSettings): 
   return settings
 }
 
-const fixFeatures = (featuresSettings: TFeaturesSettings, defaults: TFeaturesSettings): TFeaturesSettings => {
+const fixFeatures = (
+  featuresSettings: TFeaturesSettings,
+  defaults: TFeaturesSettings
+): TFeaturesSettings => {
   const settings: TFeaturesSettings = {}
   _merge(settings, defaults, _isObject(featuresSettings) ? featuresSettings : {})
 
-  const features = [
-    'codeHighlighter',
-    'ipcSupport',
-    'gitSupport',
-    'emojiSupport'
-  ]
+  const features = ['codeHighlighter', 'ipcSupport', 'gitSupport', 'emojiSupport']
 
   features.forEach(feature => {
     const setting = settings[feature]

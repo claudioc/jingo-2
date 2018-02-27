@@ -1,4 +1,4 @@
-(() => {
+;(() => {
   const qs = document.querySelector.bind(document)
   const doPreview = qs('.do-preview')
   const doEdit = qs('.do-edit')

@@ -1,16 +1,11 @@
 import { Config } from '@lib/config'
 import * as ipc_ from 'node-ipc'
 
-type IIpcOp =
-  'READ WIKI' |
-  'CREATE DOC' |
-  'UPDATE DOC' |
-  'DELETE DOC' |
-  'CREATE FOLDER'
+type IIpcOp = 'READ WIKI' | 'CREATE DOC' | 'UPDATE DOC' | 'DELETE DOC' | 'CREATE FOLDER'
 
 export interface IIpc {
-  connect (): void
-  send (op: IIpcOp, subject): void
+  connect(): void
+  send(op: IIpcOp, subject): void
 }
 
 // We use a dummy object to return in case IPC is not active
@@ -32,12 +27,12 @@ export class Ipc implements IIpc {
   private server
   private enabled
 
-  constructor (public config: Config) {
+  constructor(public config: Config) {
     this.server = this.config.get('features.ipcSupport.server')
     this.enabled = this.config.get('features.ipcSupport.enabled')
   }
 
-  public connect () {
+  public connect() {
     if (!this.enabled) {
       return
     }
@@ -49,7 +44,7 @@ export class Ipc implements IIpc {
 
     ipc_.connectTo(this.server, handleConnected.bind(this))
 
-    function handleConnected () {
+    function handleConnected() {
       ipc_.of[this.server].on('connect', () => {
         console.log(`📞 Connected to the ipc server ${this.server}`)
         this.send('HELLO')
@@ -61,7 +56,7 @@ export class Ipc implements IIpc {
     }
   }
 
-  public send (op: IIpcOp, subject) {
+  public send(op: IIpcOp, subject) {
     if (!this.enabled) {
       return
     }

@@ -80,23 +80,32 @@ test('fixWiki basePath unset', t => {
 
 test('fixWiki basePath with leading and trailing slashes', t => {
   const expected0 = { index: 'Home', basePath: 'tuo/nonno' }
-  const actual0 = fixers.fixWiki({
-    basePath: '/tuo/nonno'
-  } as any, { index: 'Home', basePath: 'bzzt' })
+  const actual0 = fixers.fixWiki(
+    {
+      basePath: '/tuo/nonno'
+    } as any,
+    { index: 'Home', basePath: 'bzzt' }
+  )
   t.deepEqual(actual0, expected0 as any)
 
   const expected1 = { index: 'Home', basePath: 'tuo/nonno' }
-  const actual1 = fixers.fixWiki({
-    basePath: '    /tuo/nonno//'
-  } as any, { index: 'Home', basePath: 'bzzt' })
+  const actual1 = fixers.fixWiki(
+    {
+      basePath: '    /tuo/nonno//'
+    } as any,
+    { index: 'Home', basePath: 'bzzt' }
+  )
   t.deepEqual(actual1, expected1 as any)
 })
 
 test('fixWiki basePath empty', t => {
   const expected0 = { index: 'Home', basePath: 'lol' }
-  const actual0 = fixers.fixWiki({
-    basePath: '///   ///'
-  } as any, { index: 'Home', basePath: 'lol' })
+  const actual0 = fixers.fixWiki(
+    {
+      basePath: '///   ///'
+    } as any,
+    { index: 'Home', basePath: 'lol' }
+  )
   t.deepEqual(actual0, expected0 as any)
 })
 

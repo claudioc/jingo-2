@@ -21,8 +21,7 @@ test('post /api/render', async t => {
 
 test('get /api/serve-static (404)', async t => {
   const server = Server.bootstrap(await config())
-  const response = await supertest(server.app)
-    .get('/api/serve-static/zot.js')
+  const response = await supertest(server.app).get('/api/serve-static/zot.js')
 
   t.is(response.status, 404)
 })
@@ -34,24 +33,21 @@ test('get /api/serve-static (404)', async t => {
 
 test('get /api/wiki (404)', async t => {
   const server = Server.bootstrap(await config())
-  const response = await supertest(server.app)
-    .get('/api/wiki/does-not-exist')
+  const response = await supertest(server.app).get('/api/wiki/does-not-exist')
   t.is(response.status, 404)
 })
 
 test('get /api/wiki (200)', async t => {
   const server = Server.bootstrap(await fakeFs.config())
   fakeFs.writeFile('solomon_the_king.md', '### Solomon the King')
-  const response = await supertest(server.app)
-    .get('/api/wiki/solomon_the_king')
+  const response = await supertest(server.app).get('/api/wiki/solomon_the_king')
   t.is(response.status, 200)
   t.is(response.text, '<h3>Solomon the King</h3>\n')
 })
 
 test('post /api/doc (invalid data)', async t => {
   const server = Server.bootstrap(await fakeFs.config())
-  const response = await supertest(server.app)
-    .post('/api/doc')
+  const response = await supertest(server.app).post('/api/doc')
   t.is(response.status, 406)
 })
 

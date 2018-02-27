@@ -19,60 +19,59 @@ const fsApi = (fsDriver): FileSystemApi => {
 }
 
 export class FileSystemApi {
-  constructor (public fsDriver) {
-  }
+  constructor(public fsDriver) {}
 
-  public async unlink (fullPath: fs.PathLike): Promise<void> {
+  public async unlink(fullPath: fs.PathLike): Promise<void> {
     const fn = promisify(this.fsDriver.unlink)
     await fn(fullPath)
   }
 
-  public async rmdir (fullPath: fs.PathLike): Promise<void> {
+  public async rmdir(fullPath: fs.PathLike): Promise<void> {
     const fn = promisify(this.fsDriver.rmdir)
     await fn(fullPath)
   }
 
-  public async rename (oldPath: fs.PathLike, newPath: fs.PathLike): Promise<void> {
+  public async rename(oldPath: fs.PathLike, newPath: fs.PathLike): Promise<void> {
     const fn = promisify(this.fsDriver.rename)
     await fn(oldPath, newPath)
   }
 
-  public async stat (filename: fs.PathLike): Promise<fs.Stats> {
+  public async stat(filename: fs.PathLike): Promise<fs.Stats> {
     const fn = promisify(this.fsDriver.stat)
     return await fn(filename)
   }
 
-  public statSync (filename: fs.PathLike): fs.Stats {
+  public statSync(filename: fs.PathLike): fs.Stats {
     return this.fsDriver.statSync(filename)
   }
 
-  public async mkdir (fullFolderName: fs.PathLike): Promise<void> {
+  public async mkdir(fullFolderName: fs.PathLike): Promise<void> {
     const fn = promisify(this.fsDriver.mkdir)
     return await fn(fullFolderName)
   }
 
-  public async writeFile (filename: fs.PathLike, content: string): Promise<void> {
+  public async writeFile(filename: fs.PathLike, content: string): Promise<void> {
     const fn = promisify(this.fsDriver.writeFile)
     await fn(filename, content, 'utf8')
   }
 
-  public async readFile (filename: fs.PathLike): Promise<string> {
+  public async readFile(filename: fs.PathLike): Promise<string> {
     const fn = promisify(this.fsDriver.readFile)
     const content = await fn(filename, 'utf8')
     return content.toString()
   }
 
-  public readFileSync (filename: fs.PathLike): string {
+  public readFileSync(filename: fs.PathLike): string {
     const content = this.fsDriver.readFileSync(filename, 'utf8')
     return content.toString()
   }
 
-  public async readdir (root: fs.PathLike): Promise<string[]> {
+  public async readdir(root: fs.PathLike): Promise<string[]> {
     const fn = promisify(this.fsDriver.readdir)
     return await fn(root)
   }
 
-  public async access (filename: fs.PathLike, mode: number): Promise<boolean> {
+  public async access(filename: fs.PathLike, mode: number): Promise<boolean> {
     const fn = promisify(this.fsDriver.access)
     try {
       await fn(filename, mode)
@@ -86,7 +85,7 @@ export class FileSystemApi {
    * Probe file system for case sensitiveness
    * @param tester A file or directory to use as test
    */
-  public async isCaseSensitive (tester: string) {
+  public async isCaseSensitive(tester: string) {
     let stat1
     let stat2
     try {
@@ -104,7 +103,7 @@ export class FileSystemApi {
    * @param dirname
    * @param options ScanDirOptions
    */
-  public async scanDir (dirname: string, options: ScanDirOptions = {}): Promise<string[]> {
+  public async scanDir(dirname: string, options: ScanDirOptions = {}): Promise<string[]> {
     const items = await this.readdir(dirname)
 
     if (typeof options.includeFiles === 'undefined') {

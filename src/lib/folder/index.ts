@@ -9,13 +9,12 @@ type FolderPathParts = {
   folderName: string
 }
 
-function folder (config: Config): Folder {
+function folder(config: Config): Folder {
   return new Folder(config)
 }
 
 export class Folder {
-  constructor (public config: Config) {
-  }
+  constructor(public config: Config) {}
 
   /**
    * Returns the URL path for a folder action
@@ -23,20 +22,26 @@ export class Folder {
    * @param folderName Name of the folder to act upon
    * @param into The name of the parent folder
    */
-  public pathFor (action: FolderAction, folderName: string = '', into: string = ''): string {
+  public pathFor(action: FolderAction, folderName: string = '', into: string = ''): string {
     let actionPath = this.config.mount(`folder/${action}`)
     const queso = new Queso()
 
     if (action === 'list') {
       // Encode the name, but do not encode slashes in it
-      let folderPath = encodeURIComponent(folderName.replace(/^\/+|\/+$/g, '').trim()).replace(/%2F/g, '/')
+      let folderPath = encodeURIComponent(folderName.replace(/^\/+|\/+$/g, '').trim()).replace(
+        /%2F/g,
+        '/'
+      )
       folderPath += folderPath.length > 0 ? '/' : ''
       // When into and folderPath are empty, path.join returns a '.'
       folderPath = path.join(into, folderPath).replace(/^\.$/, '')
       actionPath = this.config.mount(`${this.config.get('wiki.basePath')}/${folderPath}`)
     }
 
-    if ((action === 'rename' || action === 'delete' || action === 'create') && folderName.length > 0) {
+    if (
+      (action === 'rename' || action === 'delete' || action === 'create') &&
+      folderName.length > 0
+    ) {
       queso.add('folderName', folderName)
     }
 
@@ -51,7 +56,7 @@ export class Folder {
    * Returns the full file system path of a folder
    * @param id The path of the folder
    */
-  public fullpathFor (folderName: string): fs_.PathLike {
+  public fullpathFor(folderName: string): fs_.PathLike {
     const docRoot = this.config.get('documentRoot')
     return path.resolve(docRoot, folderName || '')
   }
@@ -61,7 +66,7 @@ export class Folder {
    * @param unparsed The full path to parse
    * @returns FolderPathParts
    */
-  public splitPath (unparsed: string): FolderPathParts {
+  public splitPath(unparsed: string): FolderPathParts {
     const normalizedPath = (unparsed || '').trim()
 
     const { dir, name } = path.parse(normalizedPath)

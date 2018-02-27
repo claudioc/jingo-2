@@ -3,15 +3,15 @@ import docEvents from './doc'
 import wikiEvents from './wiki'
 
 export type JingoEvent =
-  'jingo.docCreated' |
-  'jingo.docDeleted' |
-  'jingo.docUpdated' |
-  'jingo.docRestored' |
-  'jingo.folderCreated' |
-  'jingo.folderDeleted' |
-  'jingo.folderRenamed' |
-  'jingo.wikiRead' |
-  'jingo.wikiList'
+  | 'jingo.docCreated'
+  | 'jingo.docDeleted'
+  | 'jingo.docUpdated'
+  | 'jingo.docRestored'
+  | 'jingo.folderCreated'
+  | 'jingo.folderDeleted'
+  | 'jingo.folderRenamed'
+  | 'jingo.wikiRead'
+  | 'jingo.wikiList'
 
 const appEvents = {
   'jingo.docCreated': docEvents.created,
@@ -23,9 +23,7 @@ const appEvents = {
   'jingo.folderRenamed': _noop,
   'jingo.wikiList': _noop,
   'jingo.wikiRead': wikiEvents.read
-} as {
-  [event in JingoEvent]: any
-}
+} as { [event in JingoEvent]: any }
 
 // This method exists for the sole purpose of type-checking
 // the parameter `e`. I didn't find a way to fix this in the global.d.ts

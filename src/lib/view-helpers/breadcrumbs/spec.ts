@@ -22,7 +22,10 @@ test('breadcrumbs with simple param', async t => {
     }
   }
 
-  t.is(helper(params), '<ul><li><a href="/wiki/">Wiki</a></li><li><a href="/wiki/claudio/">claudio</a></li><li><span>cicali</span></li></ul>')
+  t.is(
+    helper(params),
+    '<ul><li><a href="/wiki/">Wiki</a></li><li><a href="/wiki/claudio/">claudio</a></li><li><span>cicali</span></li></ul>'
+  )
 })
 
 test('breadcrumbs with more complex param', async t => {
@@ -34,5 +37,8 @@ test('breadcrumbs with more complex param', async t => {
     }
   }
 
-  t.is(helper(params), '<ul><li><a href="/wiki/">Wiki</a></li><li><a href="/wiki/claudio/">claudio</a></li><li><a href="/wiki/claudio/dottor/">dottor</a></li><li><a href="/wiki/mister/">mister</a></li><li><span>cicali</span></li></ul>')
+  t.is(
+    helper(params),
+    '<ul><li><a href="/wiki/">Wiki</a></li><li><a href="/wiki/claudio/">claudio</a></li><li><a href="/wiki/claudio/dottor/">dottor</a></li><li><a href="/wiki/mister/">mister</a></li><li><span>cicali</span></li></ul>'
+  )
 })

@@ -5,17 +5,7 @@ import { IDoc } from '@sdk'
 import { NextFunction, Request, Response, Router } from 'express'
 
 export default class WikiRoute extends BaseRoute {
-  private dirName: string
-  private docName: string
-
-  constructor (config, reqPath) {
-    super(config)
-    const { dirName, docName } = this.docHelpers.splitPath(reqPath)
-    this.dirName = dirName
-    this.docName = docName
-  }
-
-  public static create (router: Router, config: Config) {
+  public static create(router: Router, config: Config) {
     const basePath = config.get('wiki.basePath')
 
     /**
@@ -35,12 +25,22 @@ export default class WikiRoute extends BaseRoute {
         return
       }
 
-      const method = reqPath.endsWith('/') ? 'list' : 'read';
-      (new WikiRoute(config, reqPath))[method](req, res, next)
+      const method = reqPath.endsWith('/') ? 'list' : 'read'
+      new WikiRoute(config, reqPath)[method](req, res, next)
     })
   }
 
-  public async read (req: Request, res: Response, next: NextFunction) {
+  private dirName: string
+  private docName: string
+
+  constructor(config, reqPath) {
+    super(config)
+    const { dirName, docName } = this.docHelpers.splitPath(reqPath)
+    this.dirName = dirName
+    this.docName = docName
+  }
+
+  public async read(req: Request, res: Response, next: NextFunction) {
     const isIndex = this.config.get('wiki.index') === this.docName
     try {
       const doc = await this.acquireDoc(req)
@@ -69,7 +69,7 @@ export default class WikiRoute extends BaseRoute {
     }
   }
 
-  public async list (req: Request, res: Response, next: NextFunction) {
+  public async list(req: Request, res: Response, next: NextFunction) {
     const { folderName, parentDirname } = this.folderHelpers.splitPath(this.dirName)
 
     this.title = `Jingo – List of documents`
@@ -106,7 +106,7 @@ export default class WikiRoute extends BaseRoute {
    * Acquires the doc from cache or from the actual doc content
    * @param req The request object
    */
-  private async acquireDoc (req: Request): Promise<IDoc> {
+  private async acquireDoc(req: Request): Promise<IDoc> {
     const cache = req.app.get('cache')
     const version = this.readVersion(req)
 
@@ -130,7 +130,7 @@ export default class WikiRoute extends BaseRoute {
     return doc
   }
 
-  private readVersion (req: Request): string {
+  private readVersion(req: Request): string {
     if (!this.config.hasFeature('gitSupport')) {
       return 'HEAD'
     }

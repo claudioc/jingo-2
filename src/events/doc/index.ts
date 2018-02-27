@@ -2,7 +2,7 @@ import { Config } from '@lib/config'
 import git from '@lib/git'
 import ipc from '@lib/ipc'
 
-const created = async (config: Config, params: {docName: string; into: string;}) => {
+const created = async (config: Config, params: { docName: string; into: string }) => {
   if (!params) {
     return
   }
@@ -14,7 +14,10 @@ const created = async (config: Config, params: {docName: string; into: string;})
   await gitMech.$commit(params.docName, params.into, 'Document created')
 }
 
-const updated = async (config: Config, params: {docName: string; into: string; comment: string}) => {
+const updated = async (
+  config: Config,
+  params: { docName: string; into: string; comment: string }
+) => {
   if (!params) {
     return
   }

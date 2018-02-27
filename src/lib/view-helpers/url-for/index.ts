@@ -3,20 +3,16 @@ import folder from '@lib/folder'
 import Queso from '@lib/queso'
 import wiki from '@lib/wiki'
 
-import {
-  isEmpty as _isEmpty,
-  omit as _omit,
-  omitBy as _omitBy
-} from 'lodash'
+import { isEmpty as _isEmpty, omit as _omit, omitBy as _omitBy } from 'lodash'
 
 let makeHelper
 
-export default makeHelper = (config) => {
+export default (makeHelper = config => {
   const wikiHelpers = wiki(config)
   const docHelpers = doc(config)
   const folderHelpers = folder(config)
 
-  return (params) => {
+  return params => {
     const KNOWN_PARAMS = ['action', 'id', 'into', 'resource']
     const { resource, id, action, into } = params.hash
     let path
@@ -28,7 +24,7 @@ export default makeHelper = (config) => {
 
       // Access to any wiki page
       case 'wiki':
-        path =  wikiHelpers.pathFor(id, into)
+        path = wikiHelpers.pathFor(id, into)
         break
 
       // Access to any folder
@@ -65,4 +61,4 @@ export default makeHelper = (config) => {
 
     return `${path}${queryString}`
   }
-}
+})

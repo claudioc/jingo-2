@@ -8,8 +8,7 @@ export const validateCreate = () => {
       .withMessage('The folder title cannot be empty')
       .trim(),
 
-    check('into')
-      .trim(),
+    check('into').trim(),
 
     sanitize(['folderName', 'into'])
   ]
@@ -26,8 +25,7 @@ export const validateRename = () => {
       .isLength({ min: 1 })
       .trim(),
 
-    check('into')
-      .trim(),
+    check('into').trim(),
 
     sanitize(['folderName', 'currentFolderName', 'into'])
   ]

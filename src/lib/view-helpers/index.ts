@@ -9,7 +9,7 @@ import hasFeature from './has-feature'
 import timeAgo from './time-ago'
 import urlFor from './url-for'
 
-export default function viewHelpers (config: Config) {
+export default function viewHelpers(config: Config) {
   return {
     breadcrumbs: breadcrumbs(config),
     customIncludes: customIncludes(config),

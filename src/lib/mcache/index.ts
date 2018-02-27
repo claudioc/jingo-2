@@ -8,7 +8,7 @@ export let mcache = () => {
 export default class Mcache {
   private records: Map<string, any> = new Map()
 
-  put (key: string, value: any, time?: number) {
+  public put(key: string, value: any, time?: number) {
     if (typeof time !== 'undefined' && (typeof time !== 'number' || isNaN(time) || time <= 0)) {
       throw new Error('Cache timeout must be a positive number')
     }
@@ -27,19 +27,19 @@ export default class Mcache {
     return value
   }
 
-  get size () {
+  get size() {
     return this.records.size
   }
 
-  del (key: string) {
+  public del(key: string) {
     this.records.delete(key)
   }
 
-  clear () {
+  public clear() {
     this.records.clear()
   }
 
-  get (key: string) {
+  public get(key: string) {
     if (!this.records.has(key)) {
       return undefined
     }
@@ -55,7 +55,7 @@ export default class Mcache {
     return undefined
   }
 
-  keys () {
+  public keys() {
     return Array.from(this.records.keys())
   }
 }

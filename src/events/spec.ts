@@ -1,9 +1,4 @@
-import {
-  je,
-  JingoEvent,
-  jingoEventHandlerFor,
-  jingoEvents
-} from '@events/index'
+import { je, JingoEvent, jingoEventHandlerFor, jingoEvents } from '@events/index'
 import test from 'ava'
 import { noop as _noop } from 'lodash'
 

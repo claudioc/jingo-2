@@ -6,14 +6,14 @@ import * as MountFs from 'mountfs'
 import * as path from 'path'
 
 export default class FakeFs {
-  fsDriver
+  public fsDriver
 
-  constructor (public mountPoint: string) {
+  constructor(public mountPoint: string) {
     this.fsDriver = new MountFs(fs)
     this.fsDriver.mount(this.mountPoint, memfs)
   }
 
-  public async config () {
+  public async config() {
     const cfg = await config(this.fsDriver)
     cfg.set('documentRoot', this.mountPoint)
     cfg.disableFeature('gitSupport')
@@ -22,28 +22,28 @@ export default class FakeFs {
     return cfg
   }
 
-  public unmount () {
+  public unmount() {
     this.fsDriver.unmount(this.mountPoint)
     return this
   }
 
-  public writeFile (pathName, content = '') {
+  public writeFile(pathName, content = '') {
     this.fsDriver.writeFileSync(path.join(this.mountPoint, pathName), content)
     return this
   }
 
-  public mkdir (dir) {
+  public mkdir(dir) {
     this.fsDriver.mkdirSync(path.join(this.mountPoint, dir))
     return this
   }
 
-  public mkdirRnd () {
+  public mkdirRnd() {
     const dirName = this.rndName()
     this.fsDriver.mkdirSync(path.join(this.mountPoint, dirName))
     return dirName
   }
 
-  public readFile (pathName) {
+  public readFile(pathName) {
     try {
       return this.fsDriver.readFileSync(path.join(this.mountPoint, pathName)).toString()
     } catch (err) {
@@ -51,20 +51,22 @@ export default class FakeFs {
     }
   }
 
-  public access (pathName): void {
+  public access(pathName): void {
     this.fsDriver.accessSync(path.join(this.mountPoint, pathName))
   }
 
-  public exists (pathName): boolean {
+  public exists(pathName): boolean {
     try {
       this.fsDriver.accessSync(path.join(this.mountPoint, pathName))
       return true
-    } catch (__) {/**/}
+    } catch (__) {
+      /**/
+    }
 
     return false
   }
 
-  public rndName () {
+  public rndName() {
     return `tmp${crypto.randomBytes(4).readUInt32LE(0)}pmt`
   }
 }

@@ -11,7 +11,7 @@ const inspectRequest = (req: Request) => {
   }
 }
 
-function validationErrorsToArray (errors) {
+function validationErrorsToArray(errors) {
   const map = errors.mapped()
   return Object.keys(map).map(key => map[key].msg)
 }

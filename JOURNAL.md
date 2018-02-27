@@ -162,3 +162,7 @@
 - Split the view helpers
 - Wrote more test for the view helpers
 - sloc 5130
+27/02/18
+- Added prettier
+- Added tslint-config-prettier for compatibility with tslint
+- sloc 5383

@@ -13,19 +13,19 @@ export default class BaseRoute {
   public sdk: Sdk
   public features: TFeaturesSettings[]
 
-  constructor (public config: Config, public title: string = 'Jingo') {
+  constructor(public config: Config, public title: string = 'Jingo') {
     this.wikiHelpers = wiki(this.config)
     this.docHelpers = doc(this.config)
     this.folderHelpers = folder(this.config)
     this.sdk = sdk(this.config)
   }
 
-  public render (req: Request, res: Response, view: string, options?: object) {
+  public render(req: Request, res: Response, view: string, options?: object) {
     res.locals.title = this.title
     res.render(view, options)
   }
 
-  public inspectRequest (req: Request) {
+  public inspectRequest(req: Request) {
     return inspectRequest(req)
   }
 }

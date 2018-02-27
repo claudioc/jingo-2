@@ -9,7 +9,7 @@ import { NextFunction, Request, Response, Router } from 'express'
 import { assign as _assign } from 'lodash'
 
 export default class DocRoute extends BaseRoute {
-  public static create (router: Router, config: Config) {
+  public static create(router: Router, config: Config) {
     const csrfProtection = csrfMiddleware(config)
     const gitRequired = gitRequiredMiddleware(config)
 
@@ -17,40 +17,60 @@ export default class DocRoute extends BaseRoute {
       new DocRoute(config).create(req, res, next)
     })
 
-    router.post(`/doc/create`, [csrfProtection, validateCreate()], (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute(config).didCreate(req, res, next)
-    })
+    router.post(
+      `/doc/create`,
+      [csrfProtection, validateCreate()],
+      (req: Request, res: Response, next: NextFunction) => {
+        new DocRoute(config).didCreate(req, res, next)
+      }
+    )
 
     router.get(`/doc/update`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).update(req, res, next)
     })
 
-    router.post(`/doc/update`, [csrfProtection, validateCreate()], (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute(config).didUpdate(req, res, next)
-    })
+    router.post(
+      `/doc/update`,
+      [csrfProtection, validateCreate()],
+      (req: Request, res: Response, next: NextFunction) => {
+        new DocRoute(config).didUpdate(req, res, next)
+      }
+    )
 
     router.get(`/doc/delete`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).delete(req, res, next)
     })
 
-    router.post(`/doc/delete`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute(config).didDelete(req, res, next)
-    })
+    router.post(
+      `/doc/delete`,
+      csrfProtection,
+      (req: Request, res: Response, next: NextFunction) => {
+        new DocRoute(config).didDelete(req, res, next)
+      }
+    )
 
     router.get(`/doc/history`, gitRequired, (req: Request, res: Response, next: NextFunction) => {
       new DocRoute(config).history(req, res, next)
     })
 
-    router.get(`/doc/restore`, [gitRequired, csrfProtection], (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute(config).restore(req, res, next)
-    })
+    router.get(
+      `/doc/restore`,
+      [gitRequired, csrfProtection],
+      (req: Request, res: Response, next: NextFunction) => {
+        new DocRoute(config).restore(req, res, next)
+      }
+    )
 
-    router.post(`/doc/restore`, [gitRequired, csrfProtection], (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute(config).didRestore(req, res, next)
-    })
+    router.post(
+      `/doc/restore`,
+      [gitRequired, csrfProtection],
+      (req: Request, res: Response, next: NextFunction) => {
+        new DocRoute(config).didRestore(req, res, next)
+      }
+    )
   }
 
-  public async create (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Creating a document'
 
     const docName = req.query.docName || ''
@@ -77,7 +97,7 @@ export default class DocRoute extends BaseRoute {
     this.render(req, res, 'doc-create', scope)
   }
 
-  public async didCreate (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async didCreate(req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Creating a document'
     const { errors, data } = this.inspectRequest(req)
     const into = data.into || ''
@@ -103,7 +123,14 @@ export default class DocRoute extends BaseRoute {
 
     const itExists = await this.sdk.docExists(docName, into)
     if (itExists) {
-      this.render(req, res, 'doc-create', _assign(scope, { errors: ['A document with this title already exists'] }))
+      this.render(
+        req,
+        res,
+        'doc-create',
+        _assign(scope, {
+          errors: ['A document with this title already exists']
+        })
+      )
       return
     }
 
@@ -117,7 +144,7 @@ export default class DocRoute extends BaseRoute {
     })
   }
 
-  public async update (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async update(req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Editing a document'
     const docName = req.query.docName || ''
     const into = req.query.into || ''
@@ -152,7 +179,7 @@ export default class DocRoute extends BaseRoute {
     this.render(req, res, 'doc-update', scope)
   }
 
-  public async didUpdate (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async didUpdate(req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Editing a document'
     const { errors, data } = this.inspectRequest(req)
     const oldDocName = req.body.docName
@@ -194,14 +221,15 @@ export default class DocRoute extends BaseRoute {
 
     res.redirect(this.wikiHelpers.pathFor(data.docTitle, into))
 
-    req.app && req.app.emit(je('jingo.docUpdated'), {
-      comment,
-      docName: oldDocName,
-      into
-    })
+    req.app &&
+      req.app.emit(je('jingo.docUpdated'), {
+        comment,
+        docName: oldDocName,
+        into
+      })
   }
 
-  public async delete (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Deleting a document'
     const docName = req.query.docName || ''
     const into = req.query.into || ''
@@ -231,7 +259,7 @@ export default class DocRoute extends BaseRoute {
     this.render(req, res, 'doc-delete', scope)
   }
 
-  public async didDelete (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async didDelete(req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Deleting a document'
     const docName = req.body.docName
     const into = req.body.into
@@ -250,13 +278,14 @@ export default class DocRoute extends BaseRoute {
 
     res.redirect(this.folderHelpers.pathFor('list', into) + '?e=0')
 
-    req.app && req.app.emit(je('jingo.docDeleted'), {
-      docName,
-      into
-    })
+    req.app &&
+      req.app.emit(je('jingo.docDeleted'), {
+        docName,
+        into
+      })
   }
 
-  public async history (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async history(req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – History of the document'
     const docName = req.query.docName || ''
     const into = req.query.into || ''
@@ -283,7 +312,7 @@ export default class DocRoute extends BaseRoute {
     this.render(req, res, 'doc-history', scope)
   }
 
-  public async restore (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async restore(req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Restore a previous version'
     const docName = req.query.docName || ''
     const into = req.query.into || ''
@@ -315,25 +344,26 @@ export default class DocRoute extends BaseRoute {
     this.render(req, res, 'doc-restore', scope)
   }
 
-  public async didRestore (req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async didRestore(req: Request, res: Response, next: NextFunction): Promise<void> {
     this.title = 'Jingo – Restoring a document'
     const docName = req.body.docName
     const into = req.body.into
     const version = req.query.v || ''
 
-//    await this.sdk.restoreDoc(docName, into)
+    //    await this.sdk.restoreDoc(docName, into)
 
     const docTitle = this.wikiHelpers.unwikify(docName)
     res.redirect(this.wikiHelpers.pathFor(docTitle, into))
 
-    req.app && req.app.emit(je('jingo.docRestored'), {
-      docName,
-      into,
-      version
-    })
+    req.app &&
+      req.app.emit(je('jingo.docRestored'), {
+        docName,
+        into,
+        version
+      })
   }
 
-  private async assertDirectoryExists (directory, req: Request, res: Response): Promise<boolean> {
+  private async assertDirectoryExists(directory, req: Request, res: Response): Promise<boolean> {
     if (!directory) {
       return true
     }
@@ -351,7 +381,7 @@ export default class DocRoute extends BaseRoute {
     return itExists
   }
 
-  private async assertDocDoesNotExist (docName, into, req: Request, res: Response) {
+  private async assertDocDoesNotExist(docName, into, req: Request, res: Response) {
     if (!docName) {
       return true
     }
@@ -364,7 +394,7 @@ export default class DocRoute extends BaseRoute {
     return !itExists
   }
 
-  private async assertDocExists (docName, into, req: Request, res: Response) {
+  private async assertDocExists(docName, into, req: Request, res: Response) {
     const itExists = await this.sdk.docExists(docName, into)
     if (!itExists) {
       res.redirect(this.config.mount('/?e=1'))

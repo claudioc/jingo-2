@@ -2,7 +2,7 @@ import { mcache } from '@lib/mcache'
 import sdk from '@sdk'
 let makeHelper
 
-export default makeHelper = (config) => {
+export default (makeHelper = config => {
   const theSdk = sdk(config)
   const cache = mcache()
 
@@ -29,4 +29,4 @@ export default makeHelper = (config) => {
 
     return output.join('\n')
   }
-}
+})

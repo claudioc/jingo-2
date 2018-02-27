@@ -193,8 +193,7 @@ test('updateDoc failure', async t => {
   const docName2 = fakeFs.rndName()
   const docFilename1 = doc(cfg).docNameToFilename(docName1)
   const docFilename2 = doc(cfg).docNameToFilename(docName2)
-  fakeFs.writeFile(docFilename1, 'Hello')
-    .writeFile(docFilename2, 'Hello')
+  fakeFs.writeFile(docFilename1, 'Hello').writeFile(docFilename2, 'Hello')
   // This must fail because docName2 already exists
   const error = await t.throws(sdk(cfg).updateDoc(docName2, docName1, 'Today is nöt yestarday'))
   t.regex(error.message, /Cannot rename/)
@@ -250,7 +249,8 @@ test('renameDoc with a different name and new file already exists', async t => {
   const cfg = await fakeFs.config()
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
-  fakeFs.writeFile(doc(cfg).docNameToFilename(docName1), 'zot')
+  fakeFs
+    .writeFile(doc(cfg).docNameToFilename(docName1), 'zot')
     .writeFile(doc(cfg).docNameToFilename(docName2), 'zot')
   const actual: any = await sdk(cfg).renameDoc(docName1, docName2)
   const expected: any = false
@@ -304,7 +304,8 @@ test('listDocs in an existing subdir', async t => {
   const cfg = await fakeFs.config()
   const docName1 = fakeFs.rndName()
   const docName2 = fakeFs.rndName()
-  fakeFs.mkdir('mmh')
+  fakeFs
+    .mkdir('mmh')
     .writeFile('mmh/' + doc(cfg).docNameToFilename(docName1), 'zot')
     .writeFile('mmh/' + doc(cfg).docNameToFilename(docName2), 'zot')
   const actual: any = await sdk(cfg).listDocs('mmh')

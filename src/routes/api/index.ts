@@ -10,17 +10,7 @@ import * as path from 'path'
 import * as send from 'send'
 
 export default class ApiRoute {
-  sdk: Sdk
-  docHelpers: Doc
-  public wikiHelpers: Wiki
-
-  constructor (public config: Config) {
-    this.sdk = sdk(this.config)
-    this.docHelpers = doc(this.config)
-    this.wikiHelpers = wiki(this.config)
-  }
-
-  public static create (router: Router, config: Config) {
+  public static create(router: Router, config: Config) {
     /**
      * Renders a markdown string to html
      */
@@ -50,7 +40,17 @@ export default class ApiRoute {
     })
   }
 
-  public async wikiRender (req: Request, res: Response, next: NextFunction) {
+  public docHelpers: Doc
+  public wikiHelpers: Wiki
+  private sdk: Sdk
+
+  constructor(public config: Config) {
+    this.sdk = sdk(this.config)
+    this.docHelpers = doc(this.config)
+    this.wikiHelpers = wiki(this.config)
+  }
+
+  public async wikiRender(req: Request, res: Response, next: NextFunction) {
     const reqPath = req.params[0]
     const { dirName, docName } = this.docHelpers.splitPath(reqPath)
 
@@ -63,12 +63,12 @@ export default class ApiRoute {
     }
   }
 
-  public async renderMarkdown (req: Request, res: Response, next: NextFunction) {
+  public async renderMarkdown(req: Request, res: Response, next: NextFunction) {
     const renderedContent = this.sdk.renderToHtml(req.body.content)
     res.send(renderedContent)
   }
 
-  public async serveStatic (req: Request, res: Response, next: NextFunction) {
+  public async serveStatic(req: Request, res: Response, next: NextFunction) {
     const assetName = req.params[0] || ''
 
     if (assetName === '' || (!assetName.endsWith('.js') && !assetName.endsWith('.css'))) {
@@ -83,7 +83,7 @@ export default class ApiRoute {
     send(req, assetName, sendOpts).pipe(res)
   }
 
-  public async docCreate (req: Request, res: Response, next: NextFunction) {
+  public async docCreate(req: Request, res: Response, next: NextFunction) {
     const { errors, data } = this.inspectRequest(req)
     const into = data.into || ''
 
@@ -116,7 +116,7 @@ export default class ApiRoute {
     return res.status(201).send(path.join(into, docName))
   }
 
-  protected inspectRequest (req: Request) {
+  protected inspectRequest(req: Request) {
     return inspectRequest(req)
   }
 }

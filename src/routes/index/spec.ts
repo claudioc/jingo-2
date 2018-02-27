@@ -11,8 +11,7 @@ test('get index', async t => {
   const cfg = await fakeFs.config()
   const home = cfg.get('wiki.index')
   const server = Server.bootstrap(cfg)
-  const response = await supertest(server.app)
-    .get(`/`)
+  const response = await supertest(server.app).get(`/`)
 
   t.is(response.status, 302)
   t.is(response.headers.location, `/wiki/${home}`)
@@ -21,10 +20,14 @@ test('get index', async t => {
 test('get welcome', async t => {
   const cfg = await fakeFs.config()
   const server = Server.bootstrap(cfg)
-  const response = await supertest(server.app)
-    .get(`/?welcome`)
+  const response = await supertest(server.app).get(`/?welcome`)
 
   t.is(response.status, 200)
   const $ = cheerio.load(response.text)
-  t.is($('h1').first().text(), `Welcome to Jingo`)
+  t.is(
+    $('h1')
+      .first()
+      .text(),
+    `Welcome to Jingo`
+  )
 })

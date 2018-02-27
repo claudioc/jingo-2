@@ -5,9 +5,7 @@ import * as path from 'path'
 import * as semver from 'semver'
 import { promisify } from 'util'
 
-import {
-  Config
-} from '@lib/config'
+import { Config } from '@lib/config'
 
 const checkDocumentRoot = async (config: Config, documentRoot: string): Promise<void> => {
   const fsapi = fsApi(config.fsDriver)
@@ -41,11 +39,11 @@ const checkGit = async (config: Config): Promise<void> => {
 
   let parts = result.stdout.trim().split(' ')
   if (parts[0] !== 'git' || parts.length < 3) {
-    throw new Error('(git support) The `git` binary doesn\'t look like git to me.')
+    throw new Error("(git support) The `git` binary doesn't look like git to me.")
   }
 
   parts = parts[2].split('.').slice(0, 3)
-  const version = parts.concat(Array(3 - (parts.length)).fill('0')).join('.')
+  const version = parts.concat(Array(3 - parts.length).fill('0')).join('.')
 
   if (!semver.valid(version)) {
     throw new Error(`(git support) Unrecognized git version ${version}`)

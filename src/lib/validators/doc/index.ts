@@ -9,8 +9,7 @@ export const validateCreate = () => {
       .withMessage('The document title cannot be empty')
       .trim(),
 
-    check('into')
-      .trim(),
+    check('into').trim(),
 
     check('content')
       .isLength({ min: 1 })

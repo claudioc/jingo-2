@@ -41,11 +41,13 @@ test('load will merge values with the defaults', async t => {
 
   // We do not specify the wiki index in our cfg, so that it should
   // come up from the default configuration file
-  fakeFs.writeFile('config.json', JSON.stringify({
-    documentRoot: '/home/jingo',
-    wiki: {
-    }
-  }))
+  fakeFs.writeFile(
+    'config.json',
+    JSON.stringify({
+      documentRoot: '/home/jingo',
+      wiki: {}
+    })
+  )
   await cfg.load('/home/jingo/config.json')
   t.is(cfg.get('wiki.index'), cfg.getDefault('wiki.index'))
 })
@@ -53,12 +55,15 @@ test('load will merge values with the defaults', async t => {
 test('load will detect alien or mispelled keys', async t => {
   const cfg = await fakeFs.config()
 
-  fakeFs.writeFile('wrong-config1.json', JSON.stringify({
-    documentFroot: '/home/jingo',
-    wiki: {
-      indes: 'popular'
-    }
-  }))
+  fakeFs.writeFile(
+    'wrong-config1.json',
+    JSON.stringify({
+      documentFroot: '/home/jingo',
+      wiki: {
+        indes: 'popular'
+      }
+    })
+  )
 
   const error = await t.throws(cfg.load('/home/jingo/wrong-config1.json'))
 
@@ -68,12 +73,15 @@ test('load will detect alien or mispelled keys', async t => {
 test('load will detect not detect an array as alien', async t => {
   const cfg = await fakeFs.config()
 
-  fakeFs.writeFile('good-config2.json', JSON.stringify({
-    custom: {
-      scripts: ['One', 'Two']
-    },
-    documentRoot: '/home/jingo'
-  }))
+  fakeFs.writeFile(
+    'good-config2.json',
+    JSON.stringify({
+      custom: {
+        scripts: ['One', 'Two']
+      },
+      documentRoot: '/home/jingo'
+    })
+  )
 
   await t.notThrows(cfg.load('/home/jingo/good-config2.json'))
 })

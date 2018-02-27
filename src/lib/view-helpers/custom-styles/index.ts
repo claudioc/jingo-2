@@ -1,6 +1,6 @@
 let makeHelper
 
-export default makeHelper = (config) => {
+export default (makeHelper = config => {
   return () => {
     const styles = config.get('custom.styles')
     if (styles.length === 0) {
@@ -9,4 +9,4 @@ export default makeHelper = (config) => {
     const baseUrl = config.mount(`api/serve-static/`)
     return styles.map(style => `<link rel="stylesheet" href="${baseUrl}${style}">`).join('\n')
   }
-}
+})
