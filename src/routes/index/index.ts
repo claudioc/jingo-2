@@ -5,9 +5,10 @@ import { isUndefined as _isUndefined } from 'lodash'
 
 export default class IndexRoute extends BaseRoute {
   public static create(router: Router, config: Config) {
-    router.get('/', (req: Request, res: Response, next: NextFunction) => {
-      new IndexRoute(config).index(req, res, next)
-    })
+    const route = new IndexRoute(config)
+    router.get('/', (req: Request, res: Response, next: NextFunction) =>
+      route.index(req, res, next)
+    )
   }
 
   public index(req: Request, res: Response, next: NextFunction) {

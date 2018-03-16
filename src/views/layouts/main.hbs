@@ -13,10 +13,14 @@
     {{{customIncludes}}}
   </head>
   <body>
-    <header class="row align-center">
+    <header class="j-header row align-center">
+      <a class="j-logo" href="/">J-O</a>
       <nav class="col col-6 form-buttons text-right">
         <a class="button small outline" href="{{urlFor resource="doc" into=dirName}}">New doc</a>
-        <a class="button small outline j-last" href="{{urlFor resource="folder" into=dirName}}">New folder</a>
+        <a class="button small outline" href="{{urlFor resource="folder" into=dirName}}">New folder</a>
+        {{#if (hasFeature "gitSupport")}}
+        <a class="button small outline j-last" href="{{urlFor resource="doc" action="recent" into=dirName}}">Recent edits</a>
+        {{/if}}
       </nav>
     </header>
     <main class="row align-center">

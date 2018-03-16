@@ -7,8 +7,10 @@ import * as simplegit from 'simple-git/promise'
 export interface IGitOps {
   $add(docName: string, into: string): void
   $commit(docName: string, into: string, comment: string): void
-  $rm(docName: string, into: string): void
   $history(docName: string, into: string): void
+  $ls(): Promise<string[]>
+  $restore(docName: string, into: string, version: string): Promise<void>
+  $rm(docName: string, into: string): void
   $show(docName: string, into: string, version: string): Promise<string>
 }
 
@@ -16,6 +18,8 @@ const nop: IGitOps = {
   $add: _noop,
   $commit: _noop,
   $history: _noop,
+  $ls: _noop,
+  $restore: _noop,
   $rm: _noop,
   $show: _noop
 }
@@ -36,6 +40,7 @@ interface ISimpleGit extends simplegit.SimpleGit {
   commit(message: string, files: string[], options?: any): Promise<void>
   rm(files: string[]): Promise<void>
   log(options?: any): Promise<ListLogSummary>
+  raw(options: any): Promise<any>
   show(options: string | string[]): Promise<string>
 }
 
@@ -54,12 +59,6 @@ export class GitOps implements IGitOps {
     return
   }
 
-  public async $rm(docName: string, into: string): Promise<void> {
-    const pathname = this.docHelpers.fullPathname(docName, into)
-    await this._git.rm([pathname])
-    return
-  }
-
   public async $commit(docName: string, into: string, comment: string): Promise<void> {
     const pathname = this.docHelpers.fullPathname(docName, into)
     await this._git.commit(comment, [pathname])
@@ -75,22 +74,27 @@ export class GitOps implements IGitOps {
     return log
   }
 
+  public async $restore(docName: string, into: string, version: string): Promise<void> {
+    const pathname = this.docHelpers.fullPathname(docName, into)
+    await this._git.checkout([version, pathname])
+    await this._git.commit(`${docName} restored to ${version}`, [pathname])
+  }
+
+  public async $rm(docName: string, into: string): Promise<void> {
+    const pathname = this.docHelpers.fullPathname(docName, into)
+    await this._git.rm([pathname])
+    return
+  }
+
   public async $show(docName: string, into: string, version: string): Promise<string> {
     const pathname = this.docHelpers.fullPathname(docName, into)
     return await this._git.show([`${version}:${pathname}`])
   }
 
-  // revert: function (path, revision, author, callback) {
-  //   gitExec(['checkout', revision, docSubdir + path], function (err, data) {
-  //     if (err) {
-  //       callback(err, ('' + data).toString().trim())
-  //       return
-  //     }
-  //     gitMech.commit(path, 'Reverted to ' + revision, author, function (err, data) {
-  //       callback(err, ('' + data).toString().trim())
-  //     })
-  //   })
-  // }
+  public async $ls(): Promise<string[]> {
+    const items = await this._git.raw(['ls-tree', '--name-only', '-r', 'HEAD'])
+    return items ? items.trim().split('\n') : []
+  }
 }
 
 export default git

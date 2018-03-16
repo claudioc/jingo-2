@@ -13,60 +13,54 @@ export default class DocRoute extends BaseRoute {
     const csrfProtection = csrfMiddleware(config)
     const gitRequired = gitRequiredMiddleware(config)
 
-    router.get(`/doc/create`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute(config).create(req, res, next)
-    })
+    const route = new DocRoute(config)
+
+    router.get(`/doc/create`, csrfProtection, (req: Request, res: Response, next: NextFunction) =>
+      route.create(req, res, next)
+    )
 
     router.post(
       `/doc/create`,
       [csrfProtection, validateCreate()],
-      (req: Request, res: Response, next: NextFunction) => {
-        new DocRoute(config).didCreate(req, res, next)
-      }
+      (req: Request, res: Response, next: NextFunction) => route.didCreate(req, res, next)
     )
 
-    router.get(`/doc/update`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute(config).update(req, res, next)
-    })
+    router.get(`/doc/update`, csrfProtection, (req: Request, res: Response, next: NextFunction) =>
+      route.update(req, res, next)
+    )
 
     router.post(
       `/doc/update`,
       [csrfProtection, validateCreate()],
-      (req: Request, res: Response, next: NextFunction) => {
-        new DocRoute(config).didUpdate(req, res, next)
-      }
+      (req: Request, res: Response, next: NextFunction) => route.didUpdate(req, res, next)
     )
 
-    router.get(`/doc/delete`, csrfProtection, (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute(config).delete(req, res, next)
-    })
-
-    router.post(
-      `/doc/delete`,
-      csrfProtection,
-      (req: Request, res: Response, next: NextFunction) => {
-        new DocRoute(config).didDelete(req, res, next)
-      }
+    router.get(`/doc/delete`, csrfProtection, (req: Request, res: Response, next: NextFunction) =>
+      route.delete(req, res, next)
     )
 
-    router.get(`/doc/history`, gitRequired, (req: Request, res: Response, next: NextFunction) => {
-      new DocRoute(config).history(req, res, next)
-    })
+    router.post(`/doc/delete`, csrfProtection, (req: Request, res: Response, next: NextFunction) =>
+      route.didDelete(req, res, next)
+    )
+
+    router.get(`/doc/history`, gitRequired, (req: Request, res: Response, next: NextFunction) =>
+      route.history(req, res, next)
+    )
 
     router.get(
       `/doc/restore`,
       [gitRequired, csrfProtection],
-      (req: Request, res: Response, next: NextFunction) => {
-        new DocRoute(config).restore(req, res, next)
-      }
+      (req: Request, res: Response, next: NextFunction) => route.restore(req, res, next)
     )
 
     router.post(
       `/doc/restore`,
       [gitRequired, csrfProtection],
-      (req: Request, res: Response, next: NextFunction) => {
-        new DocRoute(config).didRestore(req, res, next)
-      }
+      (req: Request, res: Response, next: NextFunction) => route.didRestore(req, res, next)
+    )
+
+    router.get(`/doc/recent`, [gitRequired], (req: Request, res: Response, next: NextFunction) =>
+      route.recent(req, res, next)
     )
   }
 
@@ -348,19 +342,54 @@ export default class DocRoute extends BaseRoute {
     this.title = 'Jingo – Restoring a document'
     const docName = req.body.docName
     const into = req.body.into
-    const version = req.query.v || ''
+    const version = req.body.v || 'HEAD'
 
-    //    await this.sdk.restoreDoc(docName, into)
+    if (version !== 'HEAD') {
+      try {
+        await git(this.config).$restore(docName, into, version)
+      } catch (err) {
+        res.status(500).render('500', { err })
+        return
+      }
+
+      const cache = req.app.get('cache')
+      if (cache) {
+        cache.del(into + docName)
+      }
+
+      req.app &&
+        req.app.emit(je('jingo.docRestored'), {
+          docName,
+          into,
+          version
+        })
+    }
 
     const docTitle = this.wikiHelpers.unwikify(docName)
     res.redirect(this.wikiHelpers.pathFor(docTitle, into))
+  }
 
-    req.app &&
-      req.app.emit(je('jingo.docRestored'), {
-        docName,
-        into,
-        version
-      })
+  public async recent(req: Request, res: Response, next: NextFunction): Promise<void> {
+    this.title = 'Jingo – Recent edits'
+
+    const gitMech = git(this.config)
+    let items
+    try {
+      items = await gitMech.$ls()
+    } catch (err) {
+      res.status(500).render('500', { err })
+      return
+    }
+
+    const recentEdits = items.map(item => {
+      return this.docHelpers.splitPath(item)
+    })
+
+    const scope: object = {
+      recentEdits
+    }
+
+    this.render(req, res, 'doc-recents', scope)
   }
 
   private async assertDirectoryExists(directory, req: Request, res: Response): Promise<boolean> {

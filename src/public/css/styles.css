@@ -10,9 +10,11 @@ article code * {
   font-family: inherit;
 }
 
-body > header {
+.j-header {
   margin-bottom: 1rem;
   padding: 1rem 0;
+  background-color: whitesmoke;
+  box-shadow: 0 0 4px silver;
 }
 
 body > main {

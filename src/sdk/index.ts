@@ -233,6 +233,7 @@ export class Sdk {
 
   /**
    * Loads a document from the file system or git and returns an IDoc
+   * Loads from git when a version is specified that's not HEAD
    * @param docName Id of the document to load
    * @param from A subdirectory where the document can be found
    * @param the version we want, defaults to HEAD

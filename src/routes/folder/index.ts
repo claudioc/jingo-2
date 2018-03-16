@@ -9,53 +9,42 @@ import { assign as _assign } from 'lodash'
 export default class FolderRoute extends BaseRoute {
   public static create(router: Router, config: Config) {
     const csrfProtection = csrfMiddleware(config)
+    const route = new FolderRoute(config)
 
     router.get(
       `/folder/create`,
       csrfProtection,
-      (req: Request, res: Response, next: NextFunction) => {
-        new FolderRoute(config).create(req, res, next)
-      }
+      (req: Request, res: Response, next: NextFunction) => route.create(req, res, next)
     )
 
     router.post(
       `/folder/create`,
       [csrfProtection, validateCreate()],
-      (req: Request, res: Response, next: NextFunction) => {
-        new FolderRoute(config).didCreate(req, res, next)
-      }
+      (req: Request, res: Response, next: NextFunction) => route.didCreate(req, res, next)
     )
 
     router.get(
       `/folder/rename`,
       csrfProtection,
-      (req: Request, res: Response, next: NextFunction) => {
-        new FolderRoute(config).rename(req, res, next)
-      }
+      (req: Request, res: Response, next: NextFunction) => route.rename(req, res, next)
     )
 
     router.post(
       `/folder/rename`,
       [csrfProtection, validateRename()],
-      (req: Request, res: Response, next: NextFunction) => {
-        new FolderRoute(config).didRename(req, res, next)
-      }
+      (req: Request, res: Response, next: NextFunction) => route.didRename(req, res, next)
     )
 
     router.get(
       `/folder/delete`,
       csrfProtection,
-      (req: Request, res: Response, next: NextFunction) => {
-        new FolderRoute(config).delete(req, res, next)
-      }
+      (req: Request, res: Response, next: NextFunction) => route.delete(req, res, next)
     )
 
     router.post(
       `/folder/delete`,
       csrfProtection,
-      (req: Request, res: Response, next: NextFunction) => {
-        new FolderRoute(config).didDelete(req, res, next)
-      }
+      (req: Request, res: Response, next: NextFunction) => route.didDelete(req, res, next)
     )
   }
 
@@ -116,7 +105,7 @@ export default class FolderRoute extends BaseRoute {
       res.redirect(this.folderHelpers.pathFor('list', folderName, into))
       req.app && req.app.emit(je('jingo.folderCreated'))
     } catch (err) {
-      res.status(500).render('500')
+      res.status(500).render('500', { err })
     }
   }
 
@@ -169,7 +158,7 @@ export default class FolderRoute extends BaseRoute {
       res.redirect(this.folderHelpers.pathFor('list', folderName, into))
       req.app && req.app.emit(je('jingo.folderRenamed'))
     } catch (err) {
-      res.status(500).render('500')
+      res.status(500).render('500', { err })
     }
   }
 

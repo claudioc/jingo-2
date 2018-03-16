@@ -11,33 +11,34 @@ import * as send from 'send'
 
 export default class ApiRoute {
   public static create(router: Router, config: Config) {
+    const route = new ApiRoute(config)
     /**
      * Renders a markdown string to html
      */
-    router.post(`/api/render`, (req: Request, res: Response, next: NextFunction) => {
-      new ApiRoute(config).renderMarkdown(req, res, next)
-    })
+    router.post(`/api/render`, (req: Request, res: Response, next: NextFunction) =>
+      route.renderMarkdown(req, res, next)
+    )
 
     /**
      * Serves static content directly from the repository
      */
-    router.get(`/api/serve-static/*`, (req: Request, res: Response, next: NextFunction) => {
-      new ApiRoute(config).serveStatic(req, res, next)
-    })
+    router.get(`/api/serve-static/*`, (req: Request, res: Response, next: NextFunction) =>
+      route.serveStatic(req, res, next)
+    )
 
     /**
      * Serves the rendered content of a page
      */
-    router.get(`/api/wiki/*`, (req: Request, res: Response, next: NextFunction) => {
-      new ApiRoute(config).wikiRender(req, res, next)
-    })
+    router.get(`/api/wiki/*`, (req: Request, res: Response, next: NextFunction) =>
+      route.wikiRender(req, res, next)
+    )
 
     /**
      * Creates a new document
      */
-    router.post(`/api/doc`, validateCreate(), (req: Request, res: Response, next: NextFunction) => {
-      new ApiRoute(config).docCreate(req, res, next)
-    })
+    router.post(`/api/doc`, validateCreate(), (req: Request, res: Response, next: NextFunction) =>
+      route.docCreate(req, res, next)
+    )
   }
 
   public docHelpers: Doc

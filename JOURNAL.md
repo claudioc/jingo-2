@@ -166,3 +166,7 @@
 - Added prettier
 - Added tslint-config-prettier for compatibility with tslint
 - sloc 5383
+10/03/18
+- Made the restore document work
+16/03/18
+- Adds support for recent edits
