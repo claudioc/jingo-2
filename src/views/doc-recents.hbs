@@ -1,0 +1,7 @@
+<h3>Recent edits</h3>
+
+<ul>
+{{#each recentEdits}}
+  <li>{{this.dirName}} / <a href="{{urlFor resource="wiki" id=this.docName into=this.dirName}}">{{this.docName}}</a></li>
+{{/each}}
+</ul>
