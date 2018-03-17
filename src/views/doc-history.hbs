@@ -1,28 +1,59 @@
 <h3>History of <span class="muted">{{docTitle}}</span></h3>
+<form action="{{urlFor resource="doc" action="compare"}}">
+  <button disabled class="button small j-submit">Compare</button>
+  <table class="j-history">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Version</th>
+        <th>Author</th>
+        <th>Message</th>
+        <th>Last update</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each history}}
+      <tr>
+        <td><input type="checkbox" name="hash[]" value="{{this.hash}}"></td>
+        <td>
+          {{#if (eq @index 0)}}
+          <a href="{{urlFor resource="wiki" id=../docName into=../into}}">Most recent</a>
+          {{else}}
+          <a title="{{this.hash}}" href="{{urlFor resource="wiki" id=../docName into=../into v=this.hash}}">{{ellipsize this.hash}}</a>
+          {{/if}}
+        </td>
+        <td>{{this.author_name}}</td>
+        <td>{{this.message}}</td>
+        <td>{{timeAgo this.date}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</form>
+<script>
+;(() => {
+  const table = document.querySelector('.j-history')
+  const submit = document.querySelector('.j-submit')
+  const checks = document.querySelectorAll('input[type=checkbox]')
+  const acc = new Map()
+  const forEachCheck = fn => Array.prototype.forEach.apply(checks, [fn])
 
-<table>
-  <thead>
-    <tr>
-      <th>Version</th>
-      <th>Author</th>
-      <th>Message</th>
-      <th>Last update</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each history}}
-    <tr>
-      <td>
-        {{#if (eq @index 0)}}
-        <a href="{{urlFor resource="wiki" id=../docName into=../into}}">Most recent</a>
-        {{else}}
-        <a title="{{this.hash}}" href="{{urlFor resource="wiki" id=../docName into=../into v=this.hash}}">{{ellipsize this.hash}}</a>
-        {{/if}}
-      </td>
-      <td>{{this.author_name}}</td>
-      <td>{{this.message}}</td>
-      <td>{{timeAgo this.date}}</td>
-    </tr>
-    {{/each}}
-  </tbody>
-</table>
+  table.addEventListener('click', event => {
+    const el = event.target
+    if (el.tagName !== 'INPUT') {
+      return
+    }
+
+    el.checked ? acc.set(el, 1) : acc.delete(el)
+
+    if (acc.size === 2) {
+      const els = Array.from(acc.keys())
+      forEachCheck(check => { !els.includes(check) && (check.style.visibility = 'hidden') })
+      submit.disabled = false
+    } else {
+      forEachCheck(check => check.style.visibility = 'visible')
+      submit.disabled = true
+    }
+  })
+})()
+</script>
