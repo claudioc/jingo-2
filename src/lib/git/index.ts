@@ -7,7 +7,7 @@ import * as simplegit from 'simple-git/promise'
 export interface IGitOps {
   $add(docName: string, into: string): void
   $commit(docName: string, into: string, comment: string): void
-  $diff(docName: string, into: string, left: string, right: string): void
+  $diff(docName: string, into: string, left: string, right: string): Promise<string[]>
   $history(docName: string, into: string): void
   $ls(): Promise<string[]>
   $restore(docName: string, into: string, version: string): Promise<void>
@@ -67,10 +67,15 @@ export class GitOps implements IGitOps {
     return
   }
 
-  public async $diff(docName: string, into: string, left: string, right: string): Promise<void> {
+  public async $diff(
+    docName: string,
+    into: string,
+    left: string,
+    right: string
+  ): Promise<string[]> {
     const pathname = this.docHelpers.fullPathname(docName, into)
     const diffs = await this._git.raw(['diff', '--no-color', '-b', left, right, '--', pathname])
-    return diffs
+    return diffs ? diffs.trim().split('\n') : []
   }
 
   public async $history(docName: string, into: string): ListLogSummary {

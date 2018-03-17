@@ -1,1 +1,40 @@
-Hi
+<style>
+.j-compare {
+  font-family: monospace;
+}
+.j-compare td {
+  padding: 0.1rem 0.5rem;
+  color: silver;
+}
+.j-compare .gi {
+  background-color: #ddffdd;
+  color: black;
+}
+.j-compare .gd {
+  background-color: #ffdddd;
+  color: black;
+}
+.j-compare td:nth-child(1),
+.j-compare td:nth-child(2) {
+  font-size: 80%;
+  width: 1%;
+  color: #999999;
+  background-color: #EAF2F5;
+  text-align: right;
+}
+</style>
+<h3>Comparing revisions of <span class="muted">{{docTitle}}</span></h3>
+<p>
+<a href="{{urlFor resource="wiki" id=docName into=into v=hash.[0]}}">{{ellipsize hash.[0]}}</a>
+⇄
+<a href="{{urlFor resource="wiki" id=docName into=into v=hash.[1]}}">{{ellipsize hash.[1]}}</a>
+</p>
+<table class="j-compare">
+{{#each lines}}
+  <tr>
+    <td>{{this.ldln}}</td>
+    <td>{{this.rdln}}</td>
+    <td class="{{this.className}}">{{this.text}}</td>
+  </tr>
+{{/each}}
+</table>
