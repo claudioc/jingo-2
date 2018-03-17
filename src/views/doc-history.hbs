@@ -1,5 +1,15 @@
+<style>
+  .j-history td:nth-of-type(1) input {
+    margin-left: 1rem
+  }
+  .j-selected td {
+    background-color: whitesmoke;
+  }
+</style>
 <h3>History of <span class="muted">{{docTitle}}</span></h3>
 <form action="{{urlFor resource="doc" action="compare"}}">
+  <input type="hidden" name="docName" value="{{docName}}">
+  <input type="hidden" name="into" value="{{into}}">
   <button disabled class="button small j-submit">Compare</button>
   <table class="j-history">
     <thead>
@@ -14,7 +24,7 @@
     <tbody>
       {{#each history}}
       <tr>
-        <td><input type="checkbox" name="hash[]" value="{{this.hash}}"></td>
+        <td><input type="checkbox" name="hash" value="{{this.hash}}"></td>
         <td>
           {{#if (eq @index 0)}}
           <a href="{{urlFor resource="wiki" id=../docName into=../into}}">Most recent</a>
@@ -44,16 +54,18 @@
       return
     }
 
+    const tr = event.path.filter(parent => parent.tagName === 'TR')[0]
     el.checked ? acc.set(el, 1) : acc.delete(el)
+    tr.classList.toggle('j-selected', el.checked)
 
     if (acc.size === 2) {
       const els = Array.from(acc.keys())
       forEachCheck(check => { !els.includes(check) && (check.style.visibility = 'hidden') })
-      submit.disabled = false
     } else {
       forEachCheck(check => check.style.visibility = 'visible')
-      submit.disabled = true
     }
+
+    submit.disabled = acc.size !== 2
   })
 })()
 </script>

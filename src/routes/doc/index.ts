@@ -5,6 +5,7 @@ import gitRequiredMiddleware from '@middlewares/git-required'
 import BaseRoute from '@routes/route'
 import { Request, Response, Router } from 'express'
 
+import { get as get_docCompare } from './compare'
 import { get as get_docCreate, post as post_docCreate } from './create'
 import { get as get_docDelete, post as post_docDelete } from './delete'
 import { get as get_docHistory } from './history'
@@ -34,6 +35,8 @@ export default class DocRoute extends BaseRoute {
     router.post('/doc/restore', [gitRequired, csrfProtection], post_docRestore(route))
 
     router.get('/doc/recent', [gitRequired], get_docRecent(route))
+
+    router.get('/doc/compare', [gitRequired], get_docCompare(route))
   }
 
   public async assertDirectoryExists(directory, req: Request, res: Response): Promise<boolean> {
