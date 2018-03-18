@@ -8,8 +8,14 @@
   // Customization in term of CSS stylesheets and/or JavaScript scripts
   "custom": {
     "title": "Jingo",
+    // An url to an image (optional)
     "logo": "",
-    "includes": [],
+    // Provide the favicon information using the format: "mime,url"
+    "favicon": "image/png,http://",
+    // Include custom content at the end of the <body>
+    "content": [],
+    // Include custom elements in the <head>
+    "head": [],
     "styles": [],
     "scripts": []
   },

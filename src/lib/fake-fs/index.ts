@@ -1,4 +1,4 @@
-import { config } from '@lib/config'
+import { config, Config } from '@lib/config'
 const memfs = require('memfs')
 import * as crypto from 'crypto'
 import * as fs from 'fs'
@@ -13,7 +13,7 @@ export default class FakeFs {
     this.fsDriver.mount(this.mountPoint, memfs)
   }
 
-  public async config() {
+  public async config(): Promise<Config> {
     const cfg = await config(this.fsDriver)
     cfg.set('documentRoot', this.mountPoint)
     cfg.disableFeature('gitSupport')
@@ -68,5 +68,14 @@ export default class FakeFs {
 
   public rndName() {
     return `tmp${crypto.randomBytes(4).readUInt32LE(0)}pmt`
+  }
+
+  public unlink(pathName) {
+    try {
+      return this.fsDriver.unlinkSync(path.join(this.mountPoint, pathName))
+    } catch (err) {
+      console.log(err)
+      return null
+    }
   }
 }

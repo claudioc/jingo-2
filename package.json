@@ -16,7 +16,7 @@
     "test": "tsc; nyc ava -v",
     "watch-test": "ava -v -w",
     "clean": "rm -rf dist/*; mkdir -p dist; ln -s ../src/views dist/; ln -s ../src/public dist/; ln -s ../src/lib/config/defaults.json dist/config-defaults.json",
-    "start": "NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -w jingo -w config.json jingo -c config.json'",
+    "start": "NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -V -w jingo -w config.json jingo -c config.json'",
     "start-dev": "npm run clean; npm test; npm start",
     "sloc": "sloc dist/ -e vendor"
   },
