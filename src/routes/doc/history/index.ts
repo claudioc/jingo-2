@@ -1,4 +1,3 @@
-import git from '@lib/git'
 import { NextFunction, Request, Response } from 'express'
 
 export const get = route => {
@@ -21,9 +20,7 @@ const history = async function(req: Request, res: Response, next: NextFunction):
   }
 
   const docTitle = this.wikiHelpers.unwikify(docName)
-
-  const gitMech = git(this.config)
-  const items = await gitMech.$history(docName, into)
+  const items = await this.git.$history(docName, into)
   const scope: object = {
     docName,
     docTitle,

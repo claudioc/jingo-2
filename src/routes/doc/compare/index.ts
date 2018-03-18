@@ -1,4 +1,3 @@
-import git from '@lib/git'
 import { NextFunction, Request, Response } from 'express'
 
 export const get = route => {
@@ -10,7 +9,7 @@ export const get = route => {
 const compare = async function(req: Request, res: Response, next: NextFunction): Promise<void> {
   const { hash, docName, into } = req.query
 
-  const diffs = await git(this.config).$diff(docName, into, hash[0], hash[1])
+  const diffs = await this.git.$diff(docName, into, hash[0], hash[1])
 
   const lines = []
   diffs.slice(4).forEach(line => {

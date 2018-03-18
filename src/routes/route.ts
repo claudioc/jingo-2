@@ -1,6 +1,7 @@
 import { Config, TFeaturesSettings } from '@lib/config'
 import doc, { Doc } from '@lib/doc'
 import folder, { Folder } from '@lib/folder'
+import git, { IGitOps } from '@lib/git'
 import inspectRequest from '@lib/inspect-request'
 import wiki, { Wiki } from '@lib/wiki'
 import sdk, { Sdk } from '@sdk'
@@ -11,6 +12,7 @@ export default class BaseRoute {
   public docHelpers: Doc
   public folderHelpers: Folder
   public sdk: Sdk
+  public git: IGitOps
   public features: TFeaturesSettings[]
 
   constructor(public config: Config, public title: string = 'Jingo') {
@@ -18,6 +20,7 @@ export default class BaseRoute {
     this.docHelpers = doc(this.config)
     this.folderHelpers = folder(this.config)
     this.sdk = sdk(this.config)
+    this.git = git(this.config)
   }
 
   public render(req: Request, res: Response, view: string, options?: object) {

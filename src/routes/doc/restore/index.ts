@@ -1,5 +1,4 @@
 import { je } from '@events/index'
-import git from '@lib/git'
 import { NextFunction, Request, Response } from 'express'
 
 export const get = route => {
@@ -54,7 +53,7 @@ const didRestore = async function(req: Request, res: Response, next: NextFunctio
 
   if (version !== 'HEAD') {
     try {
-      await git(this.config).$restore(docName, into, version)
+      await this.git.$restore(docName, into, version)
     } catch (err) {
       res.status(500).render('500', { err })
       return

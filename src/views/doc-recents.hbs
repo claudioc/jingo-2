@@ -2,6 +2,10 @@
 
 <ul>
 {{#each recentEdits}}
-  <li>{{this.dirName}} / <a href="{{urlFor resource="wiki" id=this.docName into=this.dirName}}">{{this.docName}}</a></li>
+  <li>
+    <p>{{this.item.dirName}} / <a href="{{urlFor resource="wiki" id=this.item.docName into=this.item.dirName}}">{{this.item.docName}}</a></p>
+    <p>{{this.log.message}}</p>
+    <p>{{this.log.author_name}} – {{this.log.date}}</p>
+  </li>
 {{/each}}
 </ul>

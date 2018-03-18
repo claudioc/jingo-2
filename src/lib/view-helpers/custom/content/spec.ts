@@ -5,6 +5,10 @@ import helper from '.'
 
 const fakeFs = new FakeFs('/home/jingo')
 
+test.after(() => {
+  fakeFs.unmount()
+})
+
 test('custom content', async t => {
   const cfg = await fakeFs.config()
   cfg.set('custom', {
