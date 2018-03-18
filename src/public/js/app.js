@@ -7,7 +7,7 @@
   const form = editorSection.querySelector('form')
 
   doPreview.addEventListener('click', async () => {
-    window.editorInstance.save()
+    window.editorInstance.codemirror.save()
     editorSection.classList.add('hide')
     previewSection.classList.remove('hide')
     doEdit.classList.remove('hide')

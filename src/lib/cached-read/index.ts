@@ -7,7 +7,6 @@ export default (config: Config) => {
   const cache = mcache()
 
   return (files: string[]): string[] => {
-    console.log(cache.size)
     // We need a synchronous loop to be able to collect all the includes at once
     const output = []
     for (const file of files) {
