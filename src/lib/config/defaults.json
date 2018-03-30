@@ -27,6 +27,10 @@
     "basePath": "wiki"
   },
 
+  "authentication": {
+
+  },
+
   // Enable/Disable/Configure optional features
   "features": {
     // The code syntax highlighter

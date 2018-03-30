@@ -5,6 +5,7 @@ import * as boom from 'express-boom'
 import * as expressHandlebars from 'express-handlebars'
 import * as methodOverride from 'method-override'
 import * as logger from 'morgan'
+import * as passport from 'passport'
 import * as path from 'path'
 
 import { JingoEvent, jingoEventHandlerFor, jingoEvents } from '@events/index'
@@ -12,6 +13,7 @@ import { Config } from '@lib/config'
 import { mcache } from '@lib/mcache'
 import viewHelpers from '@lib/view-helpers'
 import ApiRoute from '@routes/api'
+import AuthRoute from '@routes/auth'
 import DocRoute from '@routes/doc'
 import FolderRoute from '@routes/folder'
 import IndexRoute from '@routes/index'
@@ -49,6 +51,7 @@ export default class Server {
     DocRoute.create(router, this.config)
     FolderRoute.create(router, this.config)
     ApiRoute.create(router, this.config)
+    AuthRoute.create(router, this.config)
 
     this.app.use(this.config.get('mountPath'), router)
 
@@ -135,6 +138,9 @@ export default class Server {
         name: 'session'
       })
     )
+
+    this.app.use(passport.initialize())
+    this.app.use(passport.session())
 
     this.app.set('cache', mcache())
   }
