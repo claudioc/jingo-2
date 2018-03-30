@@ -54,7 +54,7 @@ export default class WikiRoute extends BaseRoute {
         isIndex
       }
       this.title = `Jingo – ${doc.title}`
-      this.render(req, res, 'wiki-read', scope)
+      this.renderTemplate(res, `${__dirname}/read`, scope)
       req.app && req.app.emit(je('jingo.wikiRead'), this.docName)
     } catch (e) {
       if (isIndex) {
@@ -62,7 +62,7 @@ export default class WikiRoute extends BaseRoute {
       } else {
         const createPageUrl = this.docHelpers.pathFor('create', this.docName, this.dirName)
         res.status(404)
-        this.render(req, res, 'wiki-fail', {
+        this.renderTemplate(res, `${__dirname}/fail`, {
           createPageUrl
         })
       }
@@ -81,7 +81,7 @@ export default class WikiRoute extends BaseRoute {
       folderList = await this.sdk.listFolders(this.dirName)
     } catch (err) {
       res.status(404)
-      this.render(req, res, 'wiki-list-fail', {
+      this.renderTemplate(res, `${__dirname}/list-fail`, {
         directory: this.dirName,
         folderName,
         parentDirname
@@ -98,7 +98,7 @@ export default class WikiRoute extends BaseRoute {
       parentDirname
     }
 
-    this.render(req, res, 'wiki-list', scope)
+    this.renderTemplate(res, `${__dirname}/list`, scope)
     req.app && req.app.emit(je('jingo.wikiList'), this.dirName)
   }
 

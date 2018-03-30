@@ -1,20 +1,21 @@
 import { je } from '@events/index'
-import { NextFunction, Request, Response } from 'express'
+import { RouteEntry, RouteHandler } from '@routes/route'
 import { assign as _assign } from 'lodash'
+import DocRoute from '..'
 
-export const get = route => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    create.apply(route, [req, res, next])
+export const get: RouteEntry = (route: DocRoute) => {
+  return (req, res, next) => {
+    return create.apply(route, [req, res, next])
   }
 }
 
-export const post = route => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    didCreate.apply(route, [req, res, next])
+export const post: RouteEntry = (route: DocRoute) => {
+  return (req, res, next) => {
+    return didCreate.apply(route, [req, res, next])
   }
 }
 
-const create = async function(req: Request, res: Response, next: NextFunction): Promise<void> {
+const create: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Creating a document'
   const docName = req.query.docName || ''
   const into = req.query.into || ''
@@ -37,10 +38,10 @@ const create = async function(req: Request, res: Response, next: NextFunction): 
     wikiIndex
   }
 
-  this.render(req, res, 'doc-create', scope)
+  this.renderTemplate(res, __dirname, scope)
 }
 
-const didCreate = async function(req: Request, res: Response, next: NextFunction): Promise<void> {
+const didCreate: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Creating a document'
   const { errors, data } = this.inspectRequest(req)
   const into = data.into || ''
@@ -54,7 +55,7 @@ const didCreate = async function(req: Request, res: Response, next: NextFunction
   }
 
   if (errors) {
-    this.render(req, res, 'doc-create', _assign(scope, { errors }))
+    this.renderTemplate(res, __dirname, _assign(scope, { errors }))
     return
   }
 
@@ -66,10 +67,9 @@ const didCreate = async function(req: Request, res: Response, next: NextFunction
 
   const itExists = await this.sdk.docExists(docName, into)
   if (itExists) {
-    this.render(
-      req,
+    this.renderTemplate(
       res,
-      'doc-create',
+      __dirname,
       _assign(scope, {
         errors: ['A document with this title already exists']
       })

@@ -1,5 +1,6 @@
 import { config } from '@lib/config'
 import test from 'ava'
+import * as cheerio from 'cheerio'
 import * as supertest from 'supertest'
 
 process.env.NODE_ENV = 'test'
@@ -11,5 +12,11 @@ test('get /auth/login', async t => {
   const response = await supertest(server.app).get('/auth/login')
 
   t.is(response.status, 200)
-  t.is(response.text, '<h3>Hello World!</h3>\n')
+  const $ = cheerio.load(response.text)
+  t.is(
+    $('h1')
+      .first()
+      .text(),
+    `Login`
+  )
 })

@@ -1,12 +1,13 @@
-import { NextFunction, Request, Response } from 'express'
+import { RouteEntry, RouteHandler } from '@routes/route'
+import DocRoute from '..'
 
-export const get = route => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    history.apply(route, [req, res, next])
+export const get: RouteEntry = (route: DocRoute) => {
+  return (req, res, next) => {
+    return history.apply(route, [req, res, next])
   }
 }
 
-const history = async function(req: Request, res: Response, next: NextFunction): Promise<void> {
+const history: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – History of the document'
   const docName = req.query.docName || ''
   const into = req.query.into || ''
@@ -28,5 +29,5 @@ const history = async function(req: Request, res: Response, next: NextFunction):
     into
   }
 
-  this.render(req, res, 'doc-history', scope)
+  this.renderTemplate(res, __dirname, scope)
 }

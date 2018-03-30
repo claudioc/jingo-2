@@ -8,7 +8,7 @@ export interface IGitOps {
   $add(docName: string, into: string): void
   $commit(docName: string, into: string, comment: string): void
   $diff(docName: string, into: string, left: string, right: string): Promise<string[]>
-  $history(docName: string, into: string): void
+  $history(docName: string, into: string): ListLogSummary
   $ls(): Promise<string[]>
   $recent(): Promise<ListLogLine[]>
   $restore(docName: string, into: string, version: string): Promise<void>

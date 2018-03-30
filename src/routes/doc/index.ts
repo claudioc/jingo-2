@@ -47,7 +47,7 @@ export default class DocRoute extends BaseRoute {
     const { folderName, parentDirname } = this.folderHelpers.splitPath(directory)
     const itExists = await this.sdk.folderExists(folderName, parentDirname)
     if (!itExists) {
-      this.render(req, res, 'doc-fail', {
+      this.renderTemplate(res, `${__dirname}/fail`, {
         directory,
         folderName,
         parentDirname

@@ -1,20 +1,21 @@
 import { je } from '@events/index'
-import { NextFunction, Request, Response } from 'express'
+import { RouteEntry, RouteHandler } from '@routes/route'
 import { assign as _assign } from 'lodash'
+import DocRoute from '..'
 
-export const get = route => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    update.apply(route, [req, res, next])
+export const get: RouteEntry = (route: DocRoute) => {
+  return (req, res, next) => {
+    return update.apply(route, [req, res, next])
   }
 }
 
-export const post = route => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    didUpdate.apply(route, [req, res, next])
+export const post: RouteEntry = (route: DocRoute) => {
+  return (req, res, next) => {
+    return didUpdate.apply(route, [req, res, next])
   }
 }
 
-const update = async function(req: Request, res: Response, next: NextFunction): Promise<void> {
+const update: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Editing a document'
   const docName = req.query.docName || ''
   const into = req.query.into || ''
@@ -46,10 +47,10 @@ const update = async function(req: Request, res: Response, next: NextFunction): 
     wikiIndex
   }
 
-  this.render(req, res, 'doc-update', scope)
+  this.renderTemplate(res, __dirname, scope)
 }
 
-const didUpdate = async function(req: Request, res: Response, next: NextFunction): Promise<void> {
+const didUpdate: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Editing a document'
   const { errors, data } = this.inspectRequest(req)
   const oldDocName = req.body.docName
@@ -67,7 +68,7 @@ const didUpdate = async function(req: Request, res: Response, next: NextFunction
   }
 
   if (errors) {
-    this.render(req, res, 'doc-update', _assign(scope, { errors }))
+    this.renderTemplate(res, __dirname, _assign(scope, { errors }))
     return
   }
 
@@ -80,7 +81,7 @@ const didUpdate = async function(req: Request, res: Response, next: NextFunction
   try {
     await this.sdk.updateDoc(oldDocName, newDocName, data.content, into)
   } catch (err) {
-    this.render(req, res, 'doc-update', _assign(scope, { errors: [err.message] }))
+    this.renderTemplate(res, __dirname, _assign(scope, { errors: [err.message] }))
     return
   }
 

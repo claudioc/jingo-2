@@ -1,19 +1,20 @@
 import { je } from '@events/index'
-import { NextFunction, Request, Response } from 'express'
+import { RouteEntry, RouteHandler } from '@routes/route'
+import DocRoute from '..'
 
-export const get = route => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    del.apply(route, [req, res, next])
+export const get: RouteEntry = (route: DocRoute) => {
+  return (req, res, next) => {
+    return del.apply(route, [req, res, next])
   }
 }
 
-export const post = route => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    didDelete.apply(route, [req, res, next])
+export const post: RouteEntry = (route: DocRoute) => {
+  return (req, res, next) => {
+    return didDelete.apply(route, [req, res, next])
   }
 }
 
-const del = async function(req: Request, res: Response, next: NextFunction): Promise<void> {
+const del: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Deleting a document'
   const docName = req.query.docName || ''
   const into = req.query.into || ''
@@ -40,10 +41,10 @@ const del = async function(req: Request, res: Response, next: NextFunction): Pro
     into
   }
 
-  this.render(req, res, 'doc-delete', scope)
+  this.renderTemplate(res, __dirname, scope)
 }
 
-const didDelete = async function(req: Request, res: Response, next: NextFunction): Promise<void> {
+const didDelete: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Deleting a document'
   const docName = req.body.docName
   const into = req.body.into

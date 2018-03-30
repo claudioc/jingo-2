@@ -1,13 +1,14 @@
-import { NextFunction, Request, Response } from 'express'
+import { RouteEntry, RouteHandler } from '@routes/route'
 import { cloneDeep as _clone } from 'lodash'
+import DocRoute from '..'
 
-export const get = route => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    recent.apply(route, [req, res, next])
+export const get: RouteEntry = (route: DocRoute) => {
+  return (req, res, next) => {
+    return recent.apply(route, [req, res, next])
   }
 }
 
-const recent = async function(req: Request, res: Response, next: NextFunction): Promise<void> {
+const recent: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Recent edits'
 
   let items
@@ -31,5 +32,5 @@ const recent = async function(req: Request, res: Response, next: NextFunction): 
     recentEdits
   }
 
-  this.render(req, res, 'doc-recents', scope)
+  this.renderTemplate(res, __dirname, scope)
 }

@@ -68,7 +68,10 @@ const checkGit = async (config: Config): Promise<void> => {
   }
 
   const branch = config.get('features.gitSupport.branch')
-  result = await exec('git symbolic-ref --short HEAD')
+  // @TODO make this use of the simple-git library
+  result = await exec(
+    `git --git-dir=${gitDir} --work-tree=${documentRoot} symbolic-ref --short HEAD`
+  )
   if (result.stdout.split('\n')[0] !== branch) {
     throw new Error(`(git support) The local repository is not on branch ${branch}`)
   }

@@ -14,8 +14,7 @@ export const post = route => {
 
 const login = function(req: Request, res: Response, next: NextFunction): void {
   const scope = {}
-  console.log(__dirname + '/template')
-  this.render(req, res, __dirname + '/template', scope)
+  this.renderTemplate(res, __dirname, scope)
 }
 
 const didLogin = async function(req: Request, res: Response, next: NextFunction): Promise<void> {}

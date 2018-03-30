@@ -1,19 +1,20 @@
 import { je } from '@events/index'
-import { NextFunction, Request, Response } from 'express'
+import { RouteEntry, RouteHandler } from '@routes/route'
+import DocRoute from '..'
 
-export const get = route => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    restore.apply(route, [req, res, next])
+export const get: RouteEntry = (route: DocRoute) => {
+  return (req, res, next) => {
+    return restore.apply(route, [req, res, next])
   }
 }
 
-export const post = route => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    didRestore.apply(route, [req, res, next])
+export const post: RouteEntry = (route: DocRoute) => {
+  return (req, res, next) => {
+    return didRestore.apply(route, [req, res, next])
   }
 }
 
-const restore = async function(req: Request, res: Response, next: NextFunction): Promise<void> {
+const restore: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Restore a previous version'
   const docName = req.query.docName || ''
   const into = req.query.into || ''
@@ -42,10 +43,10 @@ const restore = async function(req: Request, res: Response, next: NextFunction):
     version
   }
 
-  this.render(req, res, 'doc-restore', scope)
+  this.renderTemplate(res, __dirname, scope)
 }
 
-const didRestore = async function(req: Request, res: Response, next: NextFunction): Promise<void> {
+const didRestore: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Restoring a document'
   const docName = req.body.docName
   const into = req.body.into

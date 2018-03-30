@@ -172,3 +172,5 @@
 - Adds support for recent edits
 17/03/18
 - Split the routes in single modules
+30/03/18
+- Added gulp to be able to move the template close to the route handler

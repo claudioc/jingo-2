@@ -23,13 +23,13 @@ let httpPort
 
 main()
 
-async function main () {
+async function main() {
   await parseCommandLine()
   await loadConfig()
   setupServer()
 }
 
-function setupServer () {
+function setupServer() {
   httpPort = normalizePort(process.env.PORT || DEFAULT_HTTP_PORT)
   const app = Server.bootstrap(config).app
   app.set('port', httpPort)
@@ -39,7 +39,7 @@ function setupServer () {
   httpServer.on('listening', onListening)
 }
 
-function normalizePort (val) {
+function normalizePort(val) {
   const port = parseInt(val, 10)
 
   if (isNaN(port)) {
@@ -56,14 +56,12 @@ function normalizePort (val) {
 /**
  * Event listener for HTTP server 'error' event.
  */
-function onError (error) {
+function onError(error) {
   if (error.syscall !== 'listen') {
     throw error
   }
 
-  var bind = typeof httpPort === 'string'
-    ? `Pipe ${httpPort}`
-    : `Port ${httpPort}`
+  var bind = typeof httpPort === 'string' ? `Pipe ${httpPort}` : `Port ${httpPort}`
 
   switch (error.code) {
     case 'EACCES':
@@ -81,21 +79,20 @@ function onError (error) {
   }
 }
 
-function onListening () {
+function onListening() {
   const addr = httpServer.address()
-  const bind = typeof addr === 'string'
-    ? `pipe ${addr}`
-    : `port ${addr.port}`
+  const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`
 
   const hasIpc = config.hasFeature('ipcSupport')
   console.log(`🏁 Listening on ${bind} ${hasIpc ? '(with IPC)' : ''}`)
 }
 
-async function parseCommandLine () {
-  program.version(pkg.version)
-  .option('-c, --config <path>', 'Specify the config file')
-  .option('-s, --sample-config', 'Dumps a config file template and exits')
-  .parse(process.argv)
+async function parseCommandLine() {
+  program
+    .version(pkg.version)
+    .option('-c, --config <path>', 'Specify the config file')
+    .option('-s, --sample-config', 'Dumps a config file template and exits')
+    .parse(process.argv)
 
   if (program.sampleConfig) {
     console.log(await config.sample())
@@ -107,7 +104,7 @@ async function parseCommandLine () {
   }
 
   if (!fs.existsSync(program.config)) {
-    console.error('The specified config file doesn\'t exist')
+    console.error("The specified config file doesn't exist")
     process.exit(-1)
   }
 
@@ -116,12 +113,16 @@ async function parseCommandLine () {
   }
 }
 
-async function loadConfig () {
+async function loadConfig() {
   try {
     await config.load(program.config)
   } catch (err) {
     console.log(err)
-    console.error(`There was an error reading your config file and Jingo cannot continue:\n${program.config}: ${err}`)
+    console.error(
+      `There was an error reading your config file and Jingo cannot continue:\n${
+        program.config
+      }: ${err}`
+    )
     process.exit(-1)
   }
 }

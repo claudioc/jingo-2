@@ -1,12 +1,13 @@
-import { NextFunction, Request, Response } from 'express'
+import { RouteEntry, RouteHandler } from '@routes/route'
+import DocRoute from '..'
 
-export const get = route => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    compare.apply(route, [req, res, next])
+export const get: RouteEntry = (route: DocRoute) => {
+  return (req, res, next) => {
+    return compare.apply(route, [req, res, next])
   }
 }
 
-const compare = async function(req: Request, res: Response, next: NextFunction): Promise<void> {
+const compare: RouteHandler = async function(this: DocRoute, req, res, next) {
   const { hash, docName, into } = req.query
 
   const diffs = await this.git.$diff(docName, into, hash[0], hash[1])
@@ -33,7 +34,7 @@ const compare = async function(req: Request, res: Response, next: NextFunction):
     lines
   }
 
-  this.render(req, res, 'doc-compare', scope)
+  this.renderTemplate(res, __dirname, scope)
 }
 
 let ldln = 0
