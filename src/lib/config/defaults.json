@@ -28,7 +28,15 @@
   },
 
   "authentication": {
-
+    "google": {
+      "enabled": false
+    },
+    "local": {
+      "enabled": false
+    },
+    "github": {
+      "enabled": false
+    }
   },
 
   // Enable/Disable/Configure optional features

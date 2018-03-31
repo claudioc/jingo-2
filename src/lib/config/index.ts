@@ -48,6 +48,7 @@ export interface ICustomSettings {
 }
 
 type TFeature = 'codeHighlighter' | 'ipcSupport' | 'gitSupport' | 'emojiSupport' | 'csrfProtection'
+type TAuthMethod = 'google' | 'github' | 'local'
 
 export type TFeaturesSettings = {
   codeHighlighter?: any
@@ -131,6 +132,15 @@ export class Config {
   }
 
   /**
+   * Checks if an authorization method exists and it's enabled
+   * @param feature The name of the feature to check
+   */
+  public hasAuth(authMethod: TAuthMethod): boolean {
+    const method = this.get('authentication')[authMethod]
+    return !!(method && method.enabled)
+  }
+
+  /**
    * Programmatically disables a feature
    * @param feature The name of the feature to check
    */
@@ -144,7 +154,7 @@ export class Config {
 
   /**
    * Programmatically enables a feature
-   * @param feature The name of the feature to check
+   * @param feature The name of the feature to enable
    */
   public enableFeature(featureName: TFeature): void {
     if (this.hasFeature(featureName)) {
@@ -152,6 +162,30 @@ export class Config {
     }
 
     this.set(`features.${featureName}.enabled`, true)
+  }
+
+  /**
+   * Programmatically enables an authentication method
+   * @param auth The name of the authentication method to enable
+   */
+  public enableAuth(authMethod: TAuthMethod): void {
+    if (this.hasAuth(authMethod)) {
+      return
+    }
+
+    this.set(`authentication.${authMethod}.enabled`, true)
+  }
+
+  /**
+   * Programmatically disables an authentication method
+   * @param auth The name of the authentication method to disable
+   */
+  public disableAuth(authMethod: TAuthMethod): void {
+    if (!this.hasAuth(authMethod)) {
+      return
+    }
+
+    this.set(`authentication.${authMethod}.enabled`, false)
   }
 
   public reset(): Config {

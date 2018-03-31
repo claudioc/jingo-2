@@ -12,7 +12,7 @@ export type RouteHandler = (
   req: Request,
   res: Response,
   next: NextFunction
-) => Promise<void>
+) => Promise<void> | void
 
 export type RouteEntry = (route: BaseRoute) => RouteHandler
 

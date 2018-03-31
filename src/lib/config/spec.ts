@@ -189,9 +189,20 @@ test('sample', async t => {
   t.true(sample.startsWith('{'))
 })
 
-test('hasFeature with a valid and enable feature', async t => {
+test('hasFeature with a valid and enabled feature', async t => {
   const cfg = await config()
   t.true(cfg.hasFeature('codeHighlighter'))
+})
+
+test('hasAuth with a valid and enabled method', async t => {
+  const cfg = await config()
+  cfg.enableAuth('google')
+  t.true(cfg.hasAuth('google'))
+})
+
+test('hasAuth with a disabled method', async t => {
+  const cfg = await config()
+  t.false(cfg.hasAuth('google'))
 })
 
 test('disableFeature', async t => {
@@ -208,4 +219,19 @@ test('enableFeature', async t => {
   t.false(cfg.hasFeature('codeHighlighter'))
   cfg.enableFeature('codeHighlighter')
   t.true(cfg.hasFeature('codeHighlighter'))
+})
+
+test('disableAuth', async t => {
+  const cfg = await config()
+  cfg.set('authentication.google.enabled', true)
+  t.true(cfg.hasAuth('google'))
+  cfg.disableAuth('google')
+  t.false(cfg.hasAuth('google'))
+})
+
+test('enableAuth', async t => {
+  const cfg = await config()
+  t.false(cfg.hasAuth('google'))
+  cfg.enableAuth('google')
+  t.true(cfg.hasAuth('google'))
 })

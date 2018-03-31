@@ -1,20 +1,21 @@
-import { NextFunction, Request, Response } from 'express'
+import { RouteEntry, RouteHandler } from '@routes/route'
+import AuthRoute from '..'
 
-export const get = route => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    login.apply(route, [req, res, next])
+export const get: RouteEntry = (route: AuthRoute) => {
+  return (req, res, next) => {
+    return login.apply(route, [req, res, next])
   }
 }
 
-export const post = route => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    didLogin.apply(route, [req, res, next])
+export const post: RouteEntry = (route: AuthRoute) => {
+  return (req, res, next) => {
+    return didLogin.apply(route, [req, res, next])
   }
 }
 
-const login = function(req: Request, res: Response, next: NextFunction): void {
+const login: RouteHandler = function(this: AuthRoute, req, res, next) {
   const scope = {}
   this.renderTemplate(res, __dirname, scope)
 }
 
-const didLogin = async function(req: Request, res: Response, next: NextFunction): Promise<void> {}
+const didLogin: RouteHandler = function(this: AuthRoute, req, res, next) {}

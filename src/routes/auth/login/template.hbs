@@ -1,1 +1,37 @@
-<h1>Login</h1>
+<style>
+
+</style>
+<h1>Authentication</h1>
+
+{{#if (hasAuth 'google')}}
+<section class="j-auth-google">
+  <h3>Using your Google credentials</h3>
+  <a href="#">Sign in with Google</a>
+</section>
+{{/if}}
+
+{{#if (hasAuth 'github')}}
+<section class="j-auth-github">
+  <h3>Using your Github credentials</h3>
+  <a href="#">Sign in with Github</a>
+</section>
+{{/if}}
+
+{{#if (hasAuth 'local')}}
+<section class="j-auth-local">
+  <form>
+    <div class="form-item">
+      <label>Username <span class="req">*</span></label>
+      <input autofocus type="text" name="username" required>
+    </div>
+    <div class="form-item">
+      <label>Password <span class="req">*</span></label>
+      <input type="password" name="password" required>
+    </div>
+    <div class="form-item form-buttons">
+      <input type="submit" class="button primary" value="Login">
+      <a class="button outline j-last" href="/">Cancel</a>
+    </div>
+  </form>
+</section>
+{{/if}}
