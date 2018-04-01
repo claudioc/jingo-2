@@ -13,8 +13,8 @@ export default function viewHelpers(config: Config) {
     breadcrumbs: breadcrumbs(config),
     custom: custom(config),
     ellipsize,
-    hasFeature: hasFeature(config),
     hasAuth: hasAuth(config),
+    hasFeature: hasFeature(config),
     timeAgo,
     urlFor: urlFor(config)
   }

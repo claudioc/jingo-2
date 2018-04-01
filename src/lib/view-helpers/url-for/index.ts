@@ -39,6 +39,7 @@ export default (makeHelper = config => {
 
       case 'vendor':
       case 'css':
+      case 'img':
       case 'js':
         path = config.mount(`public/${resource}/${id}`)
         break

@@ -35,7 +35,9 @@ gulp.task('templates', () => {
 gulp.task('watch', done => {
   const tsWatcher = gulp.watch('src/**/*.ts', gulp.series('scripts', 'serve'))
   const hbsWatcher = gulp.watch('src/routes/**/template.hbs', gulp.series('templates', 'serve'))
-  gulp.watch('./config.json', server)
+  gulp.watch('./config.json', gulp.series('serve')).on('change', () => {
+    console.log('Config changed')
+  })
 
   tsWatcher.on('change', log)
   hbsWatcher.on('change', log)

@@ -1,12 +1,29 @@
 <style>
+  .j-auth-google a {
+    position: relative;
+    padding: 16px 20px;
+  }
 
+  .j-auth-google span {
+    margin-left: 40px;
+  }
+
+  .j-auth-google img {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    background: white;
+    border-radius: 4px;
+    width: 40px;
+  }
 </style>
+
 <h1>Authentication</h1>
 
 {{#if (hasAuth 'google')}}
 <section class="j-auth-google">
   <h3>Using your Google credentials</h3>
-  <a href="#">Sign in with Google</a>
+  <a class="button" href="#"><img src="{{urlFor resource="img" id="btn-google.svg"}}"><span>Sign in with Google</span></a>
 </section>
 {{/if}}
 
@@ -19,6 +36,7 @@
 
 {{#if (hasAuth 'local')}}
 <section class="j-auth-local">
+  <h3>Using your local credentials</h3>
   <form>
     <div class="form-item">
       <label>Username <span class="req">*</span></label>

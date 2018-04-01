@@ -163,6 +163,16 @@ test('urlFor folder rename', async t => {
   t.is(helper(params), '/folder/rename?folderName=bazinga&into=zoo')
 })
 
+test('urlFor img asset', async t => {
+  const params = {
+    hash: {
+      id: 'bazinga.img',
+      resource: 'img'
+    }
+  }
+  t.is(helper(params), '/public/css/bazinga.img')
+})
+
 test('urlFor css asset', async t => {
   const params = {
     hash: {
