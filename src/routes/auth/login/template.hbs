@@ -1,41 +1,48 @@
 <style>
+  .j-auth {
+    margin-bottom: 16px;
+  }
+
   .j-auth-google a {
     position: relative;
-    padding: 16px 20px;
+  }
+
+  .j-auth-google a::before {
+    content: '\00a0';
+    background: url({{urlFor resource="img" id="btn-google.svg"}}) center center no-repeat;
+    position: absolute;
+    display: block;
+    border-right: 1px solid #d5d5d5;
+    left: 0;
+    top: 0;
+    text-align: center;
+    padding: 8px 16px;
+    background-size: cover;
   }
 
   .j-auth-google span {
     margin-left: 40px;
-  }
-
-  .j-auth-google img {
-    position: absolute;
-    left: 6px;
-    top: 6px;
-    background: white;
-    border-radius: 4px;
-    width: 40px;
   }
 </style>
 
 <h1>Authentication</h1>
 
 {{#if (hasAuth 'google')}}
-<section class="j-auth-google">
+<section class="j-auth j-auth-google">
   <h3>Using your Google credentials</h3>
-  <a class="button" href="#"><img src="{{urlFor resource="img" id="btn-google.svg"}}"><span>Sign in with Google</span></a>
+  <a class="button outline" href="#"><span>Sign in with Google</span></a>
 </section>
 {{/if}}
 
 {{#if (hasAuth 'github')}}
-<section class="j-auth-github">
+<section class="j-auth j-auth-github">
   <h3>Using your Github credentials</h3>
   <a href="#">Sign in with Github</a>
 </section>
 {{/if}}
 
 {{#if (hasAuth 'local')}}
-<section class="j-auth-local">
+<section class="j-auth j-auth-local">
   <h3>Using your local credentials</h3>
   <form>
     <div class="form-item">
