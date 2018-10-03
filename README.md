@@ -12,6 +12,8 @@ The project is under development, not even in Alpha status.
 2.  Write a minimal `config.json` with at least the `documentRoot` key (abolute local path of the document repository)
 3.  `npx gulp`
 
+By default the git support is disabled, so that Jingo is just an cms sitting on top of Markdown files. To enable it, turn on the the `gitSupport` feature. Some of the feature (like "Recent edits") are only active once git is supported.
+
 ## Configuration
 
 The configuration is not fully documented yet, but the `./src/lib/config/defaults.json` file contains helpful comments.
