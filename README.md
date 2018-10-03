@@ -1,26 +1,13 @@
+# Jingo, take two
 
-Default
-example.com/wiki
-example.com/public/
+Looking for Jingo 1? [Look no further](https://github.com/claudioc/jingo)
 
-Change the base path in "docs"
-example.com/docs
-example.com/public/
+## Status of the project
 
-Behind a proxy (/intranet), default settings
-example.com/intranet/wiki
-example.com/intranet/public/
+The project is under development, not even in Alpha status.
 
-Behind a proxy (/intranet), base path in "docs"
-example.com/intranet/docs
-example.com/intranet/public/
+## Quick start
 
-Markdown plugins:
-+ markdown-it-footnote
-+ markdown-it-emoji
-- markdown-it-responsive (for responsive images)
-- markdown-it-katex (for MathML)
-+ markdown-it-table-of-contents
-+ markdown-it-anchor
-- (markdown-it-lazy-headers)
-- (markdown-it-footnote-conventional (slightly different to footnote))
+1.  `npm i`
+2.  Write a minimal `config.json` with at least the `documentRoot` key (abolute local path of the document repository)
+3.  `npx gulp`
