@@ -1,7 +1,7 @@
-import { Config } from '@lib/config'
+import { Config } from '@lib/config';
 
 export default (config: Config) => {
   return () => {
-    return config.get('custom.title')
-  }
-}
+    return config.get('custom.title');
+  };
+};

@@ -1,12 +1,12 @@
-import { je } from '@events/index'
-import { Config } from '@lib/config'
-import BaseRoute from '@routes/route'
-import { IDoc } from '@sdk'
-import { NextFunction, Request, Response, Router } from 'express'
+import { je } from '@events/index';
+import { Config } from '@lib/config';
+import BaseRoute from '@routes/route';
+import { IDoc } from '@sdk';
+import { NextFunction, Request, Response, Router } from 'express';
 
 export default class WikiRoute extends BaseRoute {
   public static create(router: Router, config: Config) {
-    const basePath = config.get('wiki.basePath')
+    const basePath = config.get('wiki.basePath');
 
     /**
      * The catch-all route for all the route requests:
@@ -17,33 +17,33 @@ export default class WikiRoute extends BaseRoute {
      * a query parameter `v` with a value of a git commit
      */
     router.get(`/${basePath}*`, (req: Request, res: Response, next: NextFunction) => {
-      const reqPath = req.params[0]
-      delete req.params[0]
+      const reqPath = req.params[0];
+      delete req.params[0];
 
       if (reqPath.length === 0) {
-        res.redirect(config.mount(`${basePath}/`))
-        return
+        res.redirect(config.mount(`${basePath}/`));
+        return;
       }
 
-      const method = reqPath.endsWith('/') ? 'list' : 'read'
-      new WikiRoute(config, reqPath)[method](req, res, next)
-    })
+      const method = reqPath.endsWith('/') ? 'list' : 'read';
+      new WikiRoute(config, reqPath)[method](req, res, next);
+    });
   }
 
-  private dirName: string
-  private docName: string
+  private dirName: string;
+  private docName: string;
 
   constructor(config, reqPath) {
-    super(config)
-    const { dirName, docName } = this.docHelpers.splitPath(reqPath)
-    this.dirName = dirName
-    this.docName = docName
+    super(config);
+    const { dirName, docName } = this.docHelpers.splitPath(reqPath);
+    this.dirName = dirName;
+    this.docName = docName;
   }
 
   public async read(req: Request, res: Response, next: NextFunction) {
-    const isIndex = this.config.get('wiki.index') === this.docName
+    const isIndex = this.config.get('wiki.index') === this.docName;
     try {
-      const doc = await this.acquireDoc(req)
+      const doc = await this.acquireDoc(req);
       const scope: object = {
         codeHighlighterTheme: this.config.get('features.codeHighlighter.theme'),
         content: doc.content,
@@ -52,42 +52,42 @@ export default class WikiRoute extends BaseRoute {
         docTitle: doc.title,
         docVersion: doc.version,
         isIndex
-      }
-      this.title = `Jingo – ${doc.title}`
-      this.renderTemplate(res, `${__dirname}/read`, scope)
-      req.app && req.app.emit(je('jingo.wikiRead'), this.docName)
+      };
+      this.title = `Jingo – ${doc.title}`;
+      this.renderTemplate(res, `${__dirname}/read`, scope);
+      req.app && req.app.emit(je('jingo.wikiRead'), this.docName);
     } catch (e) {
       if (isIndex) {
-        res.redirect(this.config.mount(`/?welcome`))
+        res.redirect(this.config.mount(`/?welcome`));
       } else {
-        const createPageUrl = this.docHelpers.pathFor('create', this.docName, this.dirName)
-        res.status(404)
+        const createPageUrl = this.docHelpers.pathFor('create', this.docName, this.dirName);
+        res.status(404);
         this.renderTemplate(res, `${__dirname}/fail`, {
           createPageUrl
-        })
+        });
       }
     }
   }
 
   public async list(req: Request, res: Response, next: NextFunction) {
-    const { folderName, parentDirname } = this.folderHelpers.splitPath(this.dirName)
+    const { folderName, parentDirname } = this.folderHelpers.splitPath(this.dirName);
 
-    this.title = `Jingo – List of documents`
+    this.title = `Jingo – List of documents`;
 
-    let docList
-    let folderList
+    let docList;
+    let folderList;
     try {
-      docList = await this.sdk.listDocs(this.dirName)
-      folderList = await this.sdk.listFolders(this.dirName)
+      docList = await this.sdk.listDocs(this.dirName);
+      folderList = await this.sdk.listFolders(this.dirName);
     } catch (err) {
-      res.status(404)
+      res.status(404);
       this.renderTemplate(res, `${__dirname}/list-fail`, {
         directory: this.dirName,
         folderName,
         parentDirname
-      })
+      });
 
-      return
+      return;
     }
 
     const scope = {
@@ -96,10 +96,10 @@ export default class WikiRoute extends BaseRoute {
       folderList,
       folderName,
       parentDirname
-    }
+    };
 
-    this.renderTemplate(res, `${__dirname}/list`, scope)
-    req.app && req.app.emit(je('jingo.wikiList'), this.dirName)
+    this.renderTemplate(res, `${__dirname}/list`, scope);
+    req.app && req.app.emit(je('jingo.wikiList'), this.dirName);
   }
 
   /**
@@ -107,34 +107,34 @@ export default class WikiRoute extends BaseRoute {
    * @param req The request object
    */
   private async acquireDoc(req: Request): Promise<IDoc> {
-    const cache = req.app.get('cache')
-    const version = this.readVersion(req)
+    const cache = req.app.get('cache');
+    const version = this.readVersion(req);
 
-    let doc
+    let doc;
     if (!cache || version !== 'HEAD') {
-      doc = await this.sdk.loadDoc(this.docName, this.dirName, version)
-      doc.content = this.sdk.renderToHtml(doc.content)
-      doc.version = version
-      return doc
+      doc = await this.sdk.loadDoc(this.docName, this.dirName, version);
+      doc.content = this.sdk.renderToHtml(doc.content);
+      doc.version = version;
+      return doc;
     }
 
-    doc = cache.get(this.dirName + this.docName)
+    doc = cache.get(this.dirName + this.docName);
     if (!doc) {
-      doc = await this.sdk.loadDoc(this.docName, this.dirName)
+      doc = await this.sdk.loadDoc(this.docName, this.dirName);
       // Save in the cache the compiled doc content
-      doc.content = this.sdk.renderToHtml(doc.content)
-      doc.version = version
-      cache.put(this.dirName + this.docName, doc, 3600 * 1000)
+      doc.content = this.sdk.renderToHtml(doc.content);
+      doc.version = version;
+      cache.put(this.dirName + this.docName, doc, 3600 * 1000);
     }
 
-    return doc
+    return doc;
   }
 
   private readVersion(req: Request): string {
     if (!this.config.hasFeature('gitSupport')) {
-      return 'HEAD'
+      return 'HEAD';
     }
 
-    return (req.query.v || 'HEAD').trim()
+    return (req.query.v || 'HEAD').trim();
   }
 }

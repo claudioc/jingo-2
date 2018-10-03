@@ -1,16 +1,16 @@
-import { Config } from '@lib/config'
-import Queso from '@lib/queso'
-import * as fs_ from 'fs'
-import * as path from 'path'
+import { Config } from '@lib/config';
+import Queso from '@lib/queso';
+import * as fs_ from 'fs';
+import * as path from 'path';
 
-type FolderAction = 'create' | 'list' | 'rename' | 'delete'
+type FolderAction = 'create' | 'list' | 'rename' | 'delete';
 type FolderPathParts = {
-  parentDirname: string
-  folderName: string
-}
+  parentDirname: string;
+  folderName: string;
+};
 
 function folder(config: Config): Folder {
-  return new Folder(config)
+  return new Folder(config);
 }
 
 export class Folder {
@@ -23,33 +23,33 @@ export class Folder {
    * @param into The name of the parent folder
    */
   public pathFor(action: FolderAction, folderName: string = '', into: string = ''): string {
-    let actionPath = this.config.mount(`folder/${action}`)
-    const queso = new Queso()
+    let actionPath = this.config.mount(`folder/${action}`);
+    const queso = new Queso();
 
     if (action === 'list') {
       // Encode the name, but do not encode slashes in it
       let folderPath = encodeURIComponent(folderName.replace(/^\/+|\/+$/g, '').trim()).replace(
         /%2F/g,
         '/'
-      )
-      folderPath += folderPath.length > 0 ? '/' : ''
+      );
+      folderPath += folderPath.length > 0 ? '/' : '';
       // When into and folderPath are empty, path.join returns a '.'
-      folderPath = path.join(into, folderPath).replace(/^\.$/, '')
-      actionPath = this.config.mount(`${this.config.get('wiki.basePath')}/${folderPath}`)
+      folderPath = path.join(into, folderPath).replace(/^\.$/, '');
+      actionPath = this.config.mount(`${this.config.get('wiki.basePath')}/${folderPath}`);
     }
 
     if (
       (action === 'rename' || action === 'delete' || action === 'create') &&
       folderName.length > 0
     ) {
-      queso.add('folderName', folderName)
+      queso.add('folderName', folderName);
     }
 
     if (action !== 'list' && into && into.length > 0) {
-      queso.add('into', into)
+      queso.add('into', into);
     }
 
-    return actionPath + queso.stringify()
+    return actionPath + queso.stringify();
   }
 
   /**
@@ -57,8 +57,8 @@ export class Folder {
    * @param id The path of the folder
    */
   public fullpathFor(folderName: string): fs_.PathLike {
-    const docRoot = this.config.get('documentRoot')
-    return path.resolve(docRoot, folderName || '')
+    const docRoot = this.config.get('documentRoot');
+    return path.resolve(docRoot, folderName || '');
   }
 
   /**
@@ -67,15 +67,15 @@ export class Folder {
    * @returns FolderPathParts
    */
   public splitPath(unparsed: string): FolderPathParts {
-    const normalizedPath = (unparsed || '').trim()
+    const normalizedPath = (unparsed || '').trim();
 
-    const { dir, name } = path.parse(normalizedPath)
+    const { dir, name } = path.parse(normalizedPath);
 
     return {
       folderName: name,
       parentDirname: dir
-    }
+    };
   }
 }
 
-export default folder
+export default folder;

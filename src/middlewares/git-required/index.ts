@@ -1,13 +1,13 @@
-import { Config } from '@lib/config'
+import { Config } from '@lib/config';
 
 const middleware = (config: Config) => {
   return (req, res, next) => {
     if (config.hasFeature('gitSupport')) {
-      next()
+      next();
     } else {
-      next('router')
+      next('router');
     }
-  }
-}
+  };
+};
 
-export default middleware
+export default middleware;

@@ -1,5 +1,5 @@
-import { check } from 'express-validator/check'
-import { sanitize } from 'express-validator/filter'
+import { check } from 'express-validator/check';
+import { sanitize } from 'express-validator/filter';
 
 export const validateCreate = () => {
   return [
@@ -11,8 +11,8 @@ export const validateCreate = () => {
     check('into').trim(),
 
     sanitize(['folderName', 'into'])
-  ]
-}
+  ];
+};
 
 export const validateRename = () => {
   return [
@@ -28,5 +28,5 @@ export const validateRename = () => {
     check('into').trim(),
 
     sanitize(['folderName', 'currentFolderName', 'into'])
-  ]
-}
+  ];
+};

@@ -1,5 +1,5 @@
-import test from 'ava'
+import test from 'ava';
 
-test.todo('assertDirectoryExists')
-test.todo('assertDocDoesNotExist')
-test.todo('assertDocExists')
+test.todo('assertDirectoryExists');
+test.todo('assertDocDoesNotExist');
+test.todo('assertDocExists');

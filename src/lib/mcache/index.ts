@@ -2,60 +2,60 @@
 // without a setTimout for each record
 
 export let mcache = () => {
-  return new Mcache()
-}
+  return new Mcache();
+};
 
 export default class Mcache {
-  private records: Map<string, any> = new Map()
+  private records: Map<string, any> = new Map();
 
   public put(key: string, value: any, time?: number) {
     if (typeof time !== 'undefined' && (typeof time !== 'number' || isNaN(time) || time <= 0)) {
-      throw new Error('Cache timeout must be a positive number')
+      throw new Error('Cache timeout must be a positive number');
     }
 
     if (typeof value === 'undefined') {
-      throw new Error('Cache cannot store an undefined value')
+      throw new Error('Cache cannot store an undefined value');
     }
 
     const record = {
       expire: time + Date.now(),
       value
-    }
+    };
 
-    this.records.set(key, record)
+    this.records.set(key, record);
 
-    return value
+    return value;
   }
 
   get size() {
-    return this.records.size
+    return this.records.size;
   }
 
   public del(key: string) {
-    this.records.delete(key)
+    this.records.delete(key);
   }
 
   public clear() {
-    this.records.clear()
+    this.records.clear();
   }
 
   public get(key: string) {
     if (!this.records.has(key)) {
-      return undefined
+      return undefined;
     }
 
-    const record = this.records.get(key)
+    const record = this.records.get(key);
 
     if (isNaN(record.expire) || record.expire >= Date.now()) {
-      return record.value
+      return record.value;
     } else {
-      this.del(key)
+      this.del(key);
     }
 
-    return undefined
+    return undefined;
   }
 
   public keys() {
-    return Array.from(this.records.keys())
+    return Array.from(this.records.keys());
   }
 }

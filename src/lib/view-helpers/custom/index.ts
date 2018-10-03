@@ -1,14 +1,14 @@
-import { Config } from '@lib/config'
+import { Config } from '@lib/config';
 
-type TCustomThing = 'title' | 'logo' | 'favicon' | 'scripts' | 'content' | 'styles' | 'head'
+type TCustomThing = 'title' | 'logo' | 'favicon' | 'scripts' | 'content' | 'styles' | 'head';
 
-import makeContent from './content'
-import makeFavicon from './favicon'
-import makeHead from './head'
-import makeLogo from './logo'
-import makeScripts from './scripts'
-import makeStyles from './styles'
-import makeTitle from './title'
+import makeContent from './content';
+import makeFavicon from './favicon';
+import makeHead from './head';
+import makeLogo from './logo';
+import makeScripts from './scripts';
+import makeStyles from './styles';
+import makeTitle from './title';
 
 export default (config: Config) => {
   const helpers = {
@@ -19,7 +19,7 @@ export default (config: Config) => {
     scripts: makeScripts(config),
     styles: makeStyles(config),
     title: makeTitle(config)
-  } as { [name in TCustomThing]: () => string }
+  } as { [name in TCustomThing]: () => string };
 
-  return (params: TCustomThing): string => helpers[params]()
-}
+  return (params: TCustomThing): string => helpers[params]();
+};

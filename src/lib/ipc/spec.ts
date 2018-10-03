@@ -1,3 +1,3 @@
-import test from 'ava'
+import test from 'ava';
 
-test.todo('The ipc module')
+test.todo('The ipc module');

@@ -1,12 +1,12 @@
-import { Config } from '@lib/config'
+import { Config } from '@lib/config';
 
-import breadcrumbs from './breadcrumbs'
-import custom from './custom'
-import ellipsize from './ellipsize'
-import hasAuth from './has-auth'
-import hasFeature from './has-feature'
-import timeAgo from './time-ago'
-import urlFor from './url-for'
+import breadcrumbs from './breadcrumbs';
+import custom from './custom';
+import ellipsize from './ellipsize';
+import hasAuth from './has-auth';
+import hasFeature from './has-feature';
+import timeAgo from './time-ago';
+import urlFor from './url-for';
 
 export default function viewHelpers(config: Config) {
   return {
@@ -17,5 +17,5 @@ export default function viewHelpers(config: Config) {
     hasFeature: hasFeature(config),
     timeAgo,
     urlFor: urlFor(config)
-  }
+  };
 }

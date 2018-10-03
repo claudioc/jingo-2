@@ -1,151 +1,151 @@
-import FakeFs from '@lib/fake-fs'
-import test from 'ava'
-import * as cheerio from 'cheerio'
-import * as supertest from 'supertest'
-import Route from '..'
+import FakeFs from '@lib/fake-fs';
+import test from 'ava';
+import * as cheerio from 'cheerio';
+import * as supertest from 'supertest';
+import Route from '..';
 
-import Server from '@server'
+import Server from '@server';
 
-const fakeFs = new FakeFs('/home/jingo')
+const fakeFs = new FakeFs('/home/jingo');
 
 test.after(() => {
-  fakeFs.unmount()
-})
+  fakeFs.unmount();
+});
 
 test('get create with a docName in the url', async t => {
-  const cfg = await fakeFs.config()
-  const docName = fakeFs.rndName()
+  const cfg = await fakeFs.config();
+  const docName = fakeFs.rndName();
 
-  const server = Server.bootstrap(cfg)
-  const response = await supertest(server.app).get(`/doc/create?docName=${docName}`)
+  const server = Server.bootstrap(cfg);
+  const response = await supertest(server.app).get(`/doc/create?docName=${docName}`);
 
-  t.is(response.status, 200)
-  const $ = cheerio.load(response.text)
-  t.is($('title').text(), 'Jingo – Creating a document')
+  t.is(response.status, 200);
+  const $ = cheerio.load(response.text);
+  t.is($('title').text(), 'Jingo – Creating a document');
   t.is(
     $('h3')
       .first()
       .text(),
     `Creating ${docName}`
-  )
-  t.is($('input[name="docTitle"]').attr('type'), 'text')
-})
+  );
+  t.is($('input[name="docTitle"]').attr('type'), 'text');
+});
 
 test('get create for the home page', async t => {
-  const cfg = await fakeFs.config()
-  const docName = cfg.get('wiki.index')
-  const server = Server.bootstrap(cfg)
-  const response = await supertest(server.app).get(`/doc/create?docName=${docName}`)
+  const cfg = await fakeFs.config();
+  const docName = cfg.get('wiki.index');
+  const server = Server.bootstrap(cfg);
+  const response = await supertest(server.app).get(`/doc/create?docName=${docName}`);
 
-  t.is(response.status, 200)
-  const $ = cheerio.load(response.text)
-  t.is($('title').text(), 'Jingo – Creating a document')
+  t.is(response.status, 200);
+  const $ = cheerio.load(response.text);
+  t.is($('title').text(), 'Jingo – Creating a document');
   t.is(
     $('h3')
       .first()
       .text(),
     `Creating ${docName}`
-  )
-  t.is($('input[name="docTitle"]').attr('type'), 'hidden')
-})
+  );
+  t.is($('input[name="docTitle"]').attr('type'), 'hidden');
+});
 
 test('get create with an already existing docName in the url', async t => {
-  const cfg = await fakeFs.config()
-  const route = new Route(cfg)
-  const docName = fakeFs.rndName()
-  fakeFs.writeFile(route.docHelpers.docNameToFilename(docName))
+  const cfg = await fakeFs.config();
+  const route = new Route(cfg);
+  const docName = fakeFs.rndName();
+  fakeFs.writeFile(route.docHelpers.docNameToFilename(docName));
 
-  const server = Server.bootstrap(cfg)
-  const response = await supertest(server.app).get(`/doc/create?docName=${docName}`)
+  const server = Server.bootstrap(cfg);
+  const response = await supertest(server.app).get(`/doc/create?docName=${docName}`);
 
-  t.is(response.status, 302)
-  t.is(response.headers.location, `/wiki/${docName}`)
-})
+  t.is(response.status, 302);
+  t.is(response.headers.location, `/wiki/${docName}`);
+});
 
 test('get create without a docName in the url', async t => {
-  const cfg = await fakeFs.config()
-  const server = Server.bootstrap(cfg)
-  const response = await supertest(server.app).get('/doc/create')
+  const cfg = await fakeFs.config();
+  const server = Server.bootstrap(cfg);
+  const response = await supertest(server.app).get('/doc/create');
 
-  t.is(response.status, 200)
-  const $ = cheerio.load(response.text)
-  t.is($('title').text(), 'Jingo – Creating a document')
+  t.is(response.status, 200);
+  const $ = cheerio.load(response.text);
+  t.is($('title').text(), 'Jingo – Creating a document');
   t.is(
     $('h3')
       .first()
       .text(),
     'Creating a new document'
-  )
-})
+  );
+});
 
 test('get create with a non existing into in the url', async t => {
-  const cfg = await fakeFs.config()
-  const into = fakeFs.rndName()
-  const server = Server.bootstrap(cfg)
-  const response = await supertest(server.app).get(`/doc/create?into=${into}`)
+  const cfg = await fakeFs.config();
+  const into = fakeFs.rndName();
+  const server = Server.bootstrap(cfg);
+  const response = await supertest(server.app).get(`/doc/create?into=${into}`);
 
-  t.is(response.status, 200)
-  const $ = cheerio.load(response.text)
-  t.is($('title').text(), 'Jingo – Creating a document')
+  t.is(response.status, 200);
+  const $ = cheerio.load(response.text);
+  t.is($('title').text(), 'Jingo – Creating a document');
   t.is(
     $('h1')
       .first()
       .text(),
     "We've got a problem here…"
-  )
-})
+  );
+});
 
 test('post create fail with missing fields', async t => {
-  const cfg = await fakeFs.config()
+  const cfg = await fakeFs.config();
 
-  const server = Server.bootstrap(cfg)
-  const response = await supertest(server.app).post(`/doc/create`)
+  const server = Server.bootstrap(cfg);
+  const response = await supertest(server.app).post(`/doc/create`);
 
-  t.is(response.status, 200)
-  const $ = cheerio.load(response.text)
-  t.is($('title').text(), 'Jingo – Creating a document')
-  t.is($('ul.errors li').length, 2)
-})
+  t.is(response.status, 200);
+  const $ = cheerio.load(response.text);
+  t.is($('title').text(), 'Jingo – Creating a document');
+  t.is($('ul.errors li').length, 2);
+});
 
 test('post create fail when doc already exists', async t => {
-  const cfg = await fakeFs.config()
-  const route = new Route(cfg)
-  const docName = fakeFs.rndName()
-  fakeFs.writeFile(route.docHelpers.docNameToFilename(docName))
+  const cfg = await fakeFs.config();
+  const route = new Route(cfg);
+  const docName = fakeFs.rndName();
+  fakeFs.writeFile(route.docHelpers.docNameToFilename(docName));
 
-  const server = Server.bootstrap(cfg)
+  const server = Server.bootstrap(cfg);
   const response = await supertest(server.app)
     .post(`/doc/create`)
     .send({
       content: 'whatever',
       docTitle: docName
-    })
+    });
 
-  t.is(response.status, 200)
-  const $ = cheerio.load(response.text)
-  t.is($('ul.errors li').length, 1)
+  t.is(response.status, 200);
+  const $ = cheerio.load(response.text);
+  t.is($('ul.errors li').length, 1);
   t.true(
     $('ul.errors li')
       .first()
       .text()
       .startsWith('A document with')
-  )
-})
+  );
+});
 
 test('post create success redirects to the wiki page', async t => {
-  const cfg = await fakeFs.config()
-  const route = new Route(cfg)
-  const docName = fakeFs.rndName()
+  const cfg = await fakeFs.config();
+  const route = new Route(cfg);
+  const docName = fakeFs.rndName();
 
-  const server = Server.bootstrap(cfg)
+  const server = Server.bootstrap(cfg);
   const response = await supertest(server.app)
     .post(`/doc/create`)
     .send({
       content: 'whatever',
       docTitle: docName
-    })
+    });
 
-  t.is(response.status, 302)
-  t.is(response.headers.location, `/wiki/${docName}`)
-  t.true(fakeFs.exists(route.docHelpers.docNameToFilename(docName)))
-})
+  t.is(response.status, 302);
+  t.is(response.headers.location, `/wiki/${docName}`);
+  t.true(fakeFs.exists(route.docHelpers.docNameToFilename(docName)));
+});

@@ -1,16 +1,16 @@
-let helper
+let helper;
 
 export default (helper = params => {
-  const str = params
+  const str = params;
 
   if (!str) {
-    return ''
+    return '';
   }
 
-  const len = str.length
+  const len = str.length;
   if (len < 11) {
-    return str
+    return str;
   }
 
-  return `${str.substr(0, 5)}…${str.substr(len - 5)}`
-})
+  return `${str.substr(0, 5)}…${str.substr(len - 5)}`;
+});

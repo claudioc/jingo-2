@@ -1,8 +1,10 @@
-let makeHelper
+import { Config } from '@lib/config';
 
-export default (makeHelper = config => {
-  return params => {
-    const method = params
-    return config.hasAuth(method)
-  }
-})
+let makeHelper;
+
+export default (makeHelper = (config: Config) => {
+  return (params?) => {
+    const method = params;
+    return config.hasAuth(method);
+  };
+});

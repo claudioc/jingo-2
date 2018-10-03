@@ -1,5 +1,5 @@
-import { check } from 'express-validator/check'
-import { sanitize } from 'express-validator/filter'
+import { check } from 'express-validator/check';
+import { sanitize } from 'express-validator/filter';
 
 // Returns a validator chains for the new document
 export const validateCreate = () => {
@@ -17,5 +17,5 @@ export const validateCreate = () => {
       .trim(),
 
     sanitize(['docTitle', 'content', 'into'])
-  ]
-}
+  ];
+};

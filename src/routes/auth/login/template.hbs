@@ -1,31 +1,37 @@
 <style>
-  .j-auth {
-    margin-bottom: 16px;
-  }
+.j-auth {
+  margin-bottom: 16px;
+}
 
-  .j-auth-google a {
-    position: relative;
-  }
+.j-auth-google a {
+  position: relative;
+}
 
-  .j-auth-google a::before {
-    content: '\00a0';
-    background: url({{urlFor resource="img" id="btn-google.svg"}}) center center no-repeat;
-    position: absolute;
-    display: block;
-    border-right: 1px solid #d5d5d5;
-    left: 0;
-    top: 0;
-    text-align: center;
-    padding: 8px 16px;
-    background-size: cover;
-  }
+.j-auth-google a::before {
+  content: '\00a0';
+  background: url({{urlFor resource="img" id="btn-google.svg"}}) center center no-repeat;
+  position: absolute;
+  display: block;
+  border-right: 1px solid #d5d5d5;
+  left: 0;
+  top: 0;
+  text-align: center;
+  padding: 8px 16px;
+  background-size: cover;
+}
 
-  .j-auth-google span {
-    margin-left: 40px;
-  }
+.j-auth-google span {
+  margin-left: 40px;
+}
 </style>
 
-<h1>Authentication</h1>
+<h2>Authentication</h2>
+
+{{#if (not (hasAuth ''))}}
+<section class="j-auth j-auth-google">
+  <p>No authentication provider has been defined.</p>
+</section>
+{{/if}}
 
 {{#if (hasAuth 'google')}}
 <section class="j-auth j-auth-google">

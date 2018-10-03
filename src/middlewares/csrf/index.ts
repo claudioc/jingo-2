@@ -1,26 +1,26 @@
-import { Config } from '@lib/config'
-import * as csurf from 'csurf'
+import { Config } from '@lib/config';
+import * as csurf from 'csurf';
 
 const dummyCsrf = (req, res, next) => {
   req.csrfToken = () => {
-    return 'smile'
-  }
+    return 'smile';
+  };
 
-  next()
-}
+  next();
+};
 
 const csrfMiddleware = (config: Config) => {
-  let method
+  let method;
 
   // Testing routes with csrfProtection can get really too hacky
   // so we rather disable the csrfProtection during tests
   if (config.hasFeature('csrfProtection')) {
-    method = csurf()
+    method = csurf();
   } else {
-    method = dummyCsrf
+    method = dummyCsrf;
   }
 
-  return method
-}
+  return method;
+};
 
-export default csrfMiddleware
+export default csrfMiddleware;
