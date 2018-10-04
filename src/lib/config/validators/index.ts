@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import { promisify } from 'util';
 
-import { Config } from '@lib/config';
+import { Config, IAuthMethodLocal } from '@lib/config';
 
 const checkDocumentRoot = async (config: Config, documentRoot: string): Promise<void> => {
   const fsapi = fsApi(config.fsDriver);
@@ -77,7 +77,20 @@ const checkGit = async (config: Config): Promise<void> => {
   }
 };
 
+const checkAuth = async (config: Config): Promise<void> => {
+  if (config.hasAuth('local')) {
+    const fsapi = fsApi(config.fsDriver);
+    const method: IAuthMethodLocal = config.get('authentication.local');
+    if (!await fsapi.access(method.authFile, fs.constants.R_OK)) {
+      throw new Error(
+        `(authentication) The local password file "${method.authFile}" is not readable.`
+      );
+    }
+  }
+};
+
 export default {
   checkDocumentRoot,
-  checkGit
+  checkGit,
+  checkAuth
 };

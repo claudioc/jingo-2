@@ -48,6 +48,11 @@ export interface ICustomSettings {
   scripts?: string[];
 }
 
+export interface IAuthMethodLocal {
+  enabled: boolean;
+  authFile: string;
+}
+
 type TFeature = 'codeHighlighter' | 'ipcSupport' | 'gitSupport' | 'emojiSupport' | 'csrfProtection';
 type TAuthMethod = 'google' | 'github' | 'local';
 
@@ -288,6 +293,9 @@ export class Config {
     await validators.checkDocumentRoot(this, this.values.documentRoot);
     if (this.hasFeature('gitSupport')) {
       await validators.checkGit(this);
+    }
+    if (this.hasAuth()) {
+      await validators.checkAuth(this);
     }
     return this;
   }

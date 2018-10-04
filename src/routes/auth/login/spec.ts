@@ -17,6 +17,6 @@ test('get /auth/login', async t => {
     $('h2')
       .first()
       .text(),
-    'Authentication'
+    'Sign-in'
   );
 });

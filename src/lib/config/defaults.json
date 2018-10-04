@@ -32,7 +32,9 @@
       "enabled": false
     },
     "local": {
-      "enabled": false
+      "enabled": false,
+      // The file created by `htpasswd`
+      "authFile": ""
     },
     "github": {
       "enabled": false
