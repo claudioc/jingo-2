@@ -5,7 +5,7 @@ import { IDoc } from '@sdk';
 import { NextFunction, Request, Response, Router } from 'express';
 
 export default class WikiRoute extends BaseRoute {
-  public static create(router: Router, config: Config) {
+  public static install(router: Router, config: Config) {
     const basePath = config.get('wiki.basePath');
 
     /**

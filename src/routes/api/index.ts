@@ -10,7 +10,7 @@ import * as path from 'path';
 import * as send from 'send';
 
 export default class ApiRoute {
-  public static create(router: Router, config: Config) {
+  public static install(router: Router, config: Config) {
     const route = new ApiRoute(config);
     /**
      * Renders a markdown string to html

@@ -4,7 +4,7 @@ import { NextFunction, Request, Response, Router } from 'express';
 import { isUndefined as _isUndefined } from 'lodash';
 
 export default class IndexRoute extends BaseRoute {
-  public static create(router: Router, config: Config) {
+  public static install(router: Router, config: Config) {
     const route = new IndexRoute(config);
     router.get('/', (req: Request, res: Response, next: NextFunction) =>
       route.index(req, res, next)

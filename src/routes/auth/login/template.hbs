@@ -26,6 +26,7 @@
 </style>
 
 <h2>Sign-in</h2>
+{{>errors}}
 
 {{#if (not (hasAuth ''))}}
 <section class="j-auth j-auth-google">
@@ -50,7 +51,8 @@
 {{#if (hasAuth 'local')}}
 <section class="j-auth j-auth-local">
   <h3>Using your local credentials</h3>
-  <form>
+  <form method="post">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <div class="form-item">
       <label>Username <span class="req">*</span></label>
       <input autofocus type="text" name="username" required>

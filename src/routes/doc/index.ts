@@ -14,7 +14,7 @@ import { get as get_docRestore, post as post_docRestore } from './restore';
 import { get as get_docUpdate, post as post_docUpdate } from './update';
 
 export default class DocRoute extends BaseRoute {
-  public static create(router: Router, config: Config) {
+  public static install(router: Router, config: Config) {
     const csrfProtection = csrfMiddleware(config);
     const gitRequired = gitRequiredMiddleware(config);
 

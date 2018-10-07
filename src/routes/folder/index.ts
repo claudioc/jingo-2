@@ -9,7 +9,7 @@ import { get as get_folderDelete, post as post_folderDelete } from './delete';
 import { get as get_folderRename, post as post_folderRename } from './rename';
 
 export default class FolderRoute extends BaseRoute {
-  public static create(router: Router, config: Config) {
+  public static install(router: Router, config: Config) {
     const csrfProtection = csrfMiddleware(config);
     const route = new FolderRoute(config);
 

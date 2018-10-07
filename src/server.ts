@@ -7,7 +7,7 @@ import * as methodOverride from 'method-override';
 import * as logger from 'morgan';
 import * as passport from 'passport';
 import * as path from 'path';
-
+import * as flash from 'express-flash';
 import { JingoEvent, jingoEventHandlerFor, jingoEvents } from '@events/index';
 import { Config } from '@lib/config';
 import { mcache } from '@lib/mcache';
@@ -46,12 +46,12 @@ export default class Server {
   public routes() {
     const router: express.Router = express.Router();
 
-    IndexRoute.create(router, this.config);
-    WikiRoute.create(router, this.config);
-    DocRoute.create(router, this.config);
-    FolderRoute.create(router, this.config);
-    ApiRoute.create(router, this.config);
-    AuthRoute.create(router, this.config);
+    IndexRoute.install(router, this.config);
+    WikiRoute.install(router, this.config);
+    DocRoute.install(router, this.config);
+    FolderRoute.install(router, this.config);
+    ApiRoute.install(router, this.config);
+    AuthRoute.install(router, this.config);
 
     this.app.use(this.config.get('mountPath'), router);
 
@@ -141,6 +141,22 @@ export default class Server {
 
     this.app.use(passport.initialize());
     this.app.use(passport.session());
+
+    passport.serializeUser((user, done) => {
+      console.log('User from serialize', user);
+      done(null, user);
+    });
+
+    passport.deserializeUser((user, done) => {
+      console.log('User from deserialize', user);
+      done(null, user);
+    });
+
+    this.app.use(flash());
+    this.app.use((req, res, next) => {
+      res.locals.user = (req as any).user;
+      next();
+    });
 
     this.app.set('cache', mcache());
   }
