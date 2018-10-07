@@ -48,9 +48,7 @@ The configuration is not fully documented yet, but the `./src/lib/config/default
 
 ### Local strategy
 
-The local authentication strategy uses a file containing the authentication
-
-To create, update and maintain this file, just use the `htpasswd` program that ships with any unix system (TBD: Windows?)
+The local authentication strategy uses a file containing the authentication credentials. To create, update and maintain this file, you [must use](https://httpd.apache.org/docs/2.4/programs/htpasswd.html) the `htpasswd` program that ships with any unix system (TBD: Windows?). The name of the file will be then set in the configuration file as the `authFile` key of the local authentication strategy.
 
 The first time, run it as:
 
@@ -58,7 +56,7 @@ The first time, run it as:
 htpasswd -c -B .htpasswd my_user_name
 ```
 
-The name ".htpasswd" can actually be anything else you'd prefer. Further runs should omit the `-c` flag (create), or the file will be overwritten.
+The name ".htpasswd" can actually be anything else you'd prefer. **Careful**: further runs should omit the `-c` flag (create), or the file will be overwritten.
 
 ## Hacking
 
