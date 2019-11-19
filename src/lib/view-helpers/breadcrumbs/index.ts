@@ -1,8 +1,6 @@
 import { take as _take } from 'lodash';
 
-let makeHelper;
-
-export default (makeHelper = config => {
+export default (config => {
   return params => {
     const { dirName, docTitle } = params.hash;
 

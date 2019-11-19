@@ -65,7 +65,7 @@ test('load will detect alien or mispelled keys', async t => {
     })
   );
 
-  const error = await t.throws(cfg.load('/home/jingo/wrong-config1.json'));
+  const error = await t.throwsAsync(cfg.load('/home/jingo/wrong-config1.json'));
 
   t.is(error.message, 'Unknown key(s) found in the config file: wiki.indes, documentFroot');
 });
@@ -83,7 +83,7 @@ test('load will detect not detect an array as alien', async t => {
     })
   );
 
-  await t.notThrows(cfg.load('/home/jingo/good-config2.json'));
+  await t.notThrowsAsync(cfg.load('/home/jingo/good-config2.json'));
 });
 
 test('mount helper default', async t => {

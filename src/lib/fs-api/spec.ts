@@ -10,7 +10,7 @@ test.after(() => {
 
 test('scanDir on a not-existant direcotry', async t => {
   const options = {};
-  const error = await t.throws(fsApi(fakeFs.fsDriver).scanDir('/home/jingos', options));
+  const error = await t.throwsAsync(fsApi(fakeFs.fsDriver).scanDir('/home/jingos', options));
   t.regex(error.message, /ENOENT: no such/);
 });
 

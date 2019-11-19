@@ -5,9 +5,7 @@ import wiki from '@lib/wiki';
 
 import { isEmpty as _isEmpty, omit as _omit, omitBy as _omitBy } from 'lodash';
 
-let makeHelper;
-
-export default (makeHelper = config => {
+export default (config => {
   const wikiHelpers = wiki(config);
   const docHelpers = doc(config);
   const folderHelpers = folder(config);

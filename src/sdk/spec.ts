@@ -84,7 +84,7 @@ test('findDocTitle, case insensitive with no matches', async t => {
   cfg.sys.fileSystemIsCaseSensitive = false;
   const docName = fakeFs.rndName();
 
-  const error = await t.throws(sdk(cfg).findDocTitle(docName));
+  const error = await t.throwsAsync(sdk(cfg).findDocTitle(docName));
   t.regex(error.message, /Unable to find anything/);
 });
 
@@ -195,7 +195,9 @@ test('updateDoc failure', async t => {
   const docFilename2 = doc(cfg).docNameToFilename(docName2);
   fakeFs.writeFile(docFilename1, 'Hello').writeFile(docFilename2, 'Hello');
   // This must fail because docName2 already exists
-  const error = await t.throws(sdk(cfg).updateDoc(docName2, docName1, 'Today is nöt yestarday'));
+  const error = await t.throwsAsync(
+    sdk(cfg).updateDoc(docName2, docName1, 'Today is nöt yestarday')
+  );
   t.regex(error.message, /Cannot rename/);
 });
 
@@ -315,7 +317,7 @@ test('listDocs in an existing subdir', async t => {
 
 test('listDocs in a non-existing subdir', async t => {
   const cfg = await fakeFs.config();
-  const error = await t.throws(sdk(cfg).listDocs('not-exists'));
+  const error = await t.throwsAsync(sdk(cfg).listDocs('not-exists'));
   t.regex(error.message, /ENOENT: no such/);
 });
 

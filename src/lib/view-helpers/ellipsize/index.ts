@@ -1,6 +1,4 @@
-let helper;
-
-export default (helper = params => {
+export default (params => {
   const str = params;
 
   if (!str) {
