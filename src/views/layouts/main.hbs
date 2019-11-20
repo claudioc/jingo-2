@@ -5,13 +5,14 @@
     <title>{{title}}</title>
     <meta name="generator" content="jingo wiki">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville|Roboto|Roboto+Mono" rel="stylesheet">
     <link rel="stylesheet" href="{{urlFor resource="vendor" id="kube/kube.css"}}">
     <link rel="stylesheet" href="{{urlFor resource="css" id="kube-ext.css"}}">
     <link rel="stylesheet" href="{{urlFor resource="css" id="styles.css"}}">
     {{{custom "favicon"}}}
     {{{custom "head"}}}
     {{{custom "styles"}}}
+    <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville|Roboto|Roboto+Mono" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   </head>
   <body>
     <header class="j-header row align-center">
@@ -36,6 +37,7 @@
     </header>
     <main class="row align-center">
       <div class="col col-6">
+        {{>success}}
         {{{body}}}
       </div>
     </main>

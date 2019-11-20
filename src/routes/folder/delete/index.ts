@@ -14,7 +14,7 @@ export const post: RouteEntry = (route: FolderRoute) => {
   };
 };
 
-const del: RouteHandler = async function(this: FolderRoute, req, res, next) {
+const del: RouteHandler = async function (this: FolderRoute, req, res, next) {
   this.title = 'Jingo – Deleting a folder';
   const folderName = req.query.folderName || '';
   const into = req.query.into || '';
@@ -41,13 +41,15 @@ const del: RouteHandler = async function(this: FolderRoute, req, res, next) {
   this.renderTemplate(res, __dirname, scope);
 };
 
-const didDelete: RouteHandler = async function(this: FolderRoute, req, res, next) {
+const didDelete: RouteHandler = async function (this: FolderRoute, req, res, next) {
   const folderName = req.body.folderName;
   const into = req.body.into;
 
   if (!await this.assertFolderExists(folderName, into, req, res)) {
     return;
   }
+
+  req.flash('success', `Folder ${folderName} deleted.`);
 
   await this.sdk.deleteFolder(folderName, into);
 

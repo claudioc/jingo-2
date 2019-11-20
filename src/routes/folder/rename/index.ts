@@ -15,7 +15,7 @@ export const post: RouteEntry = (route: FolderRoute) => {
   };
 };
 
-const rename: RouteHandler = async function(this: FolderRoute, req, res, next) {
+const rename: RouteHandler = async function (this: FolderRoute, req, res, next) {
   this.title = 'Jingo – Renaming a folder';
   const folderName = req.query.folderName || '';
   const into = req.query.into || '';
@@ -42,7 +42,7 @@ const rename: RouteHandler = async function(this: FolderRoute, req, res, next) {
   this.renderTemplate(res, __dirname, scope);
 };
 
-const didRename: RouteHandler = async function(this: FolderRoute, req, res, next) {
+const didRename: RouteHandler = async function (this: FolderRoute, req, res, next) {
   const { errors, data } = this.inspectRequest(req);
   const folderName = data.folderName;
   const currentFolderName = data.currentFolderName;
@@ -61,6 +61,7 @@ const didRename: RouteHandler = async function(this: FolderRoute, req, res, next
 
   try {
     await this.sdk.renameFolder(currentFolderName, folderName, into);
+    req.flash('success', `Folder ${currentFolderName} renamed to ${folderName}.`);
     res.redirect(this.folderHelpers.pathFor('list', folderName, into));
     req.app && req.app.emit(je('jingo.folderRenamed'));
   } catch (err) {

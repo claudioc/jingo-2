@@ -8,12 +8,12 @@ If you're looking for a stable version of a node.js based wiki, please consider 
 
 With the version 2, Jingo aims to get more and more like a Markdown based CMS but without losing the usage simplicity that characterized the project from the very beginning.
 
-* Folders support: this is probably one of the most requested feature in Jingo. It is now possible to create folders, as you can create documents in them. The UI is still a bit work in progress though
+* Folders support: this is probably one of the most requested features in Jingo. It is now possible to create folders, where you can create documents in them. The UI is still a bit work in progress though
 * Git support is now optional
-* Support for generic injection of styles, scripts and other element in the head of the document
-* Support for breadcrumbs
+* Support for generic injection of styles, scripts and other elements in the head of the document
+* Support for page breadcrumbs
 * Local authentication based on the standard `htpasswd` program
-* Usage of JSON (but with comment support) for the configuration
+* Usage of JSON for the configuration (but with comments support)
 * Full support for emoji
 * Better markdown parser (markdown-it)
 * Enhanced security: usage of `helmet` and support for CRSF tokens

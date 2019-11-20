@@ -15,7 +15,7 @@ export const post: RouteEntry = (route: FolderRoute) => {
   };
 };
 
-const create: RouteHandler = async function(this: FolderRoute, req, res, next) {
+const create: RouteHandler = async function (this: FolderRoute, req, res, next) {
   this.title = 'Jingo – Creating a folder';
   const into = req.query.into || '';
   const folderName = req.query.folderName || '';
@@ -38,7 +38,7 @@ const create: RouteHandler = async function(this: FolderRoute, req, res, next) {
   this.renderTemplate(res, __dirname, scope);
 };
 
-const didCreate: RouteHandler = async function(this: FolderRoute, req, res, next) {
+const didCreate: RouteHandler = async function (this: FolderRoute, req, res, next) {
   const { errors, data } = this.inspectRequest(req);
   const folderName = data.folderName;
   const into = data.into;
@@ -51,7 +51,7 @@ const didCreate: RouteHandler = async function(this: FolderRoute, req, res, next
   };
 
   if (errors) {
-    this.render(res, __dirname, _assign(scope, { errors }));
+    this.renderTemplate(res, __dirname, _assign(scope, { errors }));
     return;
   }
 
@@ -67,6 +67,7 @@ const didCreate: RouteHandler = async function(this: FolderRoute, req, res, next
 
   try {
     await this.sdk.createFolder(folderName, into);
+    req.flash('success', `Folder ${folderName} created.`);
     // All done, go to the just created folder
     res.redirect(this.folderHelpers.pathFor('list', folderName, into));
     req.app && req.app.emit(je('jingo.folderCreated'));

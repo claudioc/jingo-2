@@ -13,14 +13,14 @@ export const post: RouteEntry = (route: AuthRoute) => {
   };
 };
 
-const login: RouteHandler = function(this: AuthRoute, req, res, next) {
+const login: RouteHandler = function (this: AuthRoute, req, res, next) {
   const csrfToken = (req as any).csrfToken();
   const scope = {
     csrfToken,
-    errors: (req as any).flash().error
+    errors: req.flash().error
   };
 
   this.renderTemplate(res, __dirname, scope);
 };
 
-const didLogin: RouteHandler = function(this: AuthRoute, req, res, next) {};
+const didLogin: RouteHandler = function (this: AuthRoute, req, res, next) { };

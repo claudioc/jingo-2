@@ -14,7 +14,7 @@ export const post: RouteEntry = (route: DocRoute) => {
   };
 };
 
-const del: RouteHandler = async function(this: DocRoute, req, res, next) {
+const del: RouteHandler = async function (this: DocRoute, req, res, next) {
   this.title = 'Jingo – Deleting a document';
   const docName = req.query.docName || '';
   const into = req.query.into || '';
@@ -44,7 +44,7 @@ const del: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.renderTemplate(res, __dirname, scope);
 };
 
-const didDelete: RouteHandler = async function(this: DocRoute, req, res, next) {
+const didDelete: RouteHandler = async function (this: DocRoute, req, res, next) {
   this.title = 'Jingo – Deleting a document';
   const docName = req.body.docName;
   const into = req.body.into;
@@ -60,6 +60,7 @@ const didDelete: RouteHandler = async function(this: DocRoute, req, res, next) {
   }
 
   await this.sdk.deleteDoc(docName, into);
+  req.flash('success', `Document ${docName} deleted.`);
 
   res.redirect(this.folderHelpers.pathFor('list', into) + '?e=0');
 

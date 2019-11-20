@@ -15,7 +15,7 @@ export const post: RouteEntry = (route: DocRoute) => {
   };
 };
 
-const create: RouteHandler = async function(this: DocRoute, req, res, next) {
+const create: RouteHandler = async function (this: DocRoute, req, res, next) {
   this.title = 'Jingo – Creating a document';
   const docName = req.query.docName || '';
   const into = req.query.into || '';
@@ -41,7 +41,7 @@ const create: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.renderTemplate(res, __dirname, scope);
 };
 
-const didCreate: RouteHandler = async function(this: DocRoute, req, res, next) {
+const didCreate: RouteHandler = async function (this: DocRoute, req, res, next) {
   this.title = 'Jingo – Creating a document';
   const { errors, data } = this.inspectRequest(req);
   const into = data.into || '';
@@ -78,6 +78,7 @@ const didCreate: RouteHandler = async function(this: DocRoute, req, res, next) {
   }
 
   await this.sdk.createDoc(docName, data.content, into);
+  req.flash('success', `Document ${docName} created.`);
 
   // All done, go to the just saved page
   res.redirect(this.wikiHelpers.pathFor(data.docTitle, into));
