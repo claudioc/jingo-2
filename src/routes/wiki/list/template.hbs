@@ -26,9 +26,13 @@
 <hr>
 {{#if (neq folderName '')}}
 <div class="form-buttons">
-  <a class="button small outline" href="{{urlFor resource="folder" id=folderName into=parentDirname action="rename"}}">Rename this folder</a>
-  {{#if (and (eq docList.length 0) (eq folderList.length 0))}}
-  <a class="button small outline j-caution j-last" href="{{urlFor resource="folder" id=folderName into=parentDirname action="delete"}}">Delete this folder</a>
+  {{#if (userCan "createFolders")}}
+    <a class="button small outline" href="{{urlFor resource="folder" id=folderName into=parentDirname action="rename"}}">Rename this folder</a>
+  {{/if}}
+  {{#if (userCan "deleteFolders")}}
+    {{#if (and (eq docList.length 0) (eq folderList.length 0))}}
+    <a class="button small outline j-caution j-last" href="{{urlFor resource="folder" id=folderName into=parentDirname action="delete"}}">Delete this folder…</a>
+    {{/if}}
   {{/if}}
 </div>
 {{/if}}

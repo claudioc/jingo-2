@@ -8,6 +8,6 @@ export const get: RouteEntry = (route: AuthRoute) => {
 };
 
 const logout: RouteHandler = function (this: AuthRoute, req, res, next) {
-  //  req.logout();
+  (req as any).logout();
   res.redirect('/');
 };

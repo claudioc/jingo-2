@@ -2,7 +2,9 @@
 <link rel="stylesheet" href="{{urlFor resource="css" id="codemirror-ext.css"}}">
 {{>errors}}
 <div class="group form-buttons">
+  {{#if (userCan "deleteDocuments")}}
   <a class="button small outline float-right j-caution j-last" href="{{urlFor resource="doc" id=docName action="delete" into=into}}">Delete…</a>
+  {{/if}}
   <span class="button small outline float-right do-preview">Preview</span>
   <span class="button small outline float-right do-edit hide">Back to edit</span>
 </div>

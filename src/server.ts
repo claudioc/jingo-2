@@ -148,7 +148,14 @@ export default class Server {
     });
 
     passport.deserializeUser((user, done) => {
-      console.log('User from deserialize', user);
+      // console.log('User from deserialize', user);
+      user.permissions = [
+        'editDocuments',
+        'createDocuments',
+        'deleteDocuments',
+        'createFolders',
+        'deleteFolders'
+      ]
       done(null, user);
     });
 

@@ -10,16 +10,19 @@ import { get as get_authLogout } from './logout';
 
 export default class AuthRoute extends BaseRoute {
   public static install(router: Router, config: Config) {
-    passport.use(new LocalHtpasswdStrategy({ file: 'bzot' }));
+    const authFile = config.get('authentication.local.authFile');
+    if (authFile) {
+      passport.use(new LocalHtpasswdStrategy({ file: config.get('authentication.local.authFile') }));
+    }
     const csrfProtection = csrfMiddleware(config);
     const route = new AuthRoute(config);
     router.get('/auth/logout', get_authLogout(route));
     router.get('/auth/login', csrfProtection, get_authLogin(route));
 
     const authMiddleware = passport.authenticate('local-htpasswd', {
-      successRedirect: '/',
+      failureFlash: 'Invalid username or password.',
       failureRedirect: '/auth/login',
-      failureFlash: 'Invalid username or password.'
+      successRedirect: '/'
     });
 
     router.post('/auth/login', [csrfProtection, authMiddleware], post_authLogin(route));

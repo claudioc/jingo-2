@@ -7,6 +7,7 @@ import hasAuth from './has-auth';
 import hasFeature from './has-feature';
 import timeAgo from './time-ago';
 import urlFor from './url-for';
+import userCan from './user-can';
 
 export default function viewHelpers(config: Config) {
   return {
@@ -16,6 +17,7 @@ export default function viewHelpers(config: Config) {
     hasAuth: hasAuth(config),
     hasFeature: hasFeature(config),
     timeAgo,
-    urlFor: urlFor(config)
+    urlFor: urlFor(config),
+    userCan
   };
 }
