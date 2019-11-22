@@ -1,13 +1,3 @@
-import * as bodyParser from 'body-parser';
-import * as session from 'cookie-session';
-import * as express from 'express';
-import * as boom from 'express-boom';
-import * as expressHandlebars from 'express-handlebars';
-import * as methodOverride from 'method-override';
-import * as logger from 'morgan';
-import * as passport from 'passport';
-import * as path from 'path';
-import * as flash from 'express-flash';
 import { JingoEvent, jingoEventHandlerFor, jingoEvents } from '@events/index';
 import { Config } from '@lib/config';
 import { mcache } from '@lib/mcache';
@@ -18,6 +8,16 @@ import DocRoute from '@routes/doc';
 import FolderRoute from '@routes/folder';
 import IndexRoute from '@routes/index';
 import WikiRoute from '@routes/wiki';
+import * as bodyParser from 'body-parser';
+import * as session from 'cookie-session';
+import * as express from 'express';
+import * as boom from 'express-boom';
+import * as flash from 'express-flash';
+import * as expressHandlebars from 'express-handlebars';
+import * as methodOverride from 'method-override';
+import * as logger from 'morgan';
+import * as passport from 'passport';
+import * as path from 'path';
 
 import * as moreHelpers from 'just-handlebars-helpers';
 
@@ -143,17 +143,19 @@ export default class Server {
     this.app.use(passport.session());
 
     passport.serializeUser((user, done) => {
-      console.log('User from serialize', user);
       done(null, user);
     });
 
-    passport.deserializeUser((user, done) => {
+    passport.deserializeUser((user: any, done) => {
       // console.log('User from deserialize', user);
+      if (!user.username) {
+        user.username = user.displayName;
+      }
       user.permissions = [
         'editDocuments',
         'createDocuments',
         'deleteDocuments',
-        'createFolders',
+        'createFolders', // Includes rename permission
         'deleteFolders'
       ]
       done(null, user);

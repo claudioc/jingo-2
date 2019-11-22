@@ -1,7 +1,7 @@
+import createAuthenticatedRequest from '@lib/create-authenticated-request';
 import FakeFs from '@lib/fake-fs';
 import test from 'ava';
 import * as cheerio from 'cheerio';
-import * as supertest from 'supertest';
 import Route from '..';
 
 import Server from '@server';
@@ -15,9 +15,8 @@ test.after(() => {
 test('get create with a docName in the url', async t => {
   const cfg = await fakeFs.config();
   const docName = fakeFs.rndName();
-
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/doc/create?docName=${docName}`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/doc/create?docName=${docName}`);
 
   t.is(response.status, 200);
   const $ = cheerio.load(response.text);
@@ -34,8 +33,8 @@ test('get create with a docName in the url', async t => {
 test('get create for the home page', async t => {
   const cfg = await fakeFs.config();
   const docName = cfg.get('wiki.index');
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/doc/create?docName=${docName}`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/doc/create?docName=${docName}`);
 
   t.is(response.status, 200);
   const $ = cheerio.load(response.text);
@@ -54,9 +53,8 @@ test('get create with an already existing docName in the url', async t => {
   const route = new Route(cfg);
   const docName = fakeFs.rndName();
   fakeFs.writeFile(route.docHelpers.docNameToFilename(docName));
-
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/doc/create?docName=${docName}`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/doc/create?docName=${docName}`);
 
   t.is(response.status, 302);
   t.is(response.headers.location, `/wiki/${docName}`);
@@ -64,8 +62,8 @@ test('get create with an already existing docName in the url', async t => {
 
 test('get create without a docName in the url', async t => {
   const cfg = await fakeFs.config();
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get('/doc/create');
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get('/doc/create');
 
   t.is(response.status, 200);
   const $ = cheerio.load(response.text);
@@ -81,8 +79,8 @@ test('get create without a docName in the url', async t => {
 test('get create with a non existing into in the url', async t => {
   const cfg = await fakeFs.config();
   const into = fakeFs.rndName();
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/doc/create?into=${into}`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/doc/create?into=${into}`);
 
   t.is(response.status, 200);
   const $ = cheerio.load(response.text);
@@ -95,11 +93,10 @@ test('get create with a non existing into in the url', async t => {
   );
 });
 
-test('post create fail with missing fields', async t => {
+test('post create fails with missing fields', async t => {
   const cfg = await fakeFs.config();
-
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).post(`/doc/create`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.post('/doc/create');
 
   t.is(response.status, 200);
   const $ = cheerio.load(response.text);
@@ -107,14 +104,14 @@ test('post create fail with missing fields', async t => {
   t.is($('ul.errors li').length, 2);
 });
 
-test('post create fail when doc already exists', async t => {
+test('post create fails when doc already exists', async t => {
   const cfg = await fakeFs.config();
   const route = new Route(cfg);
   const docName = fakeFs.rndName();
   fakeFs.writeFile(route.docHelpers.docNameToFilename(docName));
 
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app)
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request
     .post(`/doc/create`)
     .send({
       content: 'whatever',
@@ -137,9 +134,9 @@ test('post create success redirects to the wiki page', async t => {
   const route = new Route(cfg);
   const docName = fakeFs.rndName();
 
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app)
-    .post(`/doc/create`)
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request
+    .post('/doc/create')
     .send({
       content: 'whatever',
       docTitle: docName

@@ -1,8 +1,8 @@
+import createAuthenticatedRequest from '@lib/create-authenticated-request';
 import FakeFs from '@lib/fake-fs';
 import test from 'ava';
 import * as cheerio from 'cheerio';
 import * as path from 'path';
-import * as supertest from 'supertest';
 
 import Server from '@server';
 
@@ -14,17 +14,17 @@ test.after(() => {
 
 test('get rename route without the folder in argument', async t => {
   const cfg = await fakeFs.config();
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/folder/rename`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get('/folder/rename');
 
   t.is(response.status, 400);
 });
 
 test('get rename route with the folder in argument (not existant)', async t => {
   const cfg = await fakeFs.config();
-  const server = Server.bootstrap(cfg);
   const folderName = fakeFs.rndName();
-  const response = await supertest(server.app).get(`/folder/rename?folderName=${folderName}`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/folder/rename?folderName=${folderName}`);
 
   t.is(response.status, 302);
   t.is(response.headers.location, cfg.get('mountPath') + '?e=1');
@@ -32,12 +32,10 @@ test('get rename route with the folder in argument (not existant)', async t => {
 
 test('get rename route with the folder in argument (existant) and into (non existant)', async t => {
   const cfg = await fakeFs.config();
-  const server = Server.bootstrap(cfg);
   const folderName = fakeFs.rndName();
   const into = fakeFs.rndName();
-  const response = await supertest(server.app).get(
-    `/folder/rename?folderName=${folderName}&into=${into}`
-  );
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/folder/rename?folderName=${folderName}&into=${into}`);
 
   t.is(response.status, 200);
   const $ = cheerio.load(response.text);
@@ -52,13 +50,11 @@ test('get rename route with the folder in argument (existant) and into (non exis
 
 test('get rename route with the folder in argument (existant) and into (existant)', async t => {
   const cfg = await fakeFs.config();
-  const server = Server.bootstrap(cfg);
   const folderName = fakeFs.rndName();
   const into = fakeFs.mkdirRnd();
   fakeFs.mkdir(path.join(into, folderName));
-  const response = await supertest(server.app).get(
-    `/folder/rename?folderName=${folderName}&into=${into}`
-  );
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/folder/rename?folderName=${folderName}&into=${into}`);
 
   t.is(response.status, 200);
   const $ = cheerio.load(response.text);
@@ -68,12 +64,13 @@ test('get rename route with the folder in argument (existant) and into (existant
 
 test('post rename route with the folder in argument (existant) and into (existant)', async t => {
   const cfg = await fakeFs.config();
-  const server = Server.bootstrap(cfg);
   const folderName = fakeFs.rndName();
   const newFolderName = fakeFs.rndName();
   const into = fakeFs.mkdirRnd();
   fakeFs.mkdir(path.join(into, folderName));
-  const response = await supertest(server.app)
+
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request
     .post(`/folder/rename`)
     .send({
       currentFolderName: folderName,

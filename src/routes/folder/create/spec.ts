@@ -1,8 +1,8 @@
+import createAuthenticatedRequest from '@lib/create-authenticated-request';
 import FakeFs from '@lib/fake-fs';
 import test from 'ava';
 import * as cheerio from 'cheerio';
 import * as path from 'path';
-import * as supertest from 'supertest';
 
 import Server from '@server';
 
@@ -15,8 +15,8 @@ test.after(() => {
 test('get create route with the folder in argument', async t => {
   const cfg = await fakeFs.config();
   const folderName = fakeFs.rndName();
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/folder/create?folderName=${folderName}`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/folder/create?folderName=${folderName}`);
 
   t.is(response.status, 200);
   const $ = cheerio.load(response.text);
@@ -33,8 +33,8 @@ test('get create route with the folder in argument', async t => {
 
 test('get create route without the folder in argument', async t => {
   const cfg = await fakeFs.config();
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/folder/create`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/folder/create`);
 
   t.is(response.status, 200);
   const $ = cheerio.load(response.text);
@@ -51,8 +51,10 @@ test('get create route without the folder in argument', async t => {
 test('get create route with non existing into', async t => {
   const cfg = await fakeFs.config();
   const into = fakeFs.rndName();
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/folder/create?into=${into}`);
+
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/folder/create?into=${into}`);
+
   t.is(response.status, 200);
   const $ = cheerio.load(response.text);
   t.is($('title').text(), `Jingo – Creating a folder`);
@@ -67,8 +69,8 @@ test('get create route with non existing into', async t => {
 test('get create route with existing into', async t => {
   const cfg = await fakeFs.config();
   const into = fakeFs.mkdirRnd();
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/folder/create?into=${into}`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/folder/create?into=${into}`);
 
   t.is(response.status, 200);
   const $ = cheerio.load(response.text);
@@ -79,8 +81,8 @@ test('get create route with existing into', async t => {
 test('get create fails if folder already exists', async t => {
   const cfg = await fakeFs.config();
   const folderName = fakeFs.mkdirRnd();
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/folder/create?folderName=${folderName}`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/folder/create?folderName=${folderName}`);
 
   t.is(response.status, 302);
   t.is(response.headers.location, `/wiki/${folderName}/`);
@@ -89,9 +91,10 @@ test('get create fails if folder already exists', async t => {
 test('post create fails if folder already exists', async t => {
   const cfg = await fakeFs.config();
   const folderName = fakeFs.mkdirRnd();
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app)
-    .post(`/folder/create`)
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+
+  const response = await request
+    .post('/folder/create')
     .send({
       folderName,
       into: ''
@@ -113,8 +116,8 @@ test('post create fails if folder already exists within into', async t => {
   const folderName = fakeFs.rndName();
   const into = fakeFs.mkdirRnd();
   fakeFs.mkdir(path.join(into, folderName));
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app)
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request
     .post(`/folder/create`)
     .send({
       folderName,
@@ -136,8 +139,8 @@ test('post create succeded', async t => {
   const cfg = await fakeFs.config();
   const folderName = fakeFs.rndName();
   const into = fakeFs.mkdirRnd();
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app)
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request
     .post(`/folder/create`)
     .send({
       folderName,

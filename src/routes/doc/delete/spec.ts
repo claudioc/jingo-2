@@ -1,7 +1,7 @@
+import createAuthenticatedRequest from '@lib/create-authenticated-request';
 import FakeFs from '@lib/fake-fs';
 import test from 'ava';
 import * as cheerio from 'cheerio';
-import * as supertest from 'supertest';
 import Route from '..';
 
 import Server from '@server';
@@ -15,9 +15,8 @@ test.after(() => {
 test('get delete route with a non-existing doc', async t => {
   const cfg = await fakeFs.config();
   const docName = fakeFs.rndName();
-
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/doc/delete?docName=${docName}`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/doc/delete?docName=${docName}`);
 
   t.is(response.status, 302);
   t.is(response.headers.location, cfg.get('mountPath') + '?e=1');
@@ -25,9 +24,8 @@ test('get delete route with a non-existing doc', async t => {
 
 test('get delete route without a docName', async t => {
   const cfg = await fakeFs.config();
-
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/doc/delete`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get('/doc/delete');
 
   t.is(response.status, 400);
 });
@@ -36,9 +34,8 @@ test('get delete route with a non-existing into', async t => {
   const cfg = await fakeFs.config();
   const docName = fakeFs.rndName();
   const into = fakeFs.rndName();
-
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/doc/delete?docName=${docName}&into=${into}`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/doc/delete?docName=${docName}&into=${into}`);
 
   t.is(response.status, 200);
   const $ = cheerio.load(response.text);
@@ -56,8 +53,8 @@ test('get delete route for a existing doc', async t => {
   const route = new Route(cfg);
   const docName = fakeFs.rndName();
   fakeFs.writeFile(route.docHelpers.docNameToFilename(docName));
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/doc/delete?docName=${docName}`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/doc/delete?docName=${docName}`);
 
   t.is(response.status, 200);
   const $ = cheerio.load(response.text);
@@ -72,8 +69,8 @@ test('get delete route for a existing doc', async t => {
 test('post delete with a non existing into', async t => {
   const cfg = await fakeFs.config();
   const into = fakeFs.rndName();
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app)
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request
     .post(`/doc/delete`)
     .send({
       docName: 'xot',
@@ -94,9 +91,8 @@ test('post delete with a non existing into', async t => {
 test('post delete route with a non-existing doc', async t => {
   const cfg = await fakeFs.config();
   const docName = fakeFs.rndName();
-
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/doc/delete?docName=${docName}`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/doc/delete?docName=${docName}`);
 
   t.is(response.status, 302);
   t.is(response.headers.location, cfg.get('mountPath') + '?e=1');
@@ -108,8 +104,8 @@ test('post delete is a success (renaming)', async t => {
   const docName = fakeFs.rndName();
   fakeFs.writeFile(route.docHelpers.docNameToFilename(docName));
 
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app)
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request
     .post(`/doc/delete`)
     .send({
       docName

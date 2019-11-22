@@ -1,7 +1,7 @@
+import createAuthenticatedRequest from '@lib/create-authenticated-request';
 import FakeFs from '@lib/fake-fs';
 import test from 'ava';
 import * as cheerio from 'cheerio';
-import * as supertest from 'supertest';
 import Route from '..';
 
 import Server from '@server';
@@ -15,9 +15,8 @@ test.after(() => {
 test('get update route with a non-existing doc', async t => {
   const cfg = await fakeFs.config();
   const docName = fakeFs.rndName();
-
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/doc/update?docName=${docName}`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/doc/update?docName=${docName}`);
 
   t.is(response.status, 302);
   t.is(response.headers.location, cfg.get('mountPath') + '?e=1');
@@ -25,9 +24,8 @@ test('get update route with a non-existing doc', async t => {
 
 test('get update route without a docName', async t => {
   const cfg = await fakeFs.config();
-
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/doc/update`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get('/doc/update');
 
   t.is(response.status, 400);
 });
@@ -36,9 +34,8 @@ test('get update route with a non-existing into', async t => {
   const cfg = await fakeFs.config();
   const docName = fakeFs.rndName();
   const into = fakeFs.rndName();
-
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/doc/update?docName=${docName}&into=${into}`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/doc/update?docName=${docName}&into=${into}`);
 
   t.is(response.status, 200);
   const $ = cheerio.load(response.text);
@@ -56,8 +53,8 @@ test('get update route with existing doc', async t => {
   const route = new Route(cfg);
   const docName = fakeFs.rndName();
   fakeFs.writeFile(route.docHelpers.docNameToFilename(docName));
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app).get(`/doc/update?docName=${docName}`);
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request.get(`/doc/update?docName=${docName}`);
 
   t.is(response.status, 200);
   const $ = cheerio.load(response.text);
@@ -77,8 +74,8 @@ test('post update route is a failure if the file already exists (rename fails)',
   fakeFs.writeFile(route.docHelpers.docNameToFilename(oldDocName));
   fakeFs.writeFile(route.docHelpers.docNameToFilename(newDocName));
 
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app)
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request
     .post(`/doc/update?docName=${oldDocName}`)
     .send({
       content: 'whatever',
@@ -100,8 +97,8 @@ test('post update route is a failure if the file already exists (rename fails)',
 test('post update with a non existing into', async t => {
   const cfg = await fakeFs.config();
   const into = fakeFs.rndName();
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app)
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request
     .post(`/doc/update`)
     .send({
       content: 'whatever',
@@ -126,8 +123,8 @@ test('post update is a success (not renaming)', async t => {
   const docName = fakeFs.rndName();
   fakeFs.writeFile(route.docHelpers.docNameToFilename(docName));
 
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app)
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request
     .post(`/doc/update`)
     .send({
       content: 'whatever',
@@ -149,8 +146,8 @@ test('post update is a success (renaming)', async t => {
   const newDocName = fakeFs.rndName();
   fakeFs.writeFile(route.docHelpers.docNameToFilename(oldDocName));
 
-  const server = Server.bootstrap(cfg);
-  const response = await supertest(server.app)
+  const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
+  const response = await request
     .post(`/doc/update`)
     .send({
       content: 'whatever',

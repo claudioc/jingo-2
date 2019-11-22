@@ -1,4 +1,5 @@
 import { Config } from '@lib/config';
+import { Strategy as MockStrategy } from '@lib/passport-mock-strategy';
 import csrfMiddleware from '@middlewares/csrf';
 import BaseRoute from '@routes/route';
 import { Router } from 'express';
@@ -26,5 +27,24 @@ export default class AuthRoute extends BaseRoute {
     });
 
     router.post('/auth/login', [csrfProtection, authMiddleware], post_authLogin(route));
+
+    if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
+      passport.use(new MockStrategy({
+        user: {
+          displayName: 'A test user',
+          emails: [{
+            type: 'email',
+            value: 'test-user@example.com'
+          }],
+          id: "1",
+          name: {
+            familyName: 'test',
+            givenName: 'user'
+          },
+          provider: 'mock'
+        }
+      }));
+      router.get('/auth/fake-login', passport.authenticate('mock'));
+    }
   }
 }

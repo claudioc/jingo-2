@@ -41,7 +41,7 @@ const git = (config: Config): GitOps | IGitOps => {
 // Reference: https://github.com/types/simple-git/blob/master/src/index.d.ts
 interface ISimpleGit extends simplegit.SimpleGit {
   add(files: string | string[]): Promise<void>;
-  commit(message: string, files: string[], options?: any): Promise<void>;
+  commit(message: string, files: string[], options?: any): Promise<simplegit.CommitSummary>;
   rm(files: string[]): Promise<void>;
   log(options?: any): Promise<ListLogSummary>;
   raw(options: any): Promise<any>;

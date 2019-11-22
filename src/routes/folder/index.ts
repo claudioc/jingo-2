@@ -1,5 +1,6 @@
 import { Config } from '@lib/config';
 import { validateCreate, validateRename } from '@lib/validators/folder';
+import authMiddleware from '@middlewares/auth';
 import csrfMiddleware from '@middlewares/csrf';
 import BaseRoute from '@routes/route';
 import { Request, Response, Router } from 'express';
@@ -12,15 +13,16 @@ export default class FolderRoute extends BaseRoute {
   public static install(router: Router, config: Config) {
     const csrfProtection = csrfMiddleware(config);
     const route = new FolderRoute(config);
+    const auth = authMiddleware(config);
 
-    router.get(`/folder/create`, csrfProtection, get_folderCreate(route));
-    router.post(`/folder/create`, [csrfProtection, validateCreate()], post_folderCreate(route));
+    router.get(`/folder/create`, [auth('createFolders'), csrfProtection], get_folderCreate(route));
+    router.post(`/folder/create`, [auth('createFolders'), csrfProtection, validateCreate()], post_folderCreate(route));
 
-    router.get(`/folder/rename`, csrfProtection, get_folderRename(route));
-    router.post(`/folder/rename`, [csrfProtection, validateRename()], post_folderRename(route));
+    router.get(`/folder/rename`, [auth('createFolders'), csrfProtection], get_folderRename(route));
+    router.post(`/folder/rename`, [auth('createFolders'), csrfProtection, validateRename()], post_folderRename(route));
 
-    router.get(`/folder/delete`, csrfProtection, get_folderDelete(route));
-    router.post(`/folder/delete`, csrfProtection, post_folderDelete(route));
+    router.get(`/folder/delete`, [auth('deleteFolders'), csrfProtection], get_folderDelete(route));
+    router.post(`/folder/delete`, [auth('deleteFolders'), csrfProtection], post_folderDelete(route));
   }
 
   public async assertDirectoryExists(directory, req: Request, res: Response): Promise<boolean> {

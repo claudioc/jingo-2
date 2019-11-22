@@ -15,7 +15,9 @@ const server = () => {
     node.kill()
   }
 
-  node = spawn('node', MY_SERVER, { stdio: 'inherit' })
+  const env = Object.create(process.env);
+  env.NODE_ENV = 'development';
+  node = spawn('node', MY_SERVER, { stdio: 'inherit', env })
   node.on('close', code => {
     if (code === 8) {
       gulp.log('Error detected, waiting for changes...')

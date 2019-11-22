@@ -1,5 +1,6 @@
 import { Config } from '@lib/config';
 import { validateCreate } from '@lib/validators/doc';
+import authMiddleware from '@middlewares/auth';
 import csrfMiddleware from '@middlewares/csrf';
 import gitRequiredMiddleware from '@middlewares/git-required';
 import BaseRoute from '@routes/route';
@@ -17,22 +18,23 @@ export default class DocRoute extends BaseRoute {
   public static install(router: Router, config: Config) {
     const csrfProtection = csrfMiddleware(config);
     const gitRequired = gitRequiredMiddleware(config);
+    const auth = authMiddleware(config);
 
     const route = new DocRoute(config);
 
-    router.get('/doc/create', csrfProtection, get_docCreate(route));
-    router.post('/doc/create', [csrfProtection, validateCreate()], post_docCreate(route));
+    router.get('/doc/create', [auth('createDocuments'), csrfProtection], get_docCreate(route));
+    router.post('/doc/create', [auth('createDocuments'), csrfProtection, validateCreate()], post_docCreate(route));
 
-    router.get('/doc/update', csrfProtection, get_docUpdate(route));
-    router.post('/doc/update', [csrfProtection, validateCreate()], post_docUpdate(route));
+    router.get('/doc/update', [auth('editDocuments'), csrfProtection], get_docUpdate(route));
+    router.post('/doc/update', [auth('editDocuments'), csrfProtection, validateCreate()], post_docUpdate(route));
 
-    router.get('/doc/delete', csrfProtection, get_docDelete(route));
-    router.post('/doc/delete', csrfProtection, post_docDelete(route));
+    router.get('/doc/delete', [auth('deleteDocuments'), csrfProtection], get_docDelete(route));
+    router.post('/doc/delete', [auth('deleteDocuments'), csrfProtection], post_docDelete(route));
 
     router.get('/doc/history', gitRequired, get_docHistory(route));
 
-    router.get('/doc/restore', [gitRequired, csrfProtection], get_docRestore(route));
-    router.post('/doc/restore', [gitRequired, csrfProtection], post_docRestore(route));
+    router.get('/doc/restore', [auth('editDocuments'), gitRequired, csrfProtection], get_docRestore(route));
+    router.post('/doc/restore', [auth('editDocuments'), gitRequired, csrfProtection], post_docRestore(route));
 
     router.get('/doc/recent', [gitRequired], get_docRecent(route));
 

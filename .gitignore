@@ -5,6 +5,7 @@ config.json
 .DS_Store
 coverage
 .nyc_output
+.htpasswd
 
 # Created by https://www.gitignore.io/api/visualstudiocode
 

@@ -17,7 +17,7 @@ const login: RouteHandler = function (this: AuthRoute, req, res, next) {
   const csrfToken = (req as any).csrfToken();
   const scope = {
     csrfToken,
-    errors: req.flash().error
+    errors: req.flash('error')
   };
 
   this.renderTemplate(res, __dirname, scope);
