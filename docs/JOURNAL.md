@@ -174,3 +174,8 @@
 - Split the routes in single modules
 30/03/18
 - Added gulp to be able to move the template close to the route handler
+22/11/19
+- Added the auth middleware and the first concept of permissions
+- Protected the routes with the auth middleware
+- Better errors and use the flash() for showing successes
+- Added the mock passport strategy and add authenticated calls to tests
