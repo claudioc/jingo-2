@@ -16,12 +16,12 @@ const history: RouteHandler = async function(this: DocRoute, req, res, next) {
     return res.status(400).render('400');
   }
 
-  if (!await this.assertDocExists(docName, into, req, res)) {
+  if (!(await this.assertDocExists(docName, into, req, res))) {
     return;
   }
 
-  const docTitle = this.wikiHelpers.unwikify(docName);
-  const items = await this.git.$history(docName, into);
+  const docTitle = this.wikiHelpers.unwikify(docName as string);
+  const items = await this.git.$history(docName as string, into as string);
   const scope: object = {
     docName,
     docTitle,

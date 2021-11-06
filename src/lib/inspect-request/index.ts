@@ -1,6 +1,5 @@
 import { Request } from 'express';
-import { validationResult } from 'express-validator/check';
-import { matchedData } from 'express-validator/filter';
+import { validationResult, matchedData } from 'express-validator';
 
 const inspectRequest = (req: Request) => {
   const errors = validationResult(req);

@@ -10,13 +10,9 @@ export {
   connectPassport,
   setupSerializeAndDeserialize,
   SerializeFn,
-  DeserializeFn,
+  DeserializeFn
 } from './mock-utilities';
-export {
-  MockStrategyOptions,
-  DoneCallback,
-  VerifyFunction,
-} from './passport-mock-strategy';
+export { MockStrategyOptions, DoneCallback, VerifyFunction } from './passport-mock-strategy';
 export { MockStrategy, MockStrategy as Strategy };
 export default MockStrategy;
 

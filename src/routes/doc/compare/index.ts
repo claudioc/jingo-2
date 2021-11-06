@@ -10,7 +10,7 @@ export const get: RouteEntry = (route: DocRoute) => {
 const compare: RouteHandler = async function(this: DocRoute, req, res, next) {
   const { hash, docName, into } = req.query;
 
-  const diffs = await this.git.$diff(docName, into, hash[0], hash[1]);
+  const diffs = await this.git.$diff(docName as string, into as string, hash[0], hash[1]);
 
   const lines = [];
   diffs.slice(4).forEach(line => {
@@ -24,7 +24,7 @@ const compare: RouteHandler = async function(this: DocRoute, req, res, next) {
     }
   });
 
-  const docTitle = this.wikiHelpers.unwikify(docName);
+  const docTitle = this.wikiHelpers.unwikify(docName as string);
 
   const scope: object = {
     docName,

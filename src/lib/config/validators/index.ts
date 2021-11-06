@@ -13,7 +13,7 @@ const checkDocumentRoot = async (config: Config, documentRoot: string): Promise<
     throw new Error('The document root is not defined');
   }
 
-  if (!await fsapi.access(documentRoot, fs.constants.R_OK | fs.constants.W_OK)) {
+  if (!(await fsapi.access(documentRoot, fs.constants.R_OK | fs.constants.W_OK))) {
     throw new Error(`EACCES The document root is not accessible by Jingo (${documentRoot})`);
   }
 
@@ -54,7 +54,7 @@ const checkGit = async (config: Config): Promise<void> => {
   }
 
   const gitDir = path.join(documentRoot, '.git');
-  if (!await fsapi.access(gitDir, fs.constants.R_OK | fs.constants.W_OK)) {
+  if (!(await fsapi.access(gitDir, fs.constants.R_OK | fs.constants.W_OK))) {
     throw new Error(`(git support) The document root is not a git repository`);
   }
 
@@ -81,7 +81,7 @@ const checkAuth = async (config: Config): Promise<void> => {
   if (config.hasAuth('local')) {
     const fsapi = fsApi(config.fsDriver);
     const method: IAuthMethodLocal = config.get('authentication.local');
-    if (!await fsapi.access(method.authFile, fs.constants.R_OK)) {
+    if (!(await fsapi.access(method.authFile, fs.constants.R_OK))) {
       throw new Error(
         `(authentication) The local password file "${method.authFile}" is not readable.`
       );

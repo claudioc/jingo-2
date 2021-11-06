@@ -139,10 +139,12 @@ export class GitOps implements IGitOps {
       items.map(async filepath => {
         logEntries.set(
           filepath,
-          (await this.driver.log({
-            file: filepath,
-            format: logFormat
-          })).latest
+          (
+            await this.driver.log({
+              file: filepath,
+              format: logFormat
+            })
+          ).latest
         );
       })
     );

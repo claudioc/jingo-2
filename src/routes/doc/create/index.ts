@@ -15,22 +15,22 @@ export const post: RouteEntry = (route: DocRoute) => {
   };
 };
 
-const create: RouteHandler = async function (this: DocRoute, req, res, next) {
+const create: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Creating a document';
   const docName = req.query.docName || '';
   const into = req.query.into || '';
   const csrfToken = (req as any).csrfToken();
 
-  if (!await this.assertDirectoryExists(into, req, res)) {
+  if (!(await this.assertDirectoryExists(into, req, res))) {
     return;
   }
 
-  if (!await this.assertDocDoesNotExist(docName, into, req, res)) {
+  if (!(await this.assertDocDoesNotExist(docName, into, req, res))) {
     return;
   }
 
   const wikiIndex = this.config.get('wiki.index');
-  const docTitle = this.wikiHelpers.unwikify(docName) || '';
+  const docTitle = this.wikiHelpers.unwikify(docName as string) || '';
   const scope: object = {
     csrfToken,
     docTitle,
@@ -41,7 +41,7 @@ const create: RouteHandler = async function (this: DocRoute, req, res, next) {
   this.renderTemplate(res, __dirname, scope);
 };
 
-const didCreate: RouteHandler = async function (this: DocRoute, req, res, next) {
+const didCreate: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Creating a document';
   const { errors, data } = this.inspectRequest(req);
   const into = data.into || '';
@@ -59,7 +59,7 @@ const didCreate: RouteHandler = async function (this: DocRoute, req, res, next) 
     return;
   }
 
-  if (!await this.assertDirectoryExists(into, req, res)) {
+  if (!(await this.assertDirectoryExists(into, req, res))) {
     return;
   }
 

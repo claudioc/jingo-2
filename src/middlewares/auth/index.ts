@@ -9,7 +9,7 @@ const middleware = (config: Config) => {
         return next();
       }
     };
-  }
+  };
 };
 
 export default middleware;

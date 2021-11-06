@@ -1,6 +1,6 @@
 import { take as _take } from 'lodash';
 
-export default (config => {
+export default config => {
   return params => {
     const { dirName, docTitle } = params.hash;
 
@@ -26,4 +26,4 @@ export default (config => {
 
     return breadcrumbs.join('');
   };
-});
+};

@@ -16,13 +16,25 @@ export default class FolderRoute extends BaseRoute {
     const auth = authMiddleware(config);
 
     router.get(`/folder/create`, [auth('createFolders'), csrfProtection], get_folderCreate(route));
-    router.post(`/folder/create`, [auth('createFolders'), csrfProtection, validateCreate()], post_folderCreate(route));
+    router.post(
+      `/folder/create`,
+      [auth('createFolders'), csrfProtection, validateCreate()],
+      post_folderCreate(route)
+    );
 
     router.get(`/folder/rename`, [auth('createFolders'), csrfProtection], get_folderRename(route));
-    router.post(`/folder/rename`, [auth('createFolders'), csrfProtection, validateRename()], post_folderRename(route));
+    router.post(
+      `/folder/rename`,
+      [auth('createFolders'), csrfProtection, validateRename()],
+      post_folderRename(route)
+    );
 
     router.get(`/folder/delete`, [auth('deleteFolders'), csrfProtection], get_folderDelete(route));
-    router.post(`/folder/delete`, [auth('deleteFolders'), csrfProtection], post_folderDelete(route));
+    router.post(
+      `/folder/delete`,
+      [auth('deleteFolders'), csrfProtection],
+      post_folderDelete(route)
+    );
   }
 
   public async assertDirectoryExists(directory, req: Request, res: Response): Promise<boolean> {

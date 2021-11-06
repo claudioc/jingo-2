@@ -146,7 +146,7 @@ export class Sdk {
     into: string = ''
   ): Promise<void> {
     // Rename the file (if needed and if possible)
-    if (!await this.renameDoc(oldDocName, docName, into)) {
+    if (!(await this.renameDoc(oldDocName, docName, into))) {
       throw new Error('Cannot rename a document to an already existant one');
     }
 

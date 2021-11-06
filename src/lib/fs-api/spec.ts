@@ -8,7 +8,7 @@ test.after(() => {
   fakeFs.unmount();
 });
 
-test('scanDir on a not-existant direcotry', async t => {
+test('scanDir on a not-existent directory', async t => {
   const options = {};
   const error = await t.throwsAsync(fsApi(fakeFs.fsDriver).scanDir('/home/jingos', options));
   t.regex(error.message, /ENOENT: no such/);

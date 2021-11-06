@@ -8,49 +8,49 @@
  * Released under the MIT license
  */
 
-'use strict'
-require('module-alias/register')
+'use strict';
+require('module-alias/register');
 
-const DEFAULT_HTTP_PORT = 6767
-const program = require('commander')
-const pkg = require('./package')
-const fs = require('fs')
-const config = require('./dist/lib/config').default
-const Server = require('./dist/server').default
-const http = require('http')
-let httpServer
-let httpPort
+const DEFAULT_HTTP_PORT = 6767;
+const program = require('commander');
+const pkg = require('./package');
+const fs = require('fs');
+const config = require('./dist/lib/config').default;
+const Server = require('./dist/server').default;
+const http = require('http');
+let httpServer;
+let httpPort;
 
-main()
+main();
 
 async function main() {
-  await parseCommandLine()
-  await loadConfig()
-  setupServer()
+  await parseCommandLine();
+  await loadConfig();
+  setupServer();
 }
 
 function setupServer() {
-  httpPort = normalizePort(process.env.PORT || DEFAULT_HTTP_PORT)
-  const app = Server.bootstrap(config).app
-  app.set('port', httpPort)
-  httpServer = http.createServer(app)
-  httpServer.listen(httpPort)
-  httpServer.on('error', onError)
-  httpServer.on('listening', onListening)
+  httpPort = normalizePort(process.env.PORT || DEFAULT_HTTP_PORT);
+  const app = Server.bootstrap(config).app;
+  app.set('port', httpPort);
+  httpServer = http.createServer(app);
+  httpServer.listen(httpPort);
+  httpServer.on('error', onError);
+  httpServer.on('listening', onListening);
 }
 
 function normalizePort(val) {
-  const port = parseInt(val, 10)
+  const port = parseInt(val, 10);
 
   if (isNaN(port)) {
-    return val
+    return val;
   }
 
   if (port >= 0) {
-    return port
+    return port;
   }
 
-  return DEFAULT_HTTP_PORT
+  return DEFAULT_HTTP_PORT;
 }
 
 /**
@@ -58,33 +58,33 @@ function normalizePort(val) {
  */
 function onError(error) {
   if (error.syscall !== 'listen') {
-    throw error
+    throw error;
   }
 
-  var bind = typeof httpPort === 'string' ? `Pipe ${httpPort}` : `Port ${httpPort}`
+  var bind = typeof httpPort === 'string' ? `Pipe ${httpPort}` : `Port ${httpPort}`;
 
   switch (error.code) {
     case 'EACCES':
-      console.error(`${bind} requires elevated privileges`)
-      process.exit(1)
-      break
+      console.error(`${bind} requires elevated privileges`);
+      process.exit(1);
+      break;
 
     case 'EADDRINUSE':
-      console.error(`${bind} is already in use`)
-      process.exit(1)
-      break
+      console.error(`${bind} is already in use`);
+      process.exit(1);
+      break;
 
     default:
-      throw error
+      throw error;
   }
 }
 
 function onListening() {
-  const addr = httpServer.address()
-  const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`
+  const addr = httpServer.address();
+  const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
 
-  const hasIpc = config.hasFeature('ipcSupport')
-  console.log(`🏁 Listening on ${bind} ${hasIpc ? '(with IPC)' : ''}`)
+  const hasIpc = config.hasFeature('ipcSupport');
+  console.log(`🏁 Listening on ${bind} ${hasIpc ? '(with IPC)' : ''}`);
 }
 
 async function parseCommandLine() {
@@ -92,37 +92,35 @@ async function parseCommandLine() {
     .version(pkg.version)
     .option('-c, --config <path>', 'Specify the config file')
     .option('-s, --sample-config', 'Dumps a config file template and exits')
-    .parse(process.argv)
+    .parse(process.argv);
 
   if (program.sampleConfig) {
-    console.log(await config.sample())
-    process.exit(0)
+    console.log(await config.sample());
+    process.exit(0);
   }
 
   if (!program.config) {
-    program.help()
+    program.help();
   }
 
   if (!fs.existsSync(program.config)) {
-    console.error("The specified config file doesn't exist")
-    process.exit(-1)
+    console.error(`The specified config file doesn't exist: ${program.config}`);
+    process.exit(-1);
   }
 
   if (!program.config || !fs.existsSync(program.config)) {
-    program.help()
+    program.help();
   }
 }
 
 async function loadConfig() {
   try {
-    await config.load(program.config)
+    await config.load(program.config);
   } catch (err) {
-    console.log(err)
+    console.log(err);
     console.error(
-      `There was an error reading your config file and Jingo cannot continue:\n${
-        program.config
-      }: ${err}`
-    )
-    process.exit(-1)
+      `There was an error reading your config file and Jingo cannot continue:\n${program.config}: ${err}`
+    );
+    process.exit(-1);
   }
 }

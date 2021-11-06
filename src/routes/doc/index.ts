@@ -23,18 +23,34 @@ export default class DocRoute extends BaseRoute {
     const route = new DocRoute(config);
 
     router.get('/doc/create', [auth('createDocuments'), csrfProtection], get_docCreate(route));
-    router.post('/doc/create', [auth('createDocuments'), csrfProtection, validateCreate()], post_docCreate(route));
+    router.post(
+      '/doc/create',
+      [auth('createDocuments'), csrfProtection, validateCreate()],
+      post_docCreate(route)
+    );
 
     router.get('/doc/update', [auth('editDocuments'), csrfProtection], get_docUpdate(route));
-    router.post('/doc/update', [auth('editDocuments'), csrfProtection, validateCreate()], post_docUpdate(route));
+    router.post(
+      '/doc/update',
+      [auth('editDocuments'), csrfProtection, validateCreate()],
+      post_docUpdate(route)
+    );
 
     router.get('/doc/delete', [auth('deleteDocuments'), csrfProtection], get_docDelete(route));
     router.post('/doc/delete', [auth('deleteDocuments'), csrfProtection], post_docDelete(route));
 
     router.get('/doc/history', gitRequired, get_docHistory(route));
 
-    router.get('/doc/restore', [auth('editDocuments'), gitRequired, csrfProtection], get_docRestore(route));
-    router.post('/doc/restore', [auth('editDocuments'), gitRequired, csrfProtection], post_docRestore(route));
+    router.get(
+      '/doc/restore',
+      [auth('editDocuments'), gitRequired, csrfProtection],
+      get_docRestore(route)
+    );
+    router.post(
+      '/doc/restore',
+      [auth('editDocuments'), gitRequired, csrfProtection],
+      post_docRestore(route)
+    );
 
     router.get('/doc/recent', [gitRequired], get_docRecent(route));
 

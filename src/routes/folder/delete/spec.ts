@@ -70,12 +70,10 @@ test('post delete route with the folder in argument (existant) and into (existan
   fakeFs.mkdir(path.join(into, folderName));
 
   const request = await createAuthenticatedRequest(Server.bootstrap(cfg));
-  const response = await request
-    .post(`/folder/delete`)
-    .send({
-      folderName,
-      into
-    });
+  const response = await request.post(`/folder/delete`).send({
+    folderName,
+    into
+  });
 
   t.is(response.status, 302);
   t.is(response.headers.location, `/wiki/${into}/`);

@@ -15,7 +15,7 @@ export const post: RouteEntry = (route: DocRoute) => {
   };
 };
 
-const update: RouteHandler = async function (this: DocRoute, req, res, next) {
+const update: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Editing a document';
   const docName = req.query.docName || '';
   const into = req.query.into || '';
@@ -25,18 +25,18 @@ const update: RouteHandler = async function (this: DocRoute, req, res, next) {
     return res.status(400).render('400');
   }
 
-  if (!await this.assertDirectoryExists(into, req, res)) {
+  if (!(await this.assertDirectoryExists(into, req, res))) {
     return;
   }
 
-  if (!await this.assertDocExists(docName, into, req, res)) {
+  if (!(await this.assertDocExists(docName, into, req, res))) {
     return;
   }
 
-  const doc = await this.sdk.loadDoc(docName, into);
+  const doc = await this.sdk.loadDoc(docName as string, into as string);
   const wikiIndex = this.config.get('wiki.index');
 
-  const docTitle = this.wikiHelpers.unwikify(docName);
+  const docTitle = this.wikiHelpers.unwikify(docName as string);
 
   const scope: object = {
     content: doc.content,
@@ -50,7 +50,7 @@ const update: RouteHandler = async function (this: DocRoute, req, res, next) {
   this.renderTemplate(res, __dirname, scope);
 };
 
-const didUpdate: RouteHandler = async function (this: DocRoute, req, res, next) {
+const didUpdate: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Editing a document';
   const { errors, data } = this.inspectRequest(req);
   const oldDocName = req.body.docName;
@@ -72,7 +72,7 @@ const didUpdate: RouteHandler = async function (this: DocRoute, req, res, next) 
     return;
   }
 
-  if (!await this.assertDirectoryExists(into, req, res)) {
+  if (!(await this.assertDirectoryExists(into, req, res))) {
     return;
   }
 

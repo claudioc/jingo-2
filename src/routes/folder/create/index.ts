@@ -15,17 +15,17 @@ export const post: RouteEntry = (route: FolderRoute) => {
   };
 };
 
-const create: RouteHandler = async function (this: FolderRoute, req, res, next) {
+const create: RouteHandler = async function(this: FolderRoute, req, res, next) {
   this.title = 'Jingo – Creating a folder';
   const into = req.query.into || '';
   const folderName = req.query.folderName || '';
   const csrfToken = (req as any).csrfToken();
 
-  if (!await this.assertDirectoryExists(into, req, res)) {
+  if (!(await this.assertDirectoryExists(into, req, res))) {
     return;
   }
 
-  if (!await this.assertFolderDoesNotExist(folderName, into, req, res)) {
+  if (!(await this.assertFolderDoesNotExist(folderName, into, req, res))) {
     return;
   }
 
@@ -38,7 +38,7 @@ const create: RouteHandler = async function (this: FolderRoute, req, res, next) 
   this.renderTemplate(res, __dirname, scope);
 };
 
-const didCreate: RouteHandler = async function (this: FolderRoute, req, res, next) {
+const didCreate: RouteHandler = async function(this: FolderRoute, req, res, next) {
   const { errors, data } = this.inspectRequest(req);
   const folderName = data.folderName;
   const into = data.into;

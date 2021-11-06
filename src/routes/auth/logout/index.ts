@@ -7,7 +7,7 @@ export const get: RouteEntry = (route: AuthRoute) => {
   };
 };
 
-const logout: RouteHandler = function (this: AuthRoute, req, res, next) {
+const logout: RouteHandler = function(this: AuthRoute, req, res, next) {
   (req as any).logout();
   res.redirect('/');
 };

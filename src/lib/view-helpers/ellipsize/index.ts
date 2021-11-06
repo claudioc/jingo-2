@@ -1,4 +1,4 @@
-export default (params => {
+export default params => {
   const str = params;
 
   if (!str) {
@@ -11,4 +11,4 @@ export default (params => {
   }
 
   return `${str.substr(0, 5)}…${str.substr(len - 5)}`;
-});
+};

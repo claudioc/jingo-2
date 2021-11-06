@@ -1,5 +1,4 @@
-import { check } from 'express-validator/check';
-import { sanitize } from 'express-validator/filter';
+import { check, sanitize } from 'express-validator';
 
 export const validateCreate = () => {
   return [

@@ -11,7 +11,7 @@ const mockUser: User = {
   displayName: 'Foo Bar',
   name: { familyName: 'Bar', givenName: 'Foo' },
   emails: [{ value: 'foo@bar.com', type: 'account' }],
-  provider: 'mock',
+  provider: 'mock'
 };
 
 export default mockUser;

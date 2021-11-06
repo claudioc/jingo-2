@@ -135,6 +135,6 @@ export default class WikiRoute extends BaseRoute {
       return 'HEAD';
     }
 
-    return (req.query.v || 'HEAD').trim();
+    return ((req.query.v as string) || 'HEAD').trim();
   }
 }

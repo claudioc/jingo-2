@@ -13,7 +13,9 @@ export default class AuthRoute extends BaseRoute {
   public static install(router: Router, config: Config) {
     const authFile = config.get('authentication.local.authFile');
     if (authFile) {
-      passport.use(new LocalHtpasswdStrategy({ file: config.get('authentication.local.authFile') }));
+      passport.use(
+        new LocalHtpasswdStrategy({ file: config.get('authentication.local.authFile') })
+      );
     }
     const csrfProtection = csrfMiddleware(config);
     const route = new AuthRoute(config);
@@ -29,21 +31,25 @@ export default class AuthRoute extends BaseRoute {
     router.post('/auth/login', [csrfProtection, authMiddleware], post_authLogin(route));
 
     if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
-      passport.use(new MockStrategy({
-        user: {
-          displayName: 'A test user',
-          emails: [{
-            type: 'email',
-            value: 'test-user@example.com'
-          }],
-          id: "1",
-          name: {
-            familyName: 'test',
-            givenName: 'user'
-          },
-          provider: 'mock'
-        }
-      }));
+      passport.use(
+        new MockStrategy({
+          user: {
+            displayName: 'A test user',
+            emails: [
+              {
+                type: 'email',
+                value: 'test-user@example.com'
+              }
+            ],
+            id: '1',
+            name: {
+              familyName: 'test',
+              givenName: 'user'
+            },
+            provider: 'mock'
+          }
+        })
+      );
       router.get('/auth/fake-login', passport.authenticate('mock'));
     }
   }

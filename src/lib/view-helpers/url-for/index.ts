@@ -5,7 +5,7 @@ import wiki from '@lib/wiki';
 
 import { isEmpty as _isEmpty, omit as _omit, omitBy as _omitBy } from 'lodash';
 
-export default (config => {
+export default config => {
   const wikiHelpers = wiki(config);
   const docHelpers = doc(config);
   const folderHelpers = folder(config);
@@ -60,4 +60,4 @@ export default (config => {
 
     return `${path}${queryString}`;
   };
-});
+};

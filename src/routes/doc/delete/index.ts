@@ -14,7 +14,7 @@ export const post: RouteEntry = (route: DocRoute) => {
   };
 };
 
-const del: RouteHandler = async function (this: DocRoute, req, res, next) {
+const del: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Deleting a document';
   const docName = req.query.docName || '';
   const into = req.query.into || '';
@@ -24,15 +24,15 @@ const del: RouteHandler = async function (this: DocRoute, req, res, next) {
     return res.status(400).render('400');
   }
 
-  if (!await this.assertDirectoryExists(into, req, res)) {
+  if (!(await this.assertDirectoryExists(into, req, res))) {
     return;
   }
 
-  if (!await this.assertDocExists(docName, into, req, res)) {
+  if (!(await this.assertDocExists(docName, into, req, res))) {
     return;
   }
 
-  const docTitle = this.wikiHelpers.unwikify(docName);
+  const docTitle = this.wikiHelpers.unwikify(docName as string);
 
   const scope: object = {
     csrfToken,
@@ -44,12 +44,12 @@ const del: RouteHandler = async function (this: DocRoute, req, res, next) {
   this.renderTemplate(res, __dirname, scope);
 };
 
-const didDelete: RouteHandler = async function (this: DocRoute, req, res, next) {
+const didDelete: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Deleting a document';
   const docName = req.body.docName;
   const into = req.body.into;
 
-  if (!await this.assertDirectoryExists(into, req, res)) {
+  if (!(await this.assertDirectoryExists(into, req, res))) {
     return;
   }
 

@@ -14,7 +14,7 @@ export const post: RouteEntry = (route: DocRoute) => {
   };
 };
 
-const restore: RouteHandler = async function (this: DocRoute, req, res, next) {
+const restore: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Restore a previous version';
   const docName = req.query.docName || '';
   const into = req.query.into || '';
@@ -25,15 +25,15 @@ const restore: RouteHandler = async function (this: DocRoute, req, res, next) {
     return res.status(400).render('400');
   }
 
-  if (!await this.assertDirectoryExists(into, req, res)) {
+  if (!(await this.assertDirectoryExists(into, req, res))) {
     return;
   }
 
-  if (!await this.assertDocExists(docName, into, req, res)) {
+  if (!(await this.assertDocExists(docName, into, req, res))) {
     return;
   }
 
-  const docTitle = this.wikiHelpers.unwikify(docName);
+  const docTitle = this.wikiHelpers.unwikify(docName as string);
 
   const scope: object = {
     csrfToken,
@@ -46,7 +46,7 @@ const restore: RouteHandler = async function (this: DocRoute, req, res, next) {
   this.renderTemplate(res, __dirname, scope);
 };
 
-const didRestore: RouteHandler = async function (this: DocRoute, req, res, next) {
+const didRestore: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Restoring a document';
   const docName = req.body.docName;
   const into = req.body.into;

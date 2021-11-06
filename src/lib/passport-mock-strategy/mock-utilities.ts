@@ -3,22 +3,13 @@ import * as passportModule from 'passport';
 
 import mockUser, { User } from './mock-user';
 
-export type SerializeFn = (
-  user: User,
-  done: (error: any, id: string) => void,
-) => void;
-export type DeserializeFn = (
-  id: string,
-  done: (error: any, user?: User) => void,
-) => void;
+export type SerializeFn = (user: User, done: (error: any, id: string) => void) => void;
+export type DeserializeFn = (id: string, done: (error: any, user?: User) => void) => void;
 
 const defaultSerialize = (user: User, done: (error: any, id: string) => void) =>
   done(null, user.id);
 
-const defaultDeserialize = (
-  id: string,
-  done: (error: any, user?: User) => void,
-) => {
+const defaultDeserialize = (id: string, done: (error: any, user?: User) => void) => {
   if (id === mockUser.id) {
     done(null, mockUser);
   } else {
@@ -35,7 +26,7 @@ const defaultDeserialize = (
 export function setupSerializeAndDeserialize(
   passport: passportModule.Authenticator,
   serializeFn?: SerializeFn | null,
-  deserializeFn?: DeserializeFn | null,
+  deserializeFn?: DeserializeFn | null
 ) {
   passport.serializeUser(serializeFn || defaultSerialize);
   passport.deserializeUser(deserializeFn || defaultDeserialize);
@@ -46,10 +37,7 @@ export function setupSerializeAndDeserialize(
  * @param {Object} app A node app to connect the passport instance to.
  * @param {Passport} passport The passport instance.
  */
-export function connectPassport(
-  app: Application,
-  passport: passportModule.Authenticator,
-) {
+export function connectPassport(app: Application, passport: passportModule.Authenticator) {
   app.use(passport.initialize());
   app.use(passport.session());
 }
