@@ -93,15 +93,15 @@ export default class Server {
       defaultLayout: 'main',
       extname: '.hbs',
       helpers: viewHelpers(this.config),
-      layoutsDir: path.join(__dirname, '../src/views/layouts'),
-      partialsDir: [path.join(__dirname, '../src/views/partials')]
+      layoutsDir: path.join(__dirname, './views/layouts'),
+      partialsDir: [path.join(__dirname, './views/partials')]
     });
 
     moreHelpers.registerHelpers(expressHbs.handlebars);
 
     this.app.engine('.hbs', expressHbs.engine);
 
-    this.app.set('views', path.join(__dirname, '../src/views'));
+    this.app.set('views', path.join(__dirname, './views'));
     this.app.set('view engine', '.hbs');
     this.app.enable('trust proxy');
     this.app.enable('strict routing');
@@ -157,7 +157,7 @@ export default class Server {
         'deleteDocuments',
         'createFolders', // Includes rename permission
         'deleteFolders'
-      ]
+      ];
       done(null, user);
     });
 

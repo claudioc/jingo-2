@@ -2,22 +2,34 @@
 
 /*
  * Jingo, wiki engine
- * http://github.com/claudioc/jingo
+ * http://github.com/claudioc/jingo-2
  *
- * Copyright 2013-2017 Claudio Cicali <claudio.cicali@gmail.com>
+ * Copyright 2013-2021 Claudio Cicali <claudio.cicali@gmail.com>
  * Released under the MIT license
  */
 
-'use strict';
-require('module-alias/register');
+import * as moduleAlias from 'module-alias';
+
+// Defines module aliases here instead of package.json.
+// This list must be kept in sync with the same list in tsconfig.json
+moduleAlias.addAliases({
+  '@lib': __dirname + '/lib',
+  '@events': __dirname + '/events',
+  '@sdk': __dirname + '/sdk',
+  '@api': __dirname + '/api',
+  '@routes': __dirname + '/routes',
+  '@middlewares': __dirname + '/middlewares'
+});
+
+const pkg = require('./package');
 
 const DEFAULT_HTTP_PORT = 6767;
-const program = require('commander');
-const pkg = require('./package');
-const fs = require('fs');
-const config = require('./dist/lib/config').default;
-const Server = require('./dist/server').default;
-const http = require('http');
+import * as program from 'commander';
+import * as fs from 'fs';
+import config from '@lib/config';
+import Server from './server';
+import * as http from 'http';
+
 let httpServer;
 let httpPort;
 

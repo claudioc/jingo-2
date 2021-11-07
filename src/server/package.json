@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "A nodejs based wiki engine",
   "author": "Claudio Cicali <claudio.cicali@gmail.com>",
-  "main": "index.js",
   "directories": {
     "lib": "lib"
   },
@@ -11,12 +10,11 @@
     "prepublish": "echo TBD",
     "test": "gulp build; nyc ava -v",
     "watch-test": "ava -v -w",
-    "clean": "rm -rf dist/*; mkdir -p dist; ln -s ../src/views dist/; ln -s ../src/public dist/; ln -s ../src/lib/config/defaults.json dist/config-defaults.json",
-    "start": "NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -V -w jingo -w config.json jingo -c config.json'",
+    "clean": "rm -rf dist/*; mkdir -p dist",
+    "start": "./run.sh",
     "start-dev": "npm run clean; npm test; npm start",
     "sloc": "sloc dist/ -e vendor"
   },
-
   "devDependencies": {
     "@types/boom": "^7.1.0",
     "@types/express": "^4.17.2",
@@ -30,6 +28,7 @@
     "@typescript-eslint/parser": "^5.3.0",
     "ava": "^3.15.0",
     "cheerio": "^1.0.0-rc.2",
+    "cpy-cli": "^3.1.1",
     "editorconfig": "^0.15.0",
     "eslint": "^8.2.0",
     "eslint-config-prettier": "^8.3.0",
@@ -87,16 +86,15 @@
     "semver": "^5.4.1",
     "simple-git": "^1.85.0"
   },
-
   "_moduleAliases": {
-    "@middlewares": "dist/middlewares",
-    "@events": "dist/events",
-    "@server": "dist/server",
-    "@sdk": "dist/sdk/index",
-    "@lib": "dist/lib",
-    "@routes": "dist/routes"
+    "@root": "dist",
+    "@middlewares": "middlewares",
+    "@events": "events",
+    "@server": "server",
+    "@sdk": "sdk/index",
+    "@lib": "lib",
+    "@routes": "routes"
   },
-
   "nyc": {
     "exclude": [
       "**/spec.js"
@@ -114,7 +112,6 @@
       "dist/**/**/spec.js"
     ]
   },
-
   "repository": {
     "type": "git",
     "url": "git+https://github.com/claudioc/jingo-2.git"

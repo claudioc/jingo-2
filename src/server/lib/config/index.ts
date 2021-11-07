@@ -99,7 +99,7 @@ export class Config {
     this.fsApi = fsApi(this.fsDriver);
     // @FIXME The default config file should probably be moved somewhere
     // by the build process. Right now it is symlinked by the `npm clean` step
-    this.defaultsFilename = path.join(process.cwd(), 'dist/config-defaults.json');
+    this.defaultsFilename = path.join(process.cwd(), 'dist/lib/config/defaults.json');
     this.sys = {
       fileSystemIsCaseSensitive: true
     };

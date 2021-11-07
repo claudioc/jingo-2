@@ -12,7 +12,8 @@
   ],
   "scripts": {
     "test": "echo TBD",
-    "sloc": "sloc dist/ -e vendor"
+    "server": "npm run start -w src/server",
+    "sloc": "sloc src/server/dist/ -e vendor"
   },
   "license": "MIT",
   "workspaces": [

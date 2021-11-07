@@ -3,7 +3,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "strictNullChecks": false,
-    "target": "es6",
+    "target": "es2020",
     "outDir": "dist/",
     "inlineSourceMap": true,
     "noUnusedParameters": false,
@@ -13,9 +13,9 @@
     "removeComments": true,
     "allowJs": true,
     "lib": [
-      "es2016"
+      "es2020"
     ],
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
       "@server": [
         "server"
@@ -39,7 +39,7 @@
   },
   "include": [
     "index.ts",
-    "src/**/*.ts"
+    "**/*.ts"
   ],
   "compileOnSave": true,
   "buildOnSave": false
