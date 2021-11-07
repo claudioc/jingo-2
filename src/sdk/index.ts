@@ -174,7 +174,7 @@ export class Sdk {
 
   /**
    * Renames a document taking care of not overwriting the destination
-   * Returns true if the rename is succesful, false otherwise
+   * Returns true if the rename is successful, false otherwise
    * @param oldDocName
    * @param newDocName
    * @param into directory where the document resides
@@ -206,7 +206,7 @@ export class Sdk {
   /**
    * Check if two docNames point to the same file (the check is
    * needed on case insensitive file systems) thus considering the first
-   * docName overwritable by the second docName (as file names) without consequences
+   * docName overridable by the second docName (as file names) without consequences
    * @param docName1 Name of the first doc
    * @param docName2 Name of the second doc
    * @param into directory where the document resides

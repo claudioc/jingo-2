@@ -1,4 +1,4 @@
-import { check, sanitize } from 'express-validator';
+import { check } from 'express-validator';
 
 // Returns a validator chains for the new document
 export const validateCreate = () => {
@@ -6,15 +6,17 @@ export const validateCreate = () => {
     check('docTitle')
       .isLength({ min: 1 })
       .withMessage('The document title cannot be empty')
-      .trim(),
+      .trim()
+      .escape(),
 
-    check('into').trim(),
+    check('into')
+      .trim()
+      .escape(),
 
     check('content')
       .isLength({ min: 1 })
       .withMessage('The document content cannot be empty')
-      .trim(),
-
-    sanitize(['docTitle', 'content', 'into'])
+      .trim()
+      .escape()
   ];
 };

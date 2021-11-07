@@ -1,4 +1,4 @@
-import { check, sanitize } from 'express-validator';
+import { check } from 'express-validator';
 
 export const validateCreate = () => {
   return [
@@ -7,9 +7,7 @@ export const validateCreate = () => {
       .withMessage('The folder title cannot be empty')
       .trim(),
 
-    check('into').trim(),
-
-    sanitize(['folderName', 'into'])
+    check('into').trim()
   ];
 };
 
@@ -24,8 +22,6 @@ export const validateRename = () => {
       .isLength({ min: 1 })
       .trim(),
 
-    check('into').trim(),
-
-    sanitize(['folderName', 'currentFolderName', 'into'])
+    check('into').trim()
   ];
 };
