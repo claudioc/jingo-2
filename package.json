@@ -11,108 +11,12 @@
     "markdown"
   ],
   "scripts": {
-    "prepublish": "echo TBD",
-    "test": "gulp build; nyc ava -v",
-    "watch-test": "ava -v -w",
-    "clean": "rm -rf dist/*; mkdir -p dist; ln -s ../src/views dist/; ln -s ../src/public dist/; ln -s ../src/lib/config/defaults.json dist/config-defaults.json",
-    "start": "NODE_ENV=development tsc-watch --outDir ./dist --onSuccess 'npx nodemon -V -w jingo -w config.json jingo -c config.json'",
-    "start-dev": "npm run clean; npm test; npm start",
+    "test": "echo TBD",
     "sloc": "sloc dist/ -e vendor"
   },
-  "_moduleAliases": {
-    "@middlewares": "dist/middlewares",
-    "@events": "dist/events",
-    "@server": "dist/server",
-    "@sdk": "dist/sdk/index",
-    "@lib": "dist/lib",
-    "@routes": "dist/routes"
-  },
-  "nyc": {
-    "exclude": [
-      "**/spec.js"
-    ]
-  },
-  "ava": {
-    "require": [
-      "module-alias/register"
-    ],
-    "files": [
-      "dist/**/**/spec.js",
-      "dist/api/**/spec.js"
-    ],
-    "source": [
-      "dist/**/**/spec.js"
-    ]
-  },
   "license": "MIT",
-  "devDependencies": {
-    "@types/boom": "^7.1.0",
-    "@types/express": "^4.17.2",
-    "@types/fs-extra": "^4.0.3",
-    "@types/markdown-it": "0.0.4",
-    "@types/method-override": "0.0.31",
-    "@types/morgan": "^1.7.37",
-    "@types/node": "^12.12.9",
-    "@types/sinon": "^4.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.3.0",
-    "@typescript-eslint/parser": "^5.3.0",
-    "ava": "^3.15.0",
-    "cheerio": "^1.0.0-rc.2",
-    "editorconfig": "^0.15.0",
-    "eslint": "^8.2.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-jsdoc": "^37.0.3",
-    "eslint-plugin-prefer-arrow": "^1.2.3",
-    "gulp": "^4.0.2",
-    "gulp-ava": "^3.0.0",
-    "gulp-cli": "^2.3.0",
-    "gulp-filter": "^5.1.0",
-    "gulp-print": "^5.0.0",
-    "gulp-typescript": "^6.0.0-alpha.1",
-    "memfs": "^2.6.0",
-    "mock-fs": "^4.4.2",
-    "mountfs": "^0.5.0",
-    "nodemon": "^2.0.14",
-    "nyc": "^15.1.0",
-    "prettier": "^1.19.1",
-    "sinon": "^7.5.0",
-    "supertest": "^4.0.2",
-    "tmp": "0.0.33",
-    "ts-node": "^10.4.0",
-    "tsc-watch": "^4.5.0",
-    "typescript": "^4.4.4"
-  },
-  "dependencies": {
-    "@types/passport": "^1.0.3",
-    "body-parser": "^1.19.0",
-    "commander": "^2.12.1",
-    "comment-json": "^1.1.3",
-    "cookie-session": "^2.0.0-beta.3",
-    "csurf": "^1.9.0",
-    "date-fns": "^1.29.0",
-    "es6-promise": "^4.2.8",
-    "express": "^4.17.1",
-    "express-boom": "^3.0.0",
-    "express-flash": "0.0.2",
-    "express-handlebars": "^5.3.4",
-    "express-validator": "^6.13.0",
-    "flat": "^4.0.0",
-    "helmet": "^3.21.2",
-    "highlight.js": "^10.4.1",
-    "just-handlebars-helpers": "^1.0.14",
-    "lodash": "^4.17.21",
-    "markdown-it": "^10.0.0",
-    "markdown-it-anchor": "^5.2.5",
-    "markdown-it-emoji": "^1.4.0",
-    "markdown-it-footnote": "^3.0.2",
-    "markdown-it-table-of-contents": "^0.4.4",
-    "method-override": "^3.0.0",
-    "module-alias": "^2.0.3",
-    "morgan": "^1.9.1",
-    "node-ipc": "^9.1.1",
-    "passport": "^0.4.0",
-    "passport-local-htpasswd": "^0.1.1",
-    "semver": "^5.4.1",
-    "simple-git": "^1.85.0"
-  }
+  "workspaces": [
+    "src/client",
+    "src/server"
+  ]
 }
