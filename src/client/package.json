@@ -1,29 +1,32 @@
 {
   "name": "jingo-client",
   "version": "1.0.0",
+  "author": "Claudio Cicali <claudio.cicali@gmail.com>",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "build": "tsc && vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
+    "react-router-dom": "^6.0.1"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.11",
-    "@tsconfig/svelte": "^2.0.1",
-    "svelte": "^3.37.0",
-    "svelte-check": "^2.1.0",
-    "svelte-preprocess": "^4.7.2",
-    "tslib": "^2.2.0",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@vitejs/plugin-react": "^1.0.0",
     "typescript": "^4.3.2",
-    "vite": "^2.6.4"
+    "vite": "^2.6.4",
+    "vite-aliases": "^0.8.7"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/claudioc/jingo-2.git"
   },
-  "author": "Claudio Cicali <claudio.cicali@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/claudioc/jingo-2/issues"
   },
-  "homepage": "https://github.com/claudioc/jingo-2#readme"}
+  "homepage": "https://github.com/claudioc/jingo-2#readme"
+}

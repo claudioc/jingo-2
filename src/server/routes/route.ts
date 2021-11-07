@@ -41,6 +41,14 @@ export default class BaseRoute {
     this.render(res, `${path}/template`, options);
   }
 
+  public async renderTemplateToString(res: Response, path: string, options?: object) {
+    return new Promise((resolve, reject) => {
+      res.render(`${path}/template`, options, (err, html) => {
+        err ? reject(err) : resolve(html);
+      });
+    });
+  }
+
   public inspectRequest(req: Request) {
     return inspectRequest(req);
   }

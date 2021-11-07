@@ -86,15 +86,6 @@
     "semver": "^5.4.1",
     "simple-git": "^1.85.0"
   },
-  "_moduleAliases": {
-    "@root": "dist",
-    "@middlewares": "middlewares",
-    "@events": "events",
-    "@server": "server",
-    "@sdk": "sdk/index",
-    "@lib": "lib",
-    "@routes": "routes"
-  },
   "nyc": {
     "exclude": [
       "**/spec.js"

@@ -11,14 +11,24 @@ export default class IndexRoute extends BaseRoute {
     );
   }
 
-  public index(req: Request, res: Response, next: NextFunction) {
+  public async index(req: Request, res: Response, next: NextFunction) {
     const wikiIndex = this.config.get('wiki.index');
 
     if (!_isUndefined(req.query.welcome)) {
-      this.renderTemplate(res, `${__dirname}/welcome`, {
-        documentRoot: this.config.get('documentRoot'),
-        wikiIndex
-      });
+      if (req.app.get('requiresJson')) {
+        const html = await this.renderTemplateToString(res, `${__dirname}/welcome`, {
+          documentRoot: this.config.get('documentRoot'),
+          wikiIndex
+        });
+        res.json({
+          body: html
+        });
+      } else {
+        this.renderTemplate(res, `${__dirname}/welcome`, {
+          documentRoot: this.config.get('documentRoot'),
+          wikiIndex
+        });
+      }
     } else {
       const indexPageUrl = this.wikiHelpers.pathFor(wikiIndex);
       res.redirect(indexPageUrl);

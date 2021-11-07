@@ -54,11 +54,19 @@ export default class WikiRoute extends BaseRoute {
         isIndex
       };
       this.title = `Jingo – ${doc.title}`;
-      this.renderTemplate(res, `${__dirname}/read`, scope);
+      if (req.app.get('requiresJson')) {
+        res.json(scope);
+      } else {
+        this.renderTemplate(res, `${__dirname}/read`, scope);
+      }
       req.app && req.app.emit(je('jingo.wikiRead'), this.docName);
     } catch (e) {
       if (isIndex) {
-        res.redirect(this.config.mount(`/?welcome`));
+        if (req.app.get('requiresJson')) {
+          res.redirect(this.config.mount(`/api?welcome`));
+        } else {
+          res.redirect(this.config.mount(`/?welcome`));
+        }
       } else {
         const createPageUrl = this.docHelpers.pathFor('create', this.docName, this.dirName);
         res.status(404);

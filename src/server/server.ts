@@ -8,6 +8,7 @@ import DocRoute from '@routes/doc';
 import FolderRoute from '@routes/folder';
 import IndexRoute from '@routes/index';
 import WikiRoute from '@routes/wiki';
+import jsonRequiredMiddleware from '@middlewares/json-required';
 import * as bodyParser from 'body-parser';
 import * as session from 'cookie-session';
 import * as express from 'express';
@@ -130,6 +131,8 @@ export default class Server {
     );
 
     this.app.use(express.json());
+
+    this.app.use(jsonRequiredMiddleware());
 
     this.app.use(
       session({

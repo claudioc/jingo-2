@@ -66,7 +66,7 @@
       "remote": "",
       // Jingo will use the current branch name for its operations,
       // but you should specify the name of the branch for security reasons
-      "branch": "master"
+      "branch": "main"
     }
   }
 }
