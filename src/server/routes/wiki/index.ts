@@ -63,7 +63,8 @@ export default class WikiRoute extends BaseRoute {
     } catch (e) {
       if (isIndex) {
         if (req.app.get('requiresJson')) {
-          res.redirect(this.config.mount(`/api?welcome`));
+          res.status(404);
+          res.json({});
         } else {
           res.redirect(this.config.mount(`/?welcome`));
         }

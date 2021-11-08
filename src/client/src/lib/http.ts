@@ -18,7 +18,7 @@ export const http: <T>(
     reqHeaders['Accept'] = 'application/json';
   }
 
-  const requestConfig: any = {
+  const requestConfig = {
     method,
     body: JSON.stringify(data),
     headers: reqHeaders,
@@ -48,7 +48,6 @@ export const http: <T>(
   return {
     error: true,
     statusCode: status,
-    data: null,
-    message: { title: body.error, description: body.message }
+    data: null
   };
 };

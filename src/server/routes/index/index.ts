@@ -15,20 +15,10 @@ export default class IndexRoute extends BaseRoute {
     const wikiIndex = this.config.get('wiki.index');
 
     if (!_isUndefined(req.query.welcome)) {
-      if (req.app.get('requiresJson')) {
-        const html = await this.renderTemplateToString(res, `${__dirname}/welcome`, {
-          documentRoot: this.config.get('documentRoot'),
-          wikiIndex
-        });
-        res.json({
-          body: html
-        });
-      } else {
-        this.renderTemplate(res, `${__dirname}/welcome`, {
-          documentRoot: this.config.get('documentRoot'),
-          wikiIndex
-        });
-      }
+      this.renderTemplate(res, `${__dirname}/welcome`, {
+        documentRoot: this.config.get('documentRoot'),
+        wikiIndex
+      });
     } else {
       const indexPageUrl = this.wikiHelpers.pathFor(wikiIndex);
       res.redirect(indexPageUrl);
