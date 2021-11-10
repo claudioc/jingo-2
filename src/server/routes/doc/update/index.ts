@@ -47,7 +47,11 @@ const update: RouteHandler = async function(this: DocRoute, req, res, next) {
     wikiIndex
   };
 
-  this.renderTemplate(res, __dirname, scope);
+  if (req.app.get('requiresJson')) {
+    res.json(scope);
+  } else {
+    this.renderTemplate(res, __dirname, scope);
+  }
 };
 
 const didUpdate: RouteHandler = async function(this: DocRoute, req, res, next) {

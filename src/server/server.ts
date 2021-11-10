@@ -170,6 +170,8 @@ export default class Server {
       next();
     });
 
-    this.app.set('cache', mcache());
+    if (this.config.hasFeature('cacheSupport')) {
+      this.app.set('cache', mcache());
+    }
   }
 }

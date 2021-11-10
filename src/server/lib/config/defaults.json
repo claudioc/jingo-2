@@ -60,6 +60,13 @@
       "version": "light" // or "full"
     },
 
+    // If you plan to edit the Markdown files from outside
+    // Jingo, then you cannot really use the cache because
+    // jingo wouldn't be able to detect a change on the files
+    "cacheSupport": {
+      "enabled": false
+    },
+
     // Configuration for git support
     "gitSupport": {
       "enabled": false,

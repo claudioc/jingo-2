@@ -1,4 +1,4 @@
-const Welcome: React.FC = () => {
+const NotFoundPage: React.FC = () => {
   return (
     <>
       <h1>Document not found</h1>
@@ -16,4 +16,4 @@ const Welcome: React.FC = () => {
   );
 };
 
-export default Welcome;
+export default NotFoundPage;

@@ -47,6 +47,7 @@ export default class WikiRoute extends BaseRoute {
       const scope: object = {
         codeHighlighterTheme: this.config.get('features.codeHighlighter.theme'),
         content: doc.content,
+        html: doc.html,
         dirName: this.dirName,
         docName: this.docName,
         docTitle: doc.title,
@@ -69,11 +70,15 @@ export default class WikiRoute extends BaseRoute {
           res.redirect(this.config.mount(`/?welcome`));
         }
       } else {
-        const createPageUrl = this.docHelpers.pathFor('create', this.docName, this.dirName);
         res.status(404);
-        this.renderTemplate(res, `${__dirname}/fail`, {
-          createPageUrl
-        });
+        if (req.app.get('requiresJson')) {
+          res.json({});
+        } else {
+          const createPageUrl = this.docHelpers.pathFor('create', this.docName, this.dirName);
+          this.renderTemplate(res, `${__dirname}/fail`, {
+            createPageUrl
+          });
+        }
       }
     }
   }
@@ -90,11 +95,15 @@ export default class WikiRoute extends BaseRoute {
       folderList = await this.sdk.listFolders(this.dirName);
     } catch (err) {
       res.status(404);
-      this.renderTemplate(res, `${__dirname}/list-fail`, {
-        directory: this.dirName,
-        folderName,
-        parentDirname
-      });
+      if (req.app.get('requiresJson')) {
+        res.json({});
+      } else {
+        this.renderTemplate(res, `${__dirname}/list-fail`, {
+          directory: this.dirName,
+          folderName,
+          parentDirname
+        });
+      }
 
       return;
     }
@@ -107,7 +116,12 @@ export default class WikiRoute extends BaseRoute {
       parentDirname
     };
 
-    this.renderTemplate(res, `${__dirname}/list`, scope);
+    if (req.app.get('requiresJson')) {
+      res.json(scope);
+    } else {
+      this.renderTemplate(res, `${__dirname}/list`, scope);
+    }
+
     req.app && req.app.emit(je('jingo.wikiList'), this.dirName);
   }
 
@@ -119,10 +133,10 @@ export default class WikiRoute extends BaseRoute {
     const cache = req.app.get('cache');
     const version = this.readVersion(req);
 
-    let doc;
+    let doc: IDoc;
     if (!cache || version !== 'HEAD') {
       doc = await this.sdk.loadDoc(this.docName, this.dirName, version);
-      doc.content = this.sdk.renderToHtml(doc.content);
+      doc.html = this.sdk.renderToHtml(doc.content);
       doc.version = version;
       return doc;
     }
@@ -131,7 +145,7 @@ export default class WikiRoute extends BaseRoute {
     if (!doc) {
       doc = await this.sdk.loadDoc(this.docName, this.dirName);
       // Save in the cache the compiled doc content
-      doc.content = this.sdk.renderToHtml(doc.content);
+      doc.html = this.sdk.renderToHtml(doc.content);
       doc.version = version;
       cache.put(this.dirName + this.docName, doc, 3600 * 1000);
     }

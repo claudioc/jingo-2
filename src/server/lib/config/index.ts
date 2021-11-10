@@ -35,6 +35,8 @@ export interface IEmojiSettings extends IFeatureSettings {
   version?: string;
 }
 
+export interface ICacheSettings extends IFeatureSettings {}
+
 export interface IWikiSettings {
   index: string;
   basePath: string;
@@ -53,13 +55,21 @@ export interface IAuthMethodLocal {
   authFile: string;
 }
 
-type TFeature = 'codeHighlighter' | 'ipcSupport' | 'gitSupport' | 'emojiSupport' | 'csrfProtection';
+type TFeature =
+  | 'codeHighlighter'
+  | 'ipcSupport'
+  | 'gitSupport'
+  | 'emojiSupport'
+  | 'csrfProtection'
+  | 'cacheSupport';
+
 type TAuthMethod = 'google' | 'github' | 'local';
 
 export type TFeaturesSettings = {
   codeHighlighter?: any;
   ipcSupport?: IIpcSettings;
   gitSupport?: IGitSettings;
+  cacheSupport?: ICacheSettings;
   emojiSupport?: IEmojiSettings;
   csrfProtection?: IFeatureSettings;
 };

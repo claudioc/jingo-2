@@ -18,6 +18,7 @@ export interface IDoc {
   title?: string;
   content: string;
   version: string;
+  html: string;
 }
 
 interface IDocItem {

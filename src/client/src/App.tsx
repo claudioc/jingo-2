@@ -1,7 +1,7 @@
-import { Outlet } from 'react-router-dom';
-import { Routes, Route, Link } from 'react-router-dom';
-import HomePage from './pages/Home';
-import WikiPage from './pages/Wiki';
+import { Outlet, Routes, Route, Link } from 'react-router-dom';
+import HomePage from './routes/Home';
+import Wiki from './routes/Wiki';
+import DocsEdit from './routes/Docs/Edit';
 
 function App() {
   return (
@@ -10,8 +10,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
-          {/* <Route path="about" element={<About />} /> */}
-          <Route path="wiki/:page" element={<WikiPage />} />
+          <Route caseSensitive={true} path="wiki/*" element={<Wiki />} />
+          <Route path="docs">
+            <Route path="edit" element={<DocsEdit />} />
+          </Route>
           <Route path="*" element={<NoMatch />} />
         </Route>
       </Routes>
@@ -19,6 +21,7 @@ function App() {
   );
 }
 
+//<Route caseSensitive={true} path="wiki/*/" element={<WikiFolder />} />
 const Layout: React.FC = () => {
   return (
     <div>
