@@ -1,4 +1,13 @@
-const NotFoundPage: React.FC = () => {
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+interface NotFoundDocProps {
+  docName: string;
+  into?: string;
+}
+
+const NotFoundDoc: React.FC<NotFoundDocProps> = ({ docName, into }) => {
+  console.log(docName);
   return (
     <>
       <h1>Document not found</h1>
@@ -6,7 +15,8 @@ const NotFoundPage: React.FC = () => {
       <p>Here is what you can do now:</p>
       <ul>
         <li>
-          Create the document by just <a href="">following this link</a>
+          Create the document by just{' '}
+          <Link to={`/docs/create?docName=${docName}&into=${into}`}>following this link</Link>
         </li>
         <li>
           Go to the <a href="">home page</a>
@@ -16,4 +26,4 @@ const NotFoundPage: React.FC = () => {
   );
 };
 
-export default NotFoundPage;
+export default NotFoundDoc;

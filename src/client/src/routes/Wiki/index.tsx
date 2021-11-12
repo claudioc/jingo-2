@@ -1,16 +1,17 @@
 import React from 'react';
 import { http } from '@lib/http';
 import { useParams, useLocation, useNavigate } from 'react-router';
-import { TDoc, TFolder } from '@lib/types';
+import { TDoc, TDocLocation, TFolder } from '@lib/types';
 import Document from './Document';
 import Folder from './Folder';
-import NotFoundPage from './NotFoundPage';
+import NotFoundDoc from './NotFoundDoc';
 import NotFoundFolder from './NotFoundFolder';
 
 const Wiki: React.FC = () => {
   const navigate = useNavigate();
   const [doc, setDoc] = React.useState<TDoc | null>();
   const [folder, setFolder] = React.useState<TFolder | null>();
+  const [newDoc, setNewDoc] = React.useState<TDocLocation>();
   const [loading, setLoading] = React.useState<boolean>();
   const urlParams = useParams();
   const location = useLocation();
@@ -22,15 +23,15 @@ const Wiki: React.FC = () => {
    */
   const path = urlParams['*'];
   const isAnyFolder = React.useMemo(() => path === '' || path?.endsWith('/'), [path]);
-  const isAnyPage = !isAnyFolder;
+  const isAnyDoc = !isAnyFolder;
 
   const fetchWikiContent = React.useCallback(async () => {
     setLoading(true);
     let response;
 
-    if (isAnyPage) {
+    if (isAnyDoc) {
       setFolder(undefined);
-      response = await http<TDoc>('get', `/api/wiki/${path}`);
+      response = await http<TDoc | TDocLocation>('get', `/api/wiki/${path}`);
     } else {
       setDoc(undefined);
       response = await http<TFolder>('get', `/api/wiki/${path}`);
@@ -38,6 +39,9 @@ const Wiki: React.FC = () => {
 
     if (response.error) {
       if (response.statusCode === 404) {
+        if (isAnyDoc) {
+          setNewDoc(response.data as TDocLocation);
+        }
         isAnyFolder ? setFolder(null) : setDoc(null);
       } else {
         console.error(`Something went wrong while fetching ${path}`);
@@ -46,7 +50,7 @@ const Wiki: React.FC = () => {
       isAnyFolder ? setFolder(response.data as TFolder) : setDoc(response.data as TDoc);
     }
     setLoading(false);
-  }, [path, isAnyFolder, isAnyPage]);
+  }, [path, isAnyFolder, isAnyDoc]);
 
   React.useEffect(() => {
     if (location.pathname === '/wiki') {
@@ -62,10 +66,12 @@ const Wiki: React.FC = () => {
 
   return (
     <>
-      {doc && <Document doc={doc} />}
+      {doc && <Document doc={doc as TDoc} />}
       {folder && <Folder folder={folder} />}
       {isAnyFolder && folder === null && <NotFoundFolder />}
-      {isAnyPage && doc === null && <NotFoundPage />}
+      {isAnyDoc && doc === null && newDoc && (
+        <NotFoundDoc docName={newDoc?.docName} into={newDoc?.into} />
+      )}
     </>
   );
 };
