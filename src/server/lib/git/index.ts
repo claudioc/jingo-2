@@ -1,6 +1,5 @@
 import { Config } from '@lib/config';
 import doc, { Doc } from '@lib/doc';
-import { noop as _noop } from 'lodash';
 import { ListLogLine, ListLogSummary } from 'simple-git';
 import * as simplegit from 'simple-git/promise';
 
@@ -16,16 +15,18 @@ export interface IGitOps {
   $show(docName: string, into: string, version: string): Promise<string>;
 }
 
+const noop = (...args: any[]) => [] as any;
+
 const nop: IGitOps = {
-  $add: _noop,
-  $commit: _noop,
-  $diff: _noop,
-  $history: _noop,
-  $ls: _noop,
-  $recent: _noop,
-  $restore: _noop,
-  $rm: _noop,
-  $show: _noop
+  $add: noop,
+  $commit: noop,
+  $diff: noop,
+  $history: noop,
+  $ls: noop,
+  $recent: noop,
+  $restore: noop,
+  $rm: noop,
+  $show: noop
 };
 
 const git = (config: Config): GitOps | IGitOps => {

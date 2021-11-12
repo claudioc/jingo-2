@@ -16,7 +16,7 @@ const created = async (config: Config, params: { docName: string; into: string }
 
 const updated = async (
   config: Config,
-  params: { docName: string; into: string; comment: string }
+  params: { docName: string; oldDocName: string; into: string; comment: string }
 ) => {
   if (!params) {
     return;

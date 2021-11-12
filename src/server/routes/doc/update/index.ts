@@ -95,12 +95,20 @@ const didUpdate: RouteHandler = async function(this: DocRoute, req, res, next) {
     cache.del(into + oldDocName);
   }
 
-  res.redirect(this.wikiHelpers.pathFor(data.docTitle, into));
+  if (req.app.get('requiresJson')) {
+    res.json({
+      docName: newDocName,
+      into
+    });
+  } else {
+    res.redirect(this.wikiHelpers.pathFor(data.docTitle, into));
+  }
 
   req.app &&
     req.app.emit(je('jingo.docUpdated'), {
       comment,
-      docName: oldDocName,
+      docName: newDocName,
+      oldDocName,
       into
     });
 };
