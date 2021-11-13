@@ -1,16 +1,20 @@
 type HttpMethod = 'get' | 'post';
-type HttpResponse<T> = {
-  statusCode: number;
-  data: T;
-  error: boolean;
-  message?: any;
+
+type ApiError = {
+  message: string;
 };
 
-export const http: <T>(
+type ApiResponse<T> = {
+  statusCode: number;
+  data: T & ApiError;
+  error: boolean;
+};
+
+export const apiRequest: <T>(
   method: HttpMethod,
   url: string,
   options?: any
-) => Promise<HttpResponse<T>> = async (method, url, options) => {
+) => Promise<ApiResponse<T>> = async (method, url, options) => {
   const { headers, data, ...rest } = options || {};
   const reqHeaders = headers || {};
   if (!reqHeaders['Content-Type']) {

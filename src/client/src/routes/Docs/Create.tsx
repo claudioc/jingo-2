@@ -1,5 +1,5 @@
 import React from 'react';
-import { http } from '@lib/http';
+import { apiRequest } from '@lib/api-request';
 import { IDocForCreate, IDocLocation } from '@lib/types';
 import { useNavigate } from 'react-router';
 import _pick from 'lodash/pick';
@@ -31,7 +31,7 @@ const Create: React.FC = () => {
 
   const fetchDocForCreate = React.useCallback(async () => {
     setLoading(true);
-    const response = await http<IDocForCreate>(
+    const response = await apiRequest<IDocForCreate>(
       'get',
       `/api/doc/create?docTitle=${docTitle}&into=${into}`
     );
@@ -62,7 +62,7 @@ const Create: React.FC = () => {
       return;
     }
 
-    const response = await http<IDocLocation>('post', `/api/doc/create`, {
+    const response = await apiRequest<IDocLocation>('post', `/api/doc/create`, {
       data: {
         _csrf: doc.csrfToken,
         into: doc.into,
@@ -71,7 +71,9 @@ const Create: React.FC = () => {
       }
     });
 
-    if (!response.error) {
+    if (response.error) {
+      setError(`Something went wrong while saving the document: ${response.data.message}`);
+    } else {
       const { wikiPath } = response.data;
       navigate(wikiPath);
     }
@@ -83,11 +85,14 @@ const Create: React.FC = () => {
 
   return (
     <>
+      <h2>Creating {`${docTitle ? docTitle : 'a new document'}`}</h2>
       {error && <p>{error}</p>}
       {doc && (
         <form onSubmit={handleSubmit}>
           <p>
+            <label htmlFor="doc-title">Title</label>
             <input
+              id="doc-title"
               required
               onChange={handleFormChange}
               name={FormFields.DocTitle}
@@ -96,7 +101,9 @@ const Create: React.FC = () => {
             />
           </p>
           <p>
+            <label htmlFor="doc-content">Content</label>
             <textarea
+              id="doc-content"
               onChange={handleFormChange}
               name={FormFields.Content}
               rows={10}

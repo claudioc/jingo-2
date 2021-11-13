@@ -1,5 +1,5 @@
 import React from 'react';
-import { http } from '@lib/http';
+import { apiRequest } from '@lib/api-request';
 import { useParams, useLocation, useNavigate } from 'react-router';
 import { IDoc, IDocLocation, TFolder } from '@lib/types';
 import Document from './Document';
@@ -31,10 +31,10 @@ const Wiki: React.FC = () => {
 
     if (isAnyDoc) {
       setFolder(undefined);
-      response = await http<IDoc | IDocLocation>('get', `/api/wiki/${path}`);
+      response = await apiRequest<IDoc | IDocLocation>('get', `/api/wiki/${path}`);
     } else {
       setDoc(undefined);
-      response = await http<TFolder>('get', `/api/wiki/${path}`);
+      response = await apiRequest<TFolder>('get', `/api/wiki/${path}`);
     }
 
     if (response.error) {

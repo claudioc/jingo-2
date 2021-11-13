@@ -1,5 +1,5 @@
 import React from 'react';
-import { http } from '@lib/http';
+import { apiRequest } from '@lib/api-request';
 import { IDocForUpdate, IDocLocation } from '@lib/types';
 import { useNavigate } from 'react-router';
 import _pick from 'lodash/pick';
@@ -33,13 +33,13 @@ const Edit: React.FC = () => {
 
   const fetchDocContent = React.useCallback(async () => {
     setLoading(true);
-    const response = await http<IDocForUpdate>(
+    const response = await apiRequest<IDocForUpdate>(
       'get',
       `/api/doc/update?docName=${docName}&into=${into}`
     );
 
     if (response.error) {
-      setError(`Something went wrong while fetching '${docName}'`);
+      setError(`Something went wrong while fetching '${docName}': ${response.data.message}`);
     } else {
       setDoc(response.data);
       setForm({ ...form, ..._pick(response.data, [FormFields.Content, FormFields.DocTitle]) });
@@ -64,7 +64,7 @@ const Edit: React.FC = () => {
       return;
     }
 
-    const response = await http<IDocLocation>('post', `/api/doc/update`, {
+    const response = await apiRequest<IDocLocation>('post', `/api/doc/update`, {
       data: {
         _csrf: doc.csrfToken,
         into: doc.into,
@@ -75,9 +75,12 @@ const Edit: React.FC = () => {
       }
     });
 
-    const { wikiPath } = response.data;
-
-    navigate(wikiPath);
+    if (response.error) {
+      setError(`Something went wrong while saving the document: ${response.data.message}`);
+    } else {
+      const { wikiPath } = response.data;
+      navigate(wikiPath);
+    }
   };
 
   if (loading) {
@@ -87,7 +90,7 @@ const Edit: React.FC = () => {
   return (
     <>
       {error && <p>{error}</p>}
-      {!error && (
+      {doc && (
         <form onSubmit={handleSubmit}>
           <p>
             <input
@@ -109,7 +112,6 @@ const Edit: React.FC = () => {
           </p>
           <p>
             <input
-              required
               onChange={handleFormChange}
               name={FormFields.Comment}
               type="text"

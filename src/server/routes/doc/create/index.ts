@@ -23,22 +23,10 @@ const create: RouteHandler = async function(this: DocRoute, req, res, next) {
   const docName = this.wikiHelpers.wikify(docTitle as string);
 
   if (!(await this.assertDirectoryExists(into, req, res))) {
-    if (req.app.get('requiresJson')) {
-      res.status(400);
-      res.json({
-        message: `The directory ${into} does not exist.`
-      });
-    }
     return;
   }
 
   if (!(await this.assertDocDoesNotExist(docName, into, req, res))) {
-    if (req.app.get('requiresJson')) {
-      res.status(400);
-      res.json({
-        message: `A document with that name ${docName} already exists`
-      });
-    }
     return;
   }
 
@@ -86,12 +74,6 @@ const didCreate: RouteHandler = async function(this: DocRoute, req, res, next) {
   }
 
   if (!(await this.assertDirectoryExists(into, req, res))) {
-    if (req.app.get('requiresJson')) {
-      res.status(400);
-      res.json({
-        message: `The directory ${into} does not exist.`
-      });
-    }
     return;
   }
 

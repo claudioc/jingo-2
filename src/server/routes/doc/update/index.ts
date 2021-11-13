@@ -72,7 +72,14 @@ const didUpdate: RouteHandler = async function(this: DocRoute, req, res, next) {
   };
 
   if (errors) {
-    this.renderTemplate(res, __dirname, _assign(scope, { errors }));
+    if (req.app.get('requiresJson')) {
+      res.status(400);
+      res.json({
+        message: errors.join(', ')
+      });
+    } else {
+      this.renderTemplate(res, __dirname, _assign(scope, { errors }));
+    }
     return;
   }
 

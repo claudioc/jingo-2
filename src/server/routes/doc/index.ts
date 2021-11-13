@@ -71,6 +71,11 @@ export default class DocRoute extends BaseRoute {
           folderName,
           parentDirname
         });
+      } else {
+        res.status(400);
+        res.json({
+          message: `The directory ${directory} does not exist.`
+        });
       }
     }
 
@@ -86,6 +91,13 @@ export default class DocRoute extends BaseRoute {
     if (itExists) {
       if (!req.app.get('requiresJson')) {
         res.redirect(this.wikiHelpers.pathFor(docName));
+      } else {
+        if (req.app.get('requiresJson')) {
+          res.status(400);
+          res.json({
+            message: `A document with that name ${docName} already exists`
+          });
+        }
       }
     }
 
@@ -95,7 +107,12 @@ export default class DocRoute extends BaseRoute {
   public async assertDocExists(docName, into, req: Request, res: Response) {
     const itExists = await this.sdk.docExists(docName, into);
     if (!itExists) {
-      if (!req.app.get('requiresJson')) {
+      if (req.app.get('requiresJson')) {
+        res.status(400);
+        res.json({
+          message: `The document ${docName} does not exist.`
+        });
+      } else {
         res.redirect(this.config.mount('/?e=1'));
       }
     }
