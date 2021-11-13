@@ -1,6 +1,6 @@
 import React from 'react';
 import { http } from '@lib/http';
-import { TDoc } from '@lib/types';
+import { IDoc } from '@lib/types';
 import Welcome from './Welcome';
 import { useNavigate } from 'react-router';
 
@@ -12,7 +12,7 @@ const HomePage: React.FC = () => {
   // FIXME this is not optimal since it will end up fetching the page twice
   // FIXME the "Home" is parameter
   const fetchHomePage = React.useCallback(async () => {
-    const response = await http<TDoc>('get', '/api/wiki/Home');
+    const response = await http<IDoc>('get', '/api/wiki/Home');
     if (response.error) {
       if (response.statusCode === 404) {
         // Show the welcome page

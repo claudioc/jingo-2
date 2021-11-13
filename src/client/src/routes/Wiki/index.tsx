@@ -1,7 +1,7 @@
 import React from 'react';
 import { http } from '@lib/http';
 import { useParams, useLocation, useNavigate } from 'react-router';
-import { TDoc, TDocLocation, TFolder } from '@lib/types';
+import { IDoc, IDocLocation, TFolder } from '@lib/types';
 import Document from './Document';
 import Folder from './Folder';
 import NotFoundDoc from './NotFoundDoc';
@@ -9,9 +9,9 @@ import NotFoundFolder from './NotFoundFolder';
 
 const Wiki: React.FC = () => {
   const navigate = useNavigate();
-  const [doc, setDoc] = React.useState<TDoc | null>();
+  const [doc, setDoc] = React.useState<IDoc | null>();
   const [folder, setFolder] = React.useState<TFolder | null>();
-  const [newDoc, setNewDoc] = React.useState<TDocLocation>();
+  const [newDoc, setNewDoc] = React.useState<IDocLocation>();
   const [loading, setLoading] = React.useState<boolean>();
   const urlParams = useParams();
   const location = useLocation();
@@ -31,7 +31,7 @@ const Wiki: React.FC = () => {
 
     if (isAnyDoc) {
       setFolder(undefined);
-      response = await http<TDoc | TDocLocation>('get', `/api/wiki/${path}`);
+      response = await http<IDoc | IDocLocation>('get', `/api/wiki/${path}`);
     } else {
       setDoc(undefined);
       response = await http<TFolder>('get', `/api/wiki/${path}`);
@@ -40,14 +40,14 @@ const Wiki: React.FC = () => {
     if (response.error) {
       if (response.statusCode === 404) {
         if (isAnyDoc) {
-          setNewDoc(response.data as TDocLocation);
+          setNewDoc(response.data as IDocLocation);
         }
         isAnyFolder ? setFolder(null) : setDoc(null);
       } else {
         console.error(`Something went wrong while fetching ${path}`);
       }
     } else {
-      isAnyFolder ? setFolder(response.data as TFolder) : setDoc(response.data as TDoc);
+      isAnyFolder ? setFolder(response.data as TFolder) : setDoc(response.data as IDoc);
     }
     setLoading(false);
   }, [path, isAnyFolder, isAnyDoc]);
@@ -66,12 +66,10 @@ const Wiki: React.FC = () => {
 
   return (
     <>
-      {doc && <Document doc={doc as TDoc} />}
+      {doc && <Document doc={doc as IDoc} />}
       {folder && <Folder folder={folder} />}
       {isAnyFolder && folder === null && <NotFoundFolder />}
-      {isAnyDoc && doc === null && newDoc && (
-        <NotFoundDoc docName={newDoc?.docName} into={newDoc?.into} />
-      )}
+      {isAnyDoc && doc === null && newDoc && <NotFoundDoc docLocation={newDoc} />}
     </>
   );
 };

@@ -65,11 +65,13 @@ export default class DocRoute extends BaseRoute {
     const { folderName, parentDirname } = this.folderHelpers.splitPath(directory);
     const itExists = await this.sdk.folderExists(folderName, parentDirname);
     if (!itExists) {
-      this.renderTemplate(res, `${__dirname}/fail`, {
-        directory,
-        folderName,
-        parentDirname
-      });
+      if (!req.app.get('requiresJson')) {
+        this.renderTemplate(res, `${__dirname}/fail`, {
+          directory,
+          folderName,
+          parentDirname
+        });
+      }
     }
 
     return itExists;
@@ -82,7 +84,9 @@ export default class DocRoute extends BaseRoute {
 
     const itExists = await this.sdk.docExists(docName, into);
     if (itExists) {
-      res.redirect(this.wikiHelpers.pathFor(docName));
+      if (!req.app.get('requiresJson')) {
+        res.redirect(this.wikiHelpers.pathFor(docName));
+      }
     }
 
     return !itExists;
@@ -91,7 +95,9 @@ export default class DocRoute extends BaseRoute {
   public async assertDocExists(docName, into, req: Request, res: Response) {
     const itExists = await this.sdk.docExists(docName, into);
     if (!itExists) {
-      res.redirect(this.config.mount('/?e=1'));
+      if (!req.app.get('requiresJson')) {
+        res.redirect(this.config.mount('/?e=1'));
+      }
     }
 
     return itExists;

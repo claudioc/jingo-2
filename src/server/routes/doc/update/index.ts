@@ -84,7 +84,7 @@ const didUpdate: RouteHandler = async function(this: DocRoute, req, res, next) {
 
   try {
     await this.sdk.updateDoc(oldDocName, newDocName, data.content, into);
-    req.flash('success', `Document updated.`);
+    req.flash('success', 'Document updated.');
   } catch (err) {
     this.renderTemplate(res, __dirname, _assign(scope, { errors: [err.message] }));
     return;
@@ -97,6 +97,7 @@ const didUpdate: RouteHandler = async function(this: DocRoute, req, res, next) {
 
   if (req.app.get('requiresJson')) {
     res.json({
+      wikiPath: this.wikiHelpers.pathFor(newDocName, into as string),
       docName: newDocName,
       into
     });

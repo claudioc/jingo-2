@@ -17,28 +17,46 @@ export const post: RouteEntry = (route: DocRoute) => {
 
 const create: RouteHandler = async function(this: DocRoute, req, res, next) {
   this.title = 'Jingo – Creating a document';
-  const docName = req.query.docName || '';
+  const docTitle = req.query.docTitle || '';
   const into = req.query.into || '';
   const csrfToken = (req as any).csrfToken();
+  const docName = this.wikiHelpers.wikify(docTitle as string);
 
   if (!(await this.assertDirectoryExists(into, req, res))) {
+    if (req.app.get('requiresJson')) {
+      res.status(400);
+      res.json({
+        message: `The directory ${into} does not exist.`
+      });
+    }
     return;
   }
 
   if (!(await this.assertDocDoesNotExist(docName, into, req, res))) {
+    if (req.app.get('requiresJson')) {
+      res.status(400);
+      res.json({
+        message: `A document with that name ${docName} already exists`
+      });
+    }
     return;
   }
 
   const wikiIndex = this.config.get('wiki.index');
-  const docTitle = this.wikiHelpers.unwikify(docName as string) || '';
   const scope: object = {
     csrfToken,
     docTitle,
+    docName,
+    wikiPath: this.wikiHelpers.pathFor(docName, into as string),
     into,
     wikiIndex
   };
 
-  this.renderTemplate(res, __dirname, scope);
+  if (req.app.get('requiresJson')) {
+    res.json(scope);
+  } else {
+    this.renderTemplate(res, __dirname, scope);
+  }
 };
 
 const didCreate: RouteHandler = async function(this: DocRoute, req, res, next) {
@@ -55,11 +73,25 @@ const didCreate: RouteHandler = async function(this: DocRoute, req, res, next) {
   };
 
   if (errors) {
-    this.renderTemplate(res, __dirname, _assign(scope, { errors }));
+    if (req.app.get('requiresJson')) {
+      res.status(400);
+      res.json({
+        message: errors.join(', ')
+      });
+    } else {
+      this.renderTemplate(res, __dirname, _assign(scope, { errors }));
+    }
+
     return;
   }
 
   if (!(await this.assertDirectoryExists(into, req, res))) {
+    if (req.app.get('requiresJson')) {
+      res.status(400);
+      res.json({
+        message: `The directory ${into} does not exist.`
+      });
+    }
     return;
   }
 
@@ -67,21 +99,37 @@ const didCreate: RouteHandler = async function(this: DocRoute, req, res, next) {
 
   const itExists = await this.sdk.docExists(docName, into);
   if (itExists) {
-    this.renderTemplate(
-      res,
-      __dirname,
-      _assign(scope, {
-        errors: ['A document with this title already exists']
-      })
-    );
+    if (req.app.get('requiresJson')) {
+      res.status(400);
+      res.json({
+        message: `A document with that name ${docName} already exists`
+      });
+    } else {
+      this.renderTemplate(
+        res,
+        __dirname,
+        _assign(scope, {
+          errors: ['A document with this title already exists']
+        })
+      );
+    }
     return;
   }
 
   await this.sdk.createDoc(docName, data.content, into);
-  req.flash('success', `Document ${docName} created.`);
 
-  // All done, go to the just saved page
-  res.redirect(this.wikiHelpers.pathFor(data.docTitle, into));
+  if (req.app.get('requiresJson')) {
+    res.json({
+      wikiPath: this.wikiHelpers.pathFor(docName, into as string),
+      docName,
+      into
+    });
+  } else {
+    req.flash('success', `Document ${docName} created.`);
+    // All done, go to the just saved page
+    res.redirect(this.wikiHelpers.pathFor(data.docTitle, into));
+  }
+
   req.app.emit(je('jingo.docCreated'), {
     docName,
     into

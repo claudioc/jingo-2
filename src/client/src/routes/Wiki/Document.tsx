@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { TDoc } from '@lib/types';
+import { IDoc } from '@lib/types';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -19,19 +19,20 @@ const RouterLink = (props: ITransformLink) => {
 };
 
 interface IDocumentProps {
-  doc: TDoc;
+  doc: IDoc;
 }
 
 const Document: React.FC<IDocumentProps> = ({ doc }) => {
   return (
     <>
       <article>
+        <h2>{doc.docTitle}</h2>
         <Markdown remarkPlugins={[remarkGfm]} components={{ a: RouterLink }}>
           {doc.content}
         </Markdown>
       </article>
       <div>
-        <Link to={`/docs/edit?docName=${doc.docName}`}>Edit</Link>
+        <Link to={`/docs/edit?docName=${doc.docName}&into=${doc.dirName}`}>Edit</Link>
       </div>
     </>
   );

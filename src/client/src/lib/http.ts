@@ -1,7 +1,7 @@
 type HttpMethod = 'get' | 'post';
 type HttpResponse<T> = {
   statusCode: number;
-  data: T | null;
+  data: T;
   error: boolean;
   message?: any;
 };
@@ -48,6 +48,6 @@ export const http: <T>(
   return {
     error: true,
     statusCode: status,
-    data: null
+    data: body
   };
 };

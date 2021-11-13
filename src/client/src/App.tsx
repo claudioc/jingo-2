@@ -2,17 +2,21 @@ import { Outlet, Routes, Route, Link } from 'react-router-dom';
 import HomePage from './routes/Home';
 import Wiki from './routes/Wiki';
 import DocsEdit from './routes/Docs/Edit';
+import DocsCreate from './routes/Docs/Create';
 
 function App() {
   return (
     <main>
-      <header>Jingo</header>
+      <header>
+        <Link to="/wiki/">Jingo</Link>
+      </header>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route caseSensitive={true} path="wiki/*" element={<Wiki />} />
           <Route path="docs">
             <Route path="edit" element={<DocsEdit />} />
+            <Route path="create" element={<DocsCreate />} />
           </Route>
           <Route path="*" element={<NoMatch />} />
         </Route>

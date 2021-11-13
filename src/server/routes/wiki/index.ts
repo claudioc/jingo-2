@@ -72,7 +72,12 @@ export default class WikiRoute extends BaseRoute {
       } else {
         res.status(404);
         if (req.app.get('requiresJson')) {
-          res.json({});
+          res.json({
+            docName: this.docName,
+            docTitle: this.wikiHelpers.unwikify(this.docName),
+            wikiPath: this.wikiHelpers.pathFor(this.docName, this.dirName),
+            into: this.dirName
+          });
         } else {
           const createPageUrl = this.docHelpers.pathFor('create', this.docName, this.dirName);
           this.renderTemplate(res, `${__dirname}/fail`, {

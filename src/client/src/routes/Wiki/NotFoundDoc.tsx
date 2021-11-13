@@ -1,13 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { IDocLocation } from '@lib/types';
 
 interface NotFoundDocProps {
-  docName: string;
-  into?: string;
+  docLocation: IDocLocation;
 }
 
-const NotFoundDoc: React.FC<NotFoundDocProps> = ({ docName, into }) => {
-  console.log(docName);
+const NotFoundDoc: React.FC<NotFoundDocProps> = ({ docLocation }) => {
   return (
     <>
       <h1>Document not found</h1>
@@ -16,10 +15,12 @@ const NotFoundDoc: React.FC<NotFoundDocProps> = ({ docName, into }) => {
       <ul>
         <li>
           Create the document by just{' '}
-          <Link to={`/docs/create?docName=${docName}&into=${into}`}>following this link</Link>
+          <Link to={`/docs/create?docTitle=${docLocation.docTitle}&into=${docLocation.into}`}>
+            following this link
+          </Link>
         </li>
         <li>
-          Go to the <a href="">home page</a>
+          Go to the <Link to="/wiki/">home page</Link>
         </li>
       </ul>
     </>

@@ -1,55 +1,53 @@
 import React from 'react';
 import { http } from '@lib/http';
-import { IDocForUpdate, IDocLocation } from '@lib/types';
+import { IDocForCreate, IDocLocation } from '@lib/types';
 import { useNavigate } from 'react-router';
 import _pick from 'lodash/pick';
+import { Link } from 'react-router-dom';
 
 enum FormFields {
   DocTitle = 'docTitle',
-  Content = 'content',
-  Comment = 'comment'
+  Content = 'content'
 }
 
 interface FormSchema {
   [FormFields.DocTitle]: string;
   [FormFields.Content]: string;
-  [FormFields.Comment]?: string;
 }
 
-const Edit: React.FC = () => {
+const Create: React.FC = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string>();
-  const [loading, setLoading] = React.useState<boolean>();
-  const [doc, setDoc] = React.useState<IDocForUpdate>();
+  const [doc, setDoc] = React.useState<IDocForCreate>();
   const [form, setForm] = React.useState<FormSchema>({
     [FormFields.DocTitle]: '',
-    [FormFields.Content]: '',
-    [FormFields.Comment]: ''
+    [FormFields.Content]: ''
   });
 
   const params = React.useMemo(() => new URLSearchParams(location.search), [location]);
-  const docName = params.get('docName');
+  const docTitle = (params.get('docTitle') ?? '').trim();
   const into = (params.get('into') ?? '').trim();
 
-  const fetchDocContent = React.useCallback(async () => {
+  const fetchDocForCreate = React.useCallback(async () => {
     setLoading(true);
-    const response = await http<IDocForUpdate>(
+    const response = await http<IDocForCreate>(
       'get',
-      `/api/doc/update?docName=${docName}&into=${into}`
+      `/api/doc/create?docTitle=${docTitle}&into=${into}`
     );
 
     if (response.error) {
-      setError(`Something went wrong while fetching '${docName}'`);
+      setError(`Something went wrong while creating '${docTitle}'`);
     } else {
       setDoc(response.data);
-      setForm({ ...form, ..._pick(response.data, [FormFields.Content, FormFields.DocTitle]) });
+      setForm({ ...form, ..._pick(response.data, [FormFields.DocTitle]) });
     }
     setLoading(false);
   }, []);
 
   React.useEffect(() => {
-    fetchDocContent();
-  }, [fetchDocContent]);
+    fetchDocForCreate();
+  }, [fetchDocForCreate]);
 
   const handleFormChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({
@@ -64,20 +62,19 @@ const Edit: React.FC = () => {
       return;
     }
 
-    const response = await http<IDocLocation>('post', `/api/doc/update`, {
+    const response = await http<IDocLocation>('post', `/api/doc/create`, {
       data: {
         _csrf: doc.csrfToken,
         into: doc.into,
-        docName: doc.docName,
-        comment: form.comment,
         docTitle: form.docTitle,
         content: form.content
       }
     });
 
-    const { wikiPath } = response.data;
-
-    navigate(wikiPath);
+    if (!response.error) {
+      const { wikiPath } = response.data;
+      navigate(wikiPath);
+    }
   };
 
   if (loading) {
@@ -87,7 +84,7 @@ const Edit: React.FC = () => {
   return (
     <>
       {error && <p>{error}</p>}
-      {!error && (
+      {doc && (
         <form onSubmit={handleSubmit}>
           <p>
             <input
@@ -108,16 +105,9 @@ const Edit: React.FC = () => {
             />
           </p>
           <p>
-            <input
-              required
-              onChange={handleFormChange}
-              name={FormFields.Comment}
-              type="text"
-              value={form.comment}
-            />
-          </p>
-          <p>
             <input type="submit" value="Save" />
+            or
+            <Link to={doc.wikiPath}>Cancel</Link>
           </p>
         </form>
       )}
@@ -125,4 +115,4 @@ const Edit: React.FC = () => {
   );
 };
 
-export default Edit;
+export default Create;

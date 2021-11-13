@@ -22,16 +22,16 @@ export class Doc {
 
   /**
    * Returns the URL path for a document action
-   * @param docName Id of the document
+   * @param id Id of the document (title or docName)
    * @param into The directory the document is in
    * @param action DocAction
    */
-  public pathFor(action: DocAction, docName: string, into: string = ''): string {
+  public pathFor(action: DocAction, id: string, into: string = ''): string {
     const docPath = this.config.mount(`doc/${action}`);
     const queso = new Queso();
 
-    if (docName) {
-      queso.add('docName', docName);
+    if (id) {
+      queso.add(action === 'create' ? 'docTitle' : 'docName', id);
     }
 
     if (into && into.length > 0) {
