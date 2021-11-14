@@ -40,6 +40,8 @@ On a more technical side:
 
 By default the git support is disabled, so that Jingo is just a CMS sitting on top of a bunch of Markdown files. To enable it, turn on the the `gitSupport` feature in the config.json file. Some of the features (like "Recent edits") are only active once git support is enabled.
 
+If you want to start working from an empty document root with git enabled, you have to first run `git init` and then `git checkout -b main` (or whatever branch you configured as the one you want to work with).
+
 ## Configuration
 
 The configuration is not fully documented yet, but the `./src/lib/config/defaults.json` file contains helpful comments.
