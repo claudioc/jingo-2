@@ -6,15 +6,18 @@ import Document from './Document';
 import Folder from './Folder';
 import NotFoundDoc from './NotFoundDoc';
 import NotFoundFolder from './NotFoundFolder';
+import { useAppState } from '@/AppState';
+import Welcome from './Welcome';
 
 const Wiki: React.FC = () => {
   const navigate = useNavigate();
   const [doc, setDoc] = React.useState<IDoc | null>();
   const [folder, setFolder] = React.useState<TFolder | null>();
-  const [newDoc, setNewDoc] = React.useState<IDocLocation>();
+  const [newDoc, setNewDoc] = React.useState<IDocLocation | null>();
   const [loading, setLoading] = React.useState<boolean>();
   const urlParams = useParams();
   const location = useLocation();
+  const appState = useAppState();
 
   /* We need to handle 3 cases
    * - we are in the wiki front page: /wiki or /wiki/
@@ -40,7 +43,12 @@ const Wiki: React.FC = () => {
     if (response.error) {
       if (response.statusCode === 404) {
         if (isAnyDoc) {
-          setNewDoc(response.data as IDocLocation);
+          // Special case for the index page
+          if (path === appState.wikiHome) {
+            setNewDoc(null);
+          } else {
+            setNewDoc(response.data as IDocLocation);
+          }
         }
         isAnyFolder ? setFolder(null) : setDoc(null);
       } else {
@@ -70,6 +78,7 @@ const Wiki: React.FC = () => {
       {folder && <Folder folder={folder} />}
       {isAnyFolder && folder === null && <NotFoundFolder />}
       {isAnyDoc && doc === null && newDoc && <NotFoundDoc docLocation={newDoc} />}
+      {isAnyDoc && doc === null && newDoc === null && <Welcome />}
     </>
   );
 };
