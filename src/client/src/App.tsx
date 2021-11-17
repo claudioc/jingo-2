@@ -3,6 +3,7 @@ import HomePage from './routes/Home';
 import Wiki from './routes/Wiki';
 import DocsEdit from './routes/Docs/Edit';
 import DocsCreate from './routes/Docs/Create';
+import FoldersCreate from './routes/Folders/Create';
 
 function App() {
   return (
@@ -18,6 +19,9 @@ function App() {
             <Route path="edit" element={<DocsEdit />} />
             <Route path="create" element={<DocsCreate />} />
           </Route>
+          <Route path="folders">
+            <Route path="create" element={<FoldersCreate />} />
+          </Route>
           <Route path="*" element={<NoMatch />} />
         </Route>
       </Routes>
@@ -25,11 +29,11 @@ function App() {
   );
 }
 
-//<Route caseSensitive={true} path="wiki/*/" element={<WikiFolder />} />
 const Layout: React.FC = () => {
   return (
     <div>
-      <span>Part of the layout</span>
+      <Link to="/docs/create">New document</Link>&nbsp;
+      <Link to="/folders/create">New folder</Link>
       <Outlet />
     </div>
   );

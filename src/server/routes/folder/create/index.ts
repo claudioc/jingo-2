@@ -35,7 +35,11 @@ const create: RouteHandler = async function(this: FolderRoute, req, res, next) {
     into
   };
 
-  this.renderTemplate(res, __dirname, scope);
+  if (req.app.get('requiresJson')) {
+    res.json(scope);
+  } else {
+    this.renderTemplate(res, __dirname, scope);
+  }
 };
 
 const didCreate: RouteHandler = async function(this: FolderRoute, req, res, next) {
@@ -51,27 +55,57 @@ const didCreate: RouteHandler = async function(this: FolderRoute, req, res, next
   };
 
   if (errors) {
-    this.renderTemplate(res, __dirname, _assign(scope, { errors }));
+    if (req.app.get('requiresJson')) {
+      res.status(400);
+      res.json({
+        message: errors.join(', ')
+      });
+    } else {
+      this.renderTemplate(res, __dirname, _assign(scope, { errors }));
+    }
     return;
   }
 
   const itExists = await this.sdk.folderExists(folderName, into);
   if (itExists) {
-    this.renderTemplate(
-      res,
-      __dirname,
-      _assign(scope, { errors: ['A folder or file with this name already exists'] })
-    );
+    if (req.app.get('requiresJson')) {
+      res.status(400);
+      res.json({
+        message: `A folder or file with the name ${folderName} already exists`
+      });
+    } else {
+      this.renderTemplate(
+        res,
+        __dirname,
+        _assign(scope, { errors: ['A folder or file with this name already exists'] })
+      );
+    }
     return;
   }
 
   try {
     await this.sdk.createFolder(folderName, into);
-    req.flash('success', `Folder ${folderName} created.`);
-    // All done, go to the just created folder
-    res.redirect(this.folderHelpers.pathFor('list', folderName, into));
+
+    if (req.app.get('requiresJson')) {
+      res.json({
+        folderPath: this.folderHelpers.pathFor('list', folderName, into),
+        folderName,
+        into
+      });
+    } else {
+      req.flash('success', `Folder ${folderName} created.`);
+      // All done, go to the just created folder
+      res.redirect(this.folderHelpers.pathFor('list', folderName, into));
+    }
     req.app && req.app.emit(je('jingo.folderCreated'));
   } catch (err) {
-    res.status(500).render('500', { err });
+    if (req.app.get('requiresJson')) {
+      res.status(500);
+      res.json({
+        message: err
+      });
+    } else {
+      res.status(500).render('500', { err });
+    }
   }
 };

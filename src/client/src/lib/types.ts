@@ -36,3 +36,13 @@ export type TFolder = {
   folderName: string;
   parentDirname: string;
 };
+
+export interface IFolderLocation {
+  folderName: string;
+  folderPath: string;
+  into: string;
+}
+
+export interface IFolderForCreate extends IFolderLocation {
+  csrfToken: string;
+}

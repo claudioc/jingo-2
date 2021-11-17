@@ -45,11 +45,18 @@ export default class FolderRoute extends BaseRoute {
     const { folderName, parentDirname } = this.folderHelpers.splitPath(directory);
     const itExists = await this.sdk.folderExists(folderName, parentDirname);
     if (!itExists) {
-      this.renderTemplate(res, `${__dirname}/fail`, {
-        directory,
-        folderName,
-        parentDirname
-      });
+      if (req.app.get('requiresJson')) {
+        res.status(400);
+        res.json({
+          message: `The directory ${directory} does not exist.`
+        });
+      } else {
+        this.renderTemplate(res, `${__dirname}/fail`, {
+          directory,
+          folderName,
+          parentDirname
+        });
+      }
     }
 
     return itExists;
@@ -67,7 +74,14 @@ export default class FolderRoute extends BaseRoute {
 
     const itExists = await this.sdk.folderExists(folder, into);
     if (itExists) {
-      res.redirect(this.folderHelpers.pathFor('list', folder, into));
+      if (req.app.get('requiresJson')) {
+        res.status(400);
+        res.json({
+          message: `The directory ${folder} already exists.`
+        });
+      } else {
+        res.redirect(this.folderHelpers.pathFor('list', folder, into));
+      }
     }
 
     return !itExists;
@@ -76,7 +90,14 @@ export default class FolderRoute extends BaseRoute {
   public async assertFolderExists(folder, into, req: Request, res: Response) {
     const itExists = await this.sdk.folderExists(folder, into);
     if (!itExists) {
-      res.redirect(this.config.mount(`/?e=1`));
+      if (req.app.get('requiresJson')) {
+        res.status(400);
+        res.json({
+          message: `The directory ${folder} does not exist.`
+        });
+      } else {
+        res.redirect(this.config.mount(`/?e=1`));
+      }
     }
 
     return itExists;
