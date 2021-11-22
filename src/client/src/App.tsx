@@ -4,6 +4,7 @@ import Wiki from './routes/Wiki';
 import DocsEdit from './routes/Docs/Edit';
 import DocsCreate from './routes/Docs/Create';
 import FoldersCreate from './routes/Folders/Create';
+import Breadcrumbs from './components/Breadcrumbs';
 
 function App() {
   return (
@@ -31,11 +32,16 @@ function App() {
 
 const Layout: React.FC = () => {
   return (
-    <div>
-      <Link to="/docs/create">New document</Link>&nbsp;
-      <Link to="/folders/create">New folder</Link>
-      <Outlet />
-    </div>
+    <>
+      <nav>
+        <Breadcrumbs />
+      </nav>
+      <div>
+        <Link to="/docs/create">New document</Link>&nbsp;
+        <Link to="/folders/create">New folder</Link>
+        <Outlet />
+      </div>
+    </>
   );
 };
 
