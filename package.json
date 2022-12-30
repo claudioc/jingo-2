@@ -96,7 +96,7 @@
     "express-flash": "0.0.2",
     "express-handlebars": "^5.3.4",
     "express-validator": "^6.13.0",
-    "flat": "^4.0.0",
+    "flat": "^5.0.1",
     "helmet": "^3.21.2",
     "highlight.js": "^10.4.1",
     "just-handlebars-helpers": "^1.0.14",
